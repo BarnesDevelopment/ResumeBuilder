@@ -1,6 +1,8 @@
 using ceTe.DynamicPDF;
 using ceTe.DynamicPDF.PageElements;
 using Microsoft.AspNetCore.Mvc;
+using ResumeAPI.Models;
+using ResumeAPI.Orchestrator;
 
 namespace ResumeAPI.Controllers
 {
@@ -9,32 +11,20 @@ namespace ResumeAPI.Controllers
     public class ResumeController : ControllerBase
     {
         private readonly ILogger<ResumeController> _logger;
+        private readonly IResumeOrchestrator _orchestrator;
 
-        public ResumeController(ILogger<ResumeController> logger)
+        public ResumeController(ILogger<ResumeController> logger, IResumeOrchestrator orchestrator)
         {
+            _orchestrator = orchestrator;
             _logger = logger;
         }
 
         [HttpPost("/build")]
-        public IActionResult BuildPdf()
+        public IActionResult BuildPdf([FromBody] ResumeHeader header)
         {
-            var stream = new MemoryStream();
-            // processing the stream.
+            var stream = _orchestrator.BuildResume(header);
 
-            Document document = new Document();
-            
-            Page page = new Page(PageSize.Letter, PageOrientation.Portrait, 54.0f);
-            document.Pages.Add(page);
-
-            string labelText = "Hello World...\nFrom DynamicPDF Generator for .NET\nDynamicPDF.com";
-            Label label = new Label(labelText, 0, 0, 504, 100, Font.Helvetica, 18, TextAlign.Center);
-            page.Elements.Add(label);
-
-            document.Draw(stream);
-
-            var fileName = "file.pdf";
-
-            return File(stream.GetBuffer(), "application/octet-stream", fileName);
+            return File(stream.GetBuffer(), "application/octet-stream", header.Filename);
         }
     }
 }

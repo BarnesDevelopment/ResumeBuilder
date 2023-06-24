@@ -1,3 +1,6 @@
+using ResumeAPI.Orchestrator;
+using ResumeAPI.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
+builder.Services.AddTransient<IResumeService, ResumeService>();
 
 var app = builder.Build();
 
