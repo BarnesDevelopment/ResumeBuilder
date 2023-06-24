@@ -23,6 +23,8 @@ public class ResumeServiceTests
         doc.Pages.Count.Should().Be(1);
     }
 
+    #region BuildHeader
+
     [Fact]
     public void BuildHeader_AddsName()
     {
@@ -52,7 +54,7 @@ public class ResumeServiceTests
 
         _serivce.BuildHeader(page, header);
 
-        ((Label)page.Elements[0]).Text.Should().Be(email);
+        ((Label)page.Elements[0]).Text.Should().Be($"Email: {email}");
     }
     
     [Fact]
@@ -73,7 +75,7 @@ public class ResumeServiceTests
 
         _serivce.BuildHeader(page, header);
 
-        ((Label)page.Elements[0]).Text.Should().Be(phone);
+        ((Label)page.Elements[0]).Text.Should().Be($"Phone: {phone}");
     }
     
     [Fact]
@@ -89,7 +91,7 @@ public class ResumeServiceTests
 
         _serivce.BuildHeader(page, header);
 
-        ((Label)page.Elements[0]).Text.Should().Be(site);
+        ((Label)page.Elements[0]).Text.Should().Be($"Website: {site}");
     }
 
     [Fact]
@@ -117,8 +119,27 @@ public class ResumeServiceTests
         _serivce.BuildHeader(page, header);
         
         ((Label)page.Elements[0]).Text.Should().Be(name);
-        ((Label)page.Elements[1]).Text.Should().Be(email);
-        ((Label)page.Elements[2]).Text.Should().Be(phone);
-        ((Label)page.Elements[3]).Text.Should().Be(site);
+        ((Label)page.Elements[1]).Text.Should().Be($"Email: {email}");
+        ((Label)page.Elements[2]).Text.Should().Be($"Phone: {phone}");
+        ((Label)page.Elements[3]).Text.Should().Be($"Website: {site}");
     }
+
+    #endregion
+
+    #region AddSeparator
+
+    [Fact]
+    public void AddSeparator_AddsText()
+    {
+        var doc = new Document();
+        var page = _serivce.AddPage(doc);
+        var y = 0;
+        var title = "title";
+
+        _serivce.AddSeparator(page, y, title);
+
+        ((Label)page.Elements[1]).Text.Should().Be(title);
+    }
+
+    #endregion
 }

@@ -25,7 +25,11 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
         var page = _service.AddPage(document);
 
-        _service.BuildHeader(page,header);
+        var y = 0;
+        
+        y = _service.BuildHeader(page,header, y);
+        
+        y = _service.AddSeparator(page, y, "Summary");
 
         document.Draw(stream);
         return stream;

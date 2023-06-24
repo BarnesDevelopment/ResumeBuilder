@@ -7,7 +7,8 @@ namespace ResumeAPI.Services;
 public interface IResumeService
 {
     Page AddPage(Document doc);
-    void BuildHeader(Page page, ResumeHeader header);
+    int BuildHeader(Page page, ResumeHeader header, int y = 0);
+    int AddSeparator(Page page, int y, string title);
 }
 
 public class ResumeService : IResumeService
@@ -26,9 +27,8 @@ public class ResumeService : IResumeService
         return page;
     }
 
-    public void BuildHeader(Page page, ResumeHeader header)
+    public int BuildHeader(Page page, ResumeHeader header, int y = 0)
     {
-        var y = 0;
         var padding = 2;
         AddNameToHeader(page, header, y);
         y += 32 + padding;
@@ -38,20 +38,26 @@ public class ResumeService : IResumeService
         y += 12 + padding;
         AddWebsiteToHeader(page, header, y);
         y += 24;
-        AddSeparator(page, y);
+        return y;
     }
 
-    private static void AddSeparator(Page page, int y)
+    public int AddSeparator(Page page, int y, string title)
     {
-        Line line = new Line(0,y,maxWidth,y,1,RgbColor.Black,LineStyle.Solid);
-        page.Elements.Add(line);
+        var sector = maxWidth / 5;
+        Line line1 = new Line(0,y+10,sector*2,y+10,1,RgbColor.Black,LineStyle.Solid);
+        page.Elements.Add(line1);
+        Label label = new Label(title, sector*2, y, sector, 18, Font.HelveticaBold, 18, TextAlign.Center);
+        page.Elements.Add(label); 
+        Line line2 = new Line(sector*3,y+10,maxWidth,y+10,1,RgbColor.Black,LineStyle.Solid);
+        page.Elements.Add(line2);
+        return y + 18;
     }
 
     private static void AddEmailToHeader(Page page, ResumeHeader header, int y)
     {
         if (!string.IsNullOrEmpty(header.Email))
         {
-            Label label = new Label(header.Email, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+            Label label = new Label("Email: " + header.Email, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
             page.Elements.Add(label); 
         }
     }
@@ -60,7 +66,7 @@ public class ResumeService : IResumeService
     {
         if (!string.IsNullOrEmpty(header.Website))
         {
-            Label label = new Label(header.Website, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+            Label label = new Label("Website: " + header.Website, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
             page.Elements.Add(label); 
         }
     }
@@ -69,7 +75,7 @@ public class ResumeService : IResumeService
     {
         if (header.Phone != null)
         {
-            Label label = new Label(header.Phone.FormattedNumber, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+            Label label = new Label("Phone: " + header.Phone.FormattedNumber, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
             page.Elements.Add(label); 
         }
     }
@@ -78,7 +84,7 @@ public class ResumeService : IResumeService
     {
         if (!string.IsNullOrEmpty(header.Name))
         {
-            Label label = new Label(header.Name, 0, y, maxWidth, 32, Font.Helvetica, 32, TextAlign.Center);
+            Label label = new Label(header.Name, 0, y, maxWidth, 32, Font.HelveticaBold, 32, TextAlign.Center);
             page.Elements.Add(label);
         }
     }
