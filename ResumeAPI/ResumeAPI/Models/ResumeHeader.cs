@@ -7,6 +7,7 @@ public class ResumeHeader
     public string Email { get; set; }
     public string Website { get; set; }
     public PhoneNumber Phone { get; set; }
+    public string Summary { get; set; }
 }
 
 public class PhoneNumber

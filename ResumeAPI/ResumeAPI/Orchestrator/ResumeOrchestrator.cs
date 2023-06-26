@@ -1,7 +1,6 @@
-﻿using ceTe.DynamicPDF;
-using ceTe.DynamicPDF.PageElements;
-using ResumeAPI.Models;
+﻿using ResumeAPI.Models;
 using ResumeAPI.Services;
+using SelectPdf;
 
 namespace ResumeAPI.Orchestrator;
 
@@ -21,17 +20,17 @@ public class ResumeOrchestrator : IResumeOrchestrator
     public MemoryStream BuildResume(ResumeHeader header)
     {
         var stream = new MemoryStream();
-        Document document = new Document();
-
-        var page = _service.AddPage(document);
-
-        var y = 0;
+        HtmlToPdf converter = new HtmlToPdf();
         
-        y = _service.BuildHeader(page,header, y);
+        var html = "<p>Hello World</p><h1>Hi suckers!</h1>";
         
-        y = _service.AddSeparator(page, y, "Summary");
-
-        document.Draw(stream);
+        html += _service.BuildHeader(header);
+        
+        html += _service.BuildSummary(header);
+        
+        PdfDocument doc = converter.ConvertHtmlString(html);
+        doc.Save(stream);
+        doc.Close();
         return stream;
     }
     

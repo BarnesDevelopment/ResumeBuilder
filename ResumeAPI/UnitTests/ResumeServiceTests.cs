@@ -1,6 +1,4 @@
-﻿using ceTe.DynamicPDF;
-using ceTe.DynamicPDF.PageElements;
-using ResumeAPI.Models;
+﻿using ResumeAPI.Models;
 using ResumeAPI.Services;
 
 namespace UnitTests;
@@ -116,29 +114,35 @@ public class ResumeServiceTests
             }
         };
 
-        _serivce.BuildHeader(page, header);
+        var y = _serivce.BuildHeader(page, header);
         
         ((Label)page.Elements[0]).Text.Should().Be(name);
         ((Label)page.Elements[1]).Text.Should().Be($"Email: {email}");
         ((Label)page.Elements[2]).Text.Should().Be($"Phone: {phone}");
         ((Label)page.Elements[3]).Text.Should().Be($"Website: {site}");
+        y.Should().Be(86);
     }
 
     #endregion
 
-    #region AddSeparator
+    #region AddSummary
 
     [Fact]
-    public void AddSeparator_AddsText()
+    public void BuildSummary_AddsText()
     {
         var doc = new Document();
         var page = _serivce.AddPage(doc);
-        var y = 0;
-        var title = "title";
+        var text = "summary text";
+        var header = new ResumeHeader
+        {
+            Summary = text
+        };
 
-        _serivce.AddSeparator(page, y, title);
+        var y = _serivce.BuildSummary(page, header);
 
-        ((Label)page.Elements[1]).Text.Should().Be(title);
+        ((Label)page.Elements[1]).Text.Should().Be("Summary");
+        ((TextArea)page.Elements[3]).Text.Should().Be(text);
+        y.Should().Be(34);
     }
 
     #endregion
