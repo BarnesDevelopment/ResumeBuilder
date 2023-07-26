@@ -67,41 +67,51 @@ public class ResumeService : IResumeService
 
     private static string AddEmailToHeader(ResumeHeader header)
     {
-        // if (!string.IsNullOrEmpty(header.Email))
-        // {
-        //     Label label = new Label("Email: " + header.Email, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-        //     page.Elements.Add(label); 
-        // }
+        if (!string.IsNullOrEmpty(header.Email))
+        {
+            var email = new TagBuilder("span");
+            email.AddCssClass("email");
+            email.InnerHtml.Append("Email: " + header.Email);
+            return email.Write();
+        }
         return "";
     }
     
     private static string AddWebsiteToHeader(ResumeHeader header)
     {
-        // if (!string.IsNullOrEmpty(header.Website))
-        // {
-        //     Label label = new Label("Website: " + header.Website, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-        //     page.Elements.Add(label); 
-        // }
+        if (!string.IsNullOrEmpty(header.Website))
+        {
+            var website = new TagBuilder("span");
+            website.AddCssClass("website");
+            website.InnerHtml.Append("Website: " + header.Website);
+            return website.Write();
+        }
         return "";
     }
     
     private static string AddPhoneToHeader(ResumeHeader header)
     {
-        // if (header.Phone != null)
-        // {
-        //     Label label = new Label("Phone: " + header.Phone.FormattedNumber, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-        //     page.Elements.Add(label); 
-        // }
+        if (header.Phone != null)
+        {
+            var phone = new TagBuilder("span");
+            phone.AddCssClass("phone");
+            phone.InnerHtml.Append("Phone: " + header.Phone.FormattedNumber);
+            return phone.Write();
+        }
         return "";
     }
 
     private static string AddNameToHeader(ResumeHeader header)
     {
-        // if (!string.IsNullOrEmpty(header.Name))
-        // {
-        //     Label label = new Label(header.Name, 0, y, maxWidth, 32, Font.HelveticaBold, 32, TextAlign.Center);
-        //     page.Elements.Add(label);
-        // }
+        if (!string.IsNullOrEmpty(header.Name))
+        {
+            var name = new TagBuilder("span");
+            name.AddCssClass("name");
+            name.InnerHtml.Append(header.Name);
+            return name.Write();
+        }
         return "";
+        
+        
     }
 }
