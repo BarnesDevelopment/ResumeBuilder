@@ -1,6 +1,5 @@
-﻿
-using System.Text.Encodings.Web;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
@@ -63,11 +62,7 @@ public class ResumeService : IResumeService
         separator.InnerHtml.AppendHtml(text);
         separator.InnerHtml.AppendHtml(hr);
 
-        using (var writer = new System.IO.StringWriter())
-        {        
-            separator.WriteTo(writer, HtmlEncoder.Default);
-            return writer.ToString();
-        } 
+        return separator.Write();
     }
 
     private static string AddEmailToHeader(ResumeHeader header)
