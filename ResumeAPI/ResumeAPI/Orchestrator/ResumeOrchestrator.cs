@@ -21,6 +21,7 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var stream = new MemoryStream();
         HtmlToPdf converter = new HtmlToPdf();
+        converter.Options.PdfPageSize = PdfPageSize.Letter;
         
         var html = @"<style>
             .separator-container {
@@ -45,11 +46,30 @@ public class ResumeOrchestrator : IResumeOrchestrator
                 border-width: 0;
                 background-color: black;
             }
+
+            .page {
+                width:1004px;
+                height: 1304px;
+                border: 2px solid black;
+                margin-top: 18px;
+            }
+
+            #page1 {
+                background-color: #ff0000;
+                margin-top: 0;
+            }
+
+            #page2 {
+                
+                background-color: #00ff00;
+            }
         </style>";
         
-        html += _service.BuildHeader(header);
-        
-        html += _service.BuildSummary(header);
+        // html += _service.BuildHeader(header);
+        //
+        // html += _service.BuildSummary(header);
+
+        html += @"<div id=""page1""class=""page""></div><div id=""page2"" class=""page""></div>";
         
         PdfDocument doc = converter.ConvertHtmlString(html);
         doc.Save(stream);
