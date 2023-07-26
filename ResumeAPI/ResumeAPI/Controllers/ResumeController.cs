@@ -1,5 +1,3 @@
-using ceTe.DynamicPDF;
-using ceTe.DynamicPDF.PageElements;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;

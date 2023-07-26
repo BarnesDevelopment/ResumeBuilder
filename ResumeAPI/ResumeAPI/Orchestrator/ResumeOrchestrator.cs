@@ -22,7 +22,30 @@ public class ResumeOrchestrator : IResumeOrchestrator
         var stream = new MemoryStream();
         HtmlToPdf converter = new HtmlToPdf();
         
-        var html = "<p>Hello World</p><h1>Hi suckers!</h1>";
+        var html = @"<style>
+            .separator-container {
+                display: flex;
+                flex-direction: row;
+                width: 100%;
+            }
+    
+            .text {
+                margin-left: 1rem;
+                margin-right: 1rem;
+                font-size: 3rem;
+            }
+        
+            .separator{
+                flex-grow: 1;
+                margin: auto;
+            }
+        
+            .separator hr {
+                height: 2px;
+                border-width: 0;
+                background-color: black;
+            }
+        </style>";
         
         html += _service.BuildHeader(header);
         

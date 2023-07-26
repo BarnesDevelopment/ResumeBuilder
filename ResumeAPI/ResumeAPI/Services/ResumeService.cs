@@ -1,5 +1,6 @@
-﻿using ceTe.DynamicPDF;
-using ceTe.DynamicPDF.PageElements;
+﻿
+using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
@@ -35,10 +36,10 @@ public class ResumeService : IResumeService
         var html = "";
         html += AddSeparator("Summary");
         
-        TextArea text = new TextArea(header.Summary, 0, y, maxWidth, 12, Font.HelveticaBold, 18, TextAlign.Center);
-        page.Elements.Add(text);
-
-        y += 14;
+        // TextArea text = new TextArea(header.Summary, 0, y, maxWidth, 12, Font.HelveticaBold, 18, TextAlign.Center);
+        // page.Elements.Add(text);
+        //
+        // y += 14;
         
         return html;
     }
@@ -46,48 +47,66 @@ public class ResumeService : IResumeService
     private string AddSeparator(string title)
     {
         var sector = maxWidth / 5;
-        Line line1 = new Line(0,y+10,sector*2,y+10,1,RgbColor.Black,LineStyle.Solid);
-        page.Elements.Add(line1);
-        Label label = new Label(title, sector*2, y, sector, 18, Font.HelveticaBold, 18, TextAlign.Center);
-        page.Elements.Add(label); 
-        Line line2 = new Line(sector*3,y+10,maxWidth,y+10,1,RgbColor.Black,LineStyle.Solid);
-        page.Elements.Add(line2);
-        return html;
+        var hr = new TagBuilder("div");
+        hr.InnerHtml.AppendHtml("<hr>");
+        hr.AddCssClass("separator");
+        
+        var textSpan = new TagBuilder("span");
+        textSpan.InnerHtml.Append(title);
+        var text = new TagBuilder("div");
+        text.InnerHtml.AppendHtml(textSpan);
+        text.AddCssClass("text");
+        
+        var separator = new TagBuilder("div");
+        separator.AddCssClass("separator-container");
+        separator.InnerHtml.AppendHtml(hr);
+        separator.InnerHtml.AppendHtml(text);
+        separator.InnerHtml.AppendHtml(hr);
+
+        using (var writer = new System.IO.StringWriter())
+        {        
+            separator.WriteTo(writer, HtmlEncoder.Default);
+            return writer.ToString();
+        } 
     }
 
     private static string AddEmailToHeader(ResumeHeader header)
     {
-        if (!string.IsNullOrEmpty(header.Email))
-        {
-            Label label = new Label("Email: " + header.Email, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-            page.Elements.Add(label); 
-        }
+        // if (!string.IsNullOrEmpty(header.Email))
+        // {
+        //     Label label = new Label("Email: " + header.Email, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+        //     page.Elements.Add(label); 
+        // }
+        return "";
     }
     
     private static string AddWebsiteToHeader(ResumeHeader header)
     {
-        if (!string.IsNullOrEmpty(header.Website))
-        {
-            Label label = new Label("Website: " + header.Website, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-            page.Elements.Add(label); 
-        }
+        // if (!string.IsNullOrEmpty(header.Website))
+        // {
+        //     Label label = new Label("Website: " + header.Website, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+        //     page.Elements.Add(label); 
+        // }
+        return "";
     }
     
     private static string AddPhoneToHeader(ResumeHeader header)
     {
-        if (header.Phone != null)
-        {
-            Label label = new Label("Phone: " + header.Phone.FormattedNumber, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
-            page.Elements.Add(label); 
-        }
+        // if (header.Phone != null)
+        // {
+        //     Label label = new Label("Phone: " + header.Phone.FormattedNumber, 0, y, maxWidth, 12, Font.Helvetica, 12, TextAlign.Center);
+        //     page.Elements.Add(label); 
+        // }
+        return "";
     }
 
     private static string AddNameToHeader(ResumeHeader header)
     {
-        if (!string.IsNullOrEmpty(header.Name))
-        {
-            Label label = new Label(header.Name, 0, y, maxWidth, 32, Font.HelveticaBold, 32, TextAlign.Center);
-            page.Elements.Add(label);
-        }
+        // if (!string.IsNullOrEmpty(header.Name))
+        // {
+        //     Label label = new Label(header.Name, 0, y, maxWidth, 32, Font.HelveticaBold, 32, TextAlign.Center);
+        //     page.Elements.Add(label);
+        // }
+        return "";
     }
 }
