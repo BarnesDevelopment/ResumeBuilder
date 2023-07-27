@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 
@@ -20,6 +21,28 @@ namespace ResumeAPI.Controllers
         [HttpPost("/build")]
         public IActionResult BuildPdf([FromBody] ResumeHeader header)
         {
+            var stream = _orchestrator.BuildResume(header);
+
+            return File(stream.GetBuffer(), "application/octet-stream", header.Filename);
+        }
+
+        [HttpGet("/build-test")]
+        public IActionResult BuildPdfTest()
+        {
+            var header = new ResumeHeader
+            {
+                Filename = "test.pdf",
+                Name = "test",
+                Email = "test@test.com",
+                Website = "test.com",
+                Phone = new PhoneNumber
+                {
+                    AreaCode = 555,
+                    Prefix = 867,
+                    LineNumber = 5309
+                },
+                Summary = "some stupid summary"
+            };
             var stream = _orchestrator.BuildResume(header);
 
             return File(stream.GetBuffer(), "application/octet-stream", header.Filename);

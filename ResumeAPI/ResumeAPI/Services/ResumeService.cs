@@ -6,8 +6,9 @@ namespace ResumeAPI.Services;
 
 public interface IResumeService
 {
-    string BuildHeader(ResumeHeader header);
-    string BuildSummary(ResumeHeader header);
+    TagBuilder BuildHeader(ResumeHeader header);
+    TagBuilder BuildSummary(ResumeHeader header);
+    TagBuilder BuildBody();
 }
 
 public class ResumeService : IResumeService
@@ -20,30 +21,46 @@ public class ResumeService : IResumeService
         
     }
 
-    public string BuildHeader(ResumeHeader header)
+    public TagBuilder BuildBody()
     {
-        var html = "";
-        html += AddNameToHeader(header);
-        html += AddEmailToHeader(header);
-        html += AddPhoneToHeader(header);
-        html += AddWebsiteToHeader(header);
-        return html;
+        var body = new TagBuilder("body");
+        
+        var style = new TagBuilder("style");
+        StreamReader sr = new StreamReader("./CSS/DefaultCss.css");
+        var css = sr.ReadToEnd();
+        sr.Close();
+        style.InnerHtml.AppendHtml(css);
+        
+        body.InnerHtml.AppendHtml(style);
+        
+        return body;
     }
 
-    public string BuildSummary(ResumeHeader header)
+    public TagBuilder BuildHeader(ResumeHeader header)
     {
-        var html = "";
-        html += AddSeparator("Summary");
-        
-        // TextArea text = new TextArea(header.Summary, 0, y, maxWidth, 12, Font.HelveticaBold, 18, TextAlign.Center);
-        // page.Elements.Add(text);
-        //
-        // y += 14;
-        
-        return html;
+        var headerTag = new TagBuilder("div");
+        headerTag.AddCssClass("header");
+        headerTag.InnerHtml.AppendHtml(AddNameToHeader(header));
+        headerTag.InnerHtml.AppendHtml(AddEmailToHeader(header));
+        headerTag.InnerHtml.AppendHtml(AddPhoneToHeader(header));
+        headerTag.InnerHtml.AppendHtml(AddWebsiteToHeader(header));
+        return headerTag;
     }
 
-    private string AddSeparator(string title)
+    public TagBuilder BuildSummary(ResumeHeader header)
+    {
+        var summary = new TagBuilder("div");
+        summary.AddCssClass("summary");
+        var separator = AddSeparator("Summary");
+        summary.InnerHtml.AppendHtml(separator);
+        var text = new TagBuilder("p");
+        text.InnerHtml.Append(header.Summary);
+        summary.InnerHtml.AppendHtml(text);
+        
+        return summary;
+    }
+
+    private TagBuilder AddSeparator(string title)
     {
         var sector = maxWidth / 5;
         var hr = new TagBuilder("div");
@@ -62,56 +79,54 @@ public class ResumeService : IResumeService
         separator.InnerHtml.AppendHtml(text);
         separator.InnerHtml.AppendHtml(hr);
 
-        return separator.Write();
+        return separator;
     }
 
-    private static string AddEmailToHeader(ResumeHeader header)
+    private static TagBuilder AddEmailToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Email))
         {
             var email = new TagBuilder("span");
             email.AddCssClass("email");
             email.InnerHtml.Append("Email: " + header.Email);
-            return email.Write();
+            return email;
         }
-        return "";
+        return new TagBuilder("span");
     }
     
-    private static string AddWebsiteToHeader(ResumeHeader header)
+    private static TagBuilder AddWebsiteToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Website))
         {
             var website = new TagBuilder("span");
             website.AddCssClass("website");
             website.InnerHtml.Append("Website: " + header.Website);
-            return website.Write();
+            return website;
         }
-        return "";
+        return new TagBuilder("span");
     }
     
-    private static string AddPhoneToHeader(ResumeHeader header)
+    private static TagBuilder AddPhoneToHeader(ResumeHeader header)
     {
         if (header.Phone != null)
         {
             var phone = new TagBuilder("span");
             phone.AddCssClass("phone");
             phone.InnerHtml.Append("Phone: " + header.Phone.FormattedNumber);
-            return phone.Write();
+            return phone;
         }
-        return "";
+        return new TagBuilder("span");
     }
 
-    private static string AddNameToHeader(ResumeHeader header)
+    private static TagBuilder AddNameToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Name))
         {
             var name = new TagBuilder("span");
             name.AddCssClass("name");
             name.InnerHtml.Append(header.Name);
-            return name.Write();
+            return name;
         }
-        return "";
-        
-        
+        return new TagBuilder("span");
     }
 }

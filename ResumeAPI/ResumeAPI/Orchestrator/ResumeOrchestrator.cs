@@ -1,4 +1,6 @@
-﻿using ResumeAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ResumeAPI.Helpers;
+using ResumeAPI.Models;
 using ResumeAPI.Services;
 using SelectPdf;
 
@@ -23,55 +25,13 @@ public class ResumeOrchestrator : IResumeOrchestrator
         HtmlToPdf converter = new HtmlToPdf();
         converter.Options.PdfPageSize = PdfPageSize.Letter;
         
-        var html = @"<style>
-            .separator-container {
-                display: flex;
-                flex-direction: row;
-                width: 100%;
-            }
-    
-            .text {
-                margin-left: 1rem;
-                margin-right: 1rem;
-                font-size: 3rem;
-            }
-        
-            .separator{
-                flex-grow: 1;
-                margin: auto;
-            }
-        
-            .separator hr {
-                height: 2px;
-                border-width: 0;
-                background-color: black;
-            }
+        var body = _service.BuildBody();
+        body.InnerHtml.AppendHtml(_service.BuildHeader(header));
+        body.InnerHtml.AppendHtml(_service.BuildSummary(header));
 
-            .page {
-                width:1004px;
-                height: 1304px;
-                border: 2px solid black;
-                margin-top: 18px;
-            }
-
-            #page1 {
-                background-color: #ff0000;
-                margin-top: 0;
-            }
-
-            #page2 {
-                
-                background-color: #00ff00;
-            }
-        </style>";
+        //html += @"<div id=""page1""class=""page""></div><div id=""page2"" class=""page""></div>";
         
-        // html += _service.BuildHeader(header);
-        //
-        // html += _service.BuildSummary(header);
-
-        html += @"<div id=""page1""class=""page""></div><div id=""page2"" class=""page""></div>";
-        
-        PdfDocument doc = converter.ConvertHtmlString(html);
+        PdfDocument doc = converter.ConvertHtmlString(body.Write());
         doc.Save(stream);
         doc.Close();
         return stream;
