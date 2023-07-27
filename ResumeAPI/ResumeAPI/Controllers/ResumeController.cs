@@ -43,9 +43,8 @@ namespace ResumeAPI.Controllers
                 },
                 Summary = "some stupid summary"
             };
-            var stream = _orchestrator.BuildResume(header);
 
-            return File(stream.GetBuffer(), "application/octet-stream", header.Filename);
+            return Content(_orchestrator.BuildResumeHtml(header), "text/html");
         }
     }
 }
