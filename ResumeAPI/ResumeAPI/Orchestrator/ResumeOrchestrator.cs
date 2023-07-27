@@ -44,10 +44,35 @@ public class ResumeOrchestrator : IResumeOrchestrator
     private TagBuilder CreateHtml(ResumeHeader header)
     {
         var page0 = _service.NewPage(0);
-        page0.InnerHtml.AppendHtml(_service.BuildHeader(header));
+        page0.InnerHtml.AppendHtml(BuildHeader(header));
         page0.InnerHtml.AppendHtml(_service.BuildSummary(header));
 
         var body = _service.BuildBody(new List<TagBuilder> { page0 });
         return body;
+    }
+    
+    public TagBuilder BuildHeader(ResumeHeader header)
+    {
+        var headerTag = new TagBuilder("div");
+        headerTag.AddCssClass("header");
+        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(_service.CreateSpan(header.Name, "name"));
+        
+        var details = new TagBuilder("div");
+        details.AddCssClass("details");
+        if (!string.IsNullOrEmpty(header.Email))
+        {
+            details.InnerHtml.AppendHtml(_service.CreateSpan(header.Email, "email"));
+            details.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        }
+
+        if (header.Phone != null)
+        {
+            details.InnerHtml.AppendHtml(_service.CreateSpan(header.Phone.FormattedNumber, "phone"));
+            details.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        }
+        if(!string.IsNullOrEmpty(header.Website)) details.InnerHtml.AppendHtml(_service.CreateSpan(header.Website, "website"));
+
+        headerTag.InnerHtml.AppendHtml(details);
+        return headerTag;
     }
 }

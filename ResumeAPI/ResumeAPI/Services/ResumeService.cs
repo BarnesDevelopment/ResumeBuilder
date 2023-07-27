@@ -6,11 +6,11 @@ namespace ResumeAPI.Services;
 
 public interface IResumeService
 {
-    TagBuilder BuildHeader(ResumeHeader header);
     TagBuilder BuildSummary(ResumeHeader header);
     TagBuilder BuildBody(List<TagBuilder> pages);
     TagBuilder NewPage(int newPageId);
     TagBuilder CreateSpan(string text, string className);
+    TagBuilder VerticalSeparator();
 }
 
 public class ResumeService : IResumeService
@@ -49,17 +49,6 @@ public class ResumeService : IResumeService
         return style;
     }
 
-    public TagBuilder BuildHeader(ResumeHeader header)
-    {
-        var headerTag = new TagBuilder("div");
-        headerTag.AddCssClass("header");
-        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(CreateSpan(header.Name, "name"));
-        if(!string.IsNullOrEmpty(header.Email)) headerTag.InnerHtml.AppendHtml(CreateSpan(header.Email, "email"));
-        if(header.Phone != null) headerTag.InnerHtml.AppendHtml(CreateSpan(header.Phone.FormattedNumber, "phone"));
-        if(!string.IsNullOrEmpty(header.Website)) headerTag.InnerHtml.AppendHtml(CreateSpan(header.Website, "website"));
-        return headerTag;
-    }
-
     public TagBuilder BuildSummary(ResumeHeader header)
     {
         var summary = new TagBuilder("div");
@@ -92,7 +81,7 @@ public class ResumeService : IResumeService
         textSpan.InnerHtml.Append(title);
         var text = new TagBuilder("div");
         text.InnerHtml.AppendHtml(textSpan);
-        text.AddCssClass("text");
+        text.AddCssClass("separator-text");
         
         var separator = new TagBuilder("div");
         separator.AddCssClass("separator-container");
@@ -109,5 +98,13 @@ public class ResumeService : IResumeService
             span.AddCssClass(className);
             span.InnerHtml.Append(text);
             return span;
+    }
+
+    public TagBuilder VerticalSeparator()
+    {
+        var span = new TagBuilder("span");
+        span.AddCssClass("vertical-separator");
+        span.InnerHtml.Append("|");
+        return span;
     }
 }
