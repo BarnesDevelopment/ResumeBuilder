@@ -22,18 +22,11 @@
 }
 
 .page {
-    width:1004px;
-    height: 1304px;
-    border: 2px solid black;
+    width:1008px;
+    height: 1308px;
     margin-top: 18px;
 }
 
-#page1 {
-    background-color: #ff0000;
+#page0 {
     margin-top: 0;
-}
-
-#page2 {
-
-    background-color: #00ff00;
 }

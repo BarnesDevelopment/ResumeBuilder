@@ -25,12 +25,12 @@ public class ResumeOrchestrator : IResumeOrchestrator
         HtmlToPdf converter = new HtmlToPdf();
         converter.Options.PdfPageSize = PdfPageSize.Letter;
         
-        var body = _service.BuildBody();
-        body.InnerHtml.AppendHtml(_service.BuildHeader(header));
-        body.InnerHtml.AppendHtml(_service.BuildSummary(header));
+        var page0 = _service.NewPage(0);
+        page0.InnerHtml.AppendHtml(_service.BuildHeader(header));
+        page0.InnerHtml.AppendHtml(_service.BuildSummary(header));
 
-        //html += @"<div id=""page1""class=""page""></div><div id=""page2"" class=""page""></div>";
-        
+        var body = _service.BuildBody(new List<TagBuilder> { page0 });
+
         PdfDocument doc = converter.ConvertHtmlString(body.Write());
         doc.Save(stream);
         doc.Close();

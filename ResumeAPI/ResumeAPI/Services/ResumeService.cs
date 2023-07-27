@@ -8,7 +8,8 @@ public interface IResumeService
 {
     TagBuilder BuildHeader(ResumeHeader header);
     TagBuilder BuildSummary(ResumeHeader header);
-    TagBuilder BuildBody();
+    TagBuilder BuildBody(List<TagBuilder> pages);
+    TagBuilder NewPage(int newPageId);
 }
 
 public class ResumeService : IResumeService
@@ -21,19 +22,30 @@ public class ResumeService : IResumeService
         
     }
 
-    public TagBuilder BuildBody()
+    public TagBuilder BuildBody(List<TagBuilder> pages)
     {
         var body = new TagBuilder("body");
         
+        var style = BuildStyle();
+
+        body.InnerHtml.AppendHtml(style);
+
+        foreach (var page in pages)
+        {
+            body.InnerHtml.AppendHtml(page);
+        }
+        
+        return body;
+    }
+
+    private TagBuilder BuildStyle()
+    {
         var style = new TagBuilder("style");
         StreamReader sr = new StreamReader("./CSS/DefaultCss.css");
         var css = sr.ReadToEnd();
         sr.Close();
         style.InnerHtml.AppendHtml(css);
-        
-        body.InnerHtml.AppendHtml(style);
-        
-        return body;
+        return style;
     }
 
     public TagBuilder BuildHeader(ResumeHeader header)
@@ -60,6 +72,14 @@ public class ResumeService : IResumeService
         return summary;
     }
 
+    public TagBuilder NewPage(int newPageId)
+    {
+        var page = new TagBuilder("div");
+        page.AddCssClass("page");
+        page.GenerateId($"page{newPageId}", "");
+        return page;
+    }
+
     private TagBuilder AddSeparator(string title)
     {
         var sector = maxWidth / 5;
@@ -82,7 +102,7 @@ public class ResumeService : IResumeService
         return separator;
     }
 
-    private static TagBuilder AddEmailToHeader(ResumeHeader header)
+    private TagBuilder AddEmailToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Email))
         {
@@ -94,7 +114,7 @@ public class ResumeService : IResumeService
         return new TagBuilder("span");
     }
     
-    private static TagBuilder AddWebsiteToHeader(ResumeHeader header)
+    private TagBuilder AddWebsiteToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Website))
         {
@@ -106,7 +126,7 @@ public class ResumeService : IResumeService
         return new TagBuilder("span");
     }
     
-    private static TagBuilder AddPhoneToHeader(ResumeHeader header)
+    private TagBuilder AddPhoneToHeader(ResumeHeader header)
     {
         if (header.Phone != null)
         {
@@ -118,7 +138,7 @@ public class ResumeService : IResumeService
         return new TagBuilder("span");
     }
 
-    private static TagBuilder AddNameToHeader(ResumeHeader header)
+    private TagBuilder AddNameToHeader(ResumeHeader header)
     {
         if (!string.IsNullOrEmpty(header.Name))
         {
