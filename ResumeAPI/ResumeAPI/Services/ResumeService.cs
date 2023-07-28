@@ -9,8 +9,9 @@ public interface IResumeService
     TagBuilder BuildSummary(ResumeHeader header);
     TagBuilder BuildBody(List<TagBuilder> pages);
     TagBuilder NewPage(int newPageId);
-    TagBuilder CreateSpan(string text, string className);
+    TagBuilder CreateSpan(string text, string className = "");
     TagBuilder VerticalSeparator();
+    TagBuilder AddSeparator(string title);
 }
 
 public class ResumeService : IResumeService
@@ -70,7 +71,7 @@ public class ResumeService : IResumeService
         return page;
     }
 
-    private TagBuilder AddSeparator(string title)
+    public TagBuilder AddSeparator(string title)
     {
         var sector = maxWidth / 5;
         var hr = new TagBuilder("div");
@@ -92,19 +93,16 @@ public class ResumeService : IResumeService
         return separator;
     }
 
-    public TagBuilder CreateSpan(string text, string className)
+    public TagBuilder CreateSpan(string text, string className = "")
     {
             var span = new TagBuilder("span");
-            span.AddCssClass(className);
+            if(!string.IsNullOrEmpty(className)) span.AddCssClass(className);
             span.InnerHtml.Append(text);
             return span;
     }
 
     public TagBuilder VerticalSeparator()
     {
-        var span = new TagBuilder("span");
-        span.AddCssClass("vertical-separator");
-        span.InnerHtml.Append("|");
-        return span;
+        return CreateSpan("|", "vertical-separator");
     }
 }

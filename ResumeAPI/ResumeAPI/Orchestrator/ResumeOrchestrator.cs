@@ -46,12 +46,13 @@ public class ResumeOrchestrator : IResumeOrchestrator
         var page0 = _service.NewPage(0);
         page0.InnerHtml.AppendHtml(BuildHeader(resume.Header));
         page0.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
+        page0.InnerHtml.AppendHtml(BuildEducation(resume.Education));
 
         var body = _service.BuildBody(new List<TagBuilder> { page0 });
         return body;
     }
     
-    public TagBuilder BuildHeader(ResumeHeader header)
+    private TagBuilder BuildHeader(ResumeHeader header)
     {
         var headerTag = new TagBuilder("div");
         headerTag.AddCssClass("header");
@@ -74,5 +75,50 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
         headerTag.InnerHtml.AppendHtml(details);
         return headerTag;
+    }
+
+    private TagBuilder BuildEducation(List<ResumeEducation> education)
+    {
+        var educationTag = new TagBuilder("div");
+        educationTag.AddCssClass("education");
+        educationTag.InnerHtml.AppendHtml(_service.AddSeparator("Education"));
+        
+        foreach (var school in education)
+        {
+            BuildSchool(school, educationTag);
+        }
+
+        return educationTag;
+    }
+
+    private void BuildSchool(ResumeEducation school, TagBuilder educationTag)
+    {
+        var schoolTag = new TagBuilder("div");
+        schoolTag.AddCssClass("school");
+
+        if (school.Degree != null)
+        {
+            var degree = new TagBuilder("div");
+            degree.AddCssClass("degree");
+            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.TypeOfDegree, "type"));
+            degree.InnerHtml.AppendHtml(_service.CreateSpan(": ", "colon"));
+            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.Major, "Major"));
+            degree.InnerHtml.AppendHtml(_service.CreateSpan(", "));
+            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.Minor, "Minor"));
+            schoolTag.InnerHtml.AppendHtml(degree);
+        }
+
+        var schoolNameTag = new TagBuilder("div");
+        schoolNameTag.AddCssClass("school-name");
+        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.School, "name"));
+        schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.City, "city"));
+        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(", "));
+        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.State, "state"));
+        schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.GraduationYear, "grad-year"));
+        schoolTag.InnerHtml.AppendHtml(schoolNameTag);
+
+        educationTag.InnerHtml.AppendHtml(schoolTag);
     }
 }

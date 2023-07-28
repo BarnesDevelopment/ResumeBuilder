@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
-
 body {
   font-family: "Roboto", sans-serif;
 }
@@ -64,3 +63,21 @@ body {
   text-align: center;
   padding: 0 2rem 0 2rem;
 }
+
+.school {
+  margin: 1rem 2rem 2rem 2rem;
+}
+.school .degree {
+  margin-bottom: 0.5rem;
+}
+.school .degree .type {
+  font-weight: bold;
+}
+.school .degree .colon {
+  font-weight: bold;
+}
+.school .school-name .vertical-separator {
+  padding: 0.3rem;
+}
+
+/*# sourceMappingURL=DefaultCss.css.map */
