@@ -27,6 +27,11 @@ public class ResumeEducation
     public string City { get; set; }
     public string State { get; set; }
     public string GraduationYear { get; set; }
+    public ResumeDegree Degree { get; set; } 
+}
+
+public class ResumeDegree
+{
     public string TypeOfDegree { get; set; }
     public string Major { get; set; }
     public string Minor { get; set; }
