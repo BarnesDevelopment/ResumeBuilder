@@ -19,32 +19,36 @@ namespace ResumeAPI.Controllers
         }
 
         [HttpPost("/build")]
-        public IActionResult BuildPdf([FromBody] ResumeHeader header)
+        public IActionResult BuildPdf([FromBody] Resume resume)
         {
-            var stream = _orchestrator.BuildResume(header);
+            var stream = _orchestrator.BuildResume(resume);
 
-            return File(stream.GetBuffer(), "application/octet-stream", header.Filename);
+            return File(stream.GetBuffer(), "application/octet-stream", resume.Header.Filename);
         }
 
         [HttpGet("/build-test")]
         public IActionResult BuildPdfTest()
         {
-            var header = new ResumeHeader
+            var resume = new Resume
             {
-                Filename = "test.pdf",
-                Name = "test",
-                Email = "test@test.com",
-                Website = "test.com",
-                Phone = new PhoneNumber
+                Header = new ResumeHeader
                 {
-                    AreaCode = 555,
-                    Prefix = 867,
-                    LineNumber = 5309
-                },
-                Summary = "some stupid summary"
+                    Filename = "test.pdf",
+                    Name = "test",
+                    Email = "test@test.com",
+                    Website = "test.com",
+                    Phone = new PhoneNumber
+                    {
+                        AreaCode = 555,
+                        Prefix = 867,
+                        LineNumber = 5309
+                    },
+                    Summary =
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis tortor magna. Aliquam erat volutpat. Nullam maximus diam a ante tempus, eget rhoncus enim iaculis. Suspendisse quis nibh in urna feugiat faucibus a id nunc. Phasellus sed ex metus. Morbi iaculis nunc non odio lobortis porta. Duis porttitor, diam eget tincidunt tempus, urna enim sollicitudin mauris, sed posuere ante sem nec arcu. Mauris et facilisis sem, et ornare ex. Maecenas a euismod ipsum. Nunc sodales, leo non maximus commodo, ex augue lobortis erat, quis malesuada ligula urna sed libero. Duis luctus suscipit purus. Donec ultrices tellus augue, ut porta tortor feugiat ac. Vivamus cursus fermentum accumsan. Vestibulum quam ligula, sodales a justo eu, blandit eleifend metus. Nunc semper imperdiet libero at tincidunt. Maecenas lacinia posuere viverra."
+                }
             };
 
-            return Content(_orchestrator.BuildResumeHtml(header), "text/html");
+            return Content(_orchestrator.BuildResumeHtml(resume), "text/html");
         }
     }
 }

@@ -8,8 +8,8 @@ namespace ResumeAPI.Orchestrator;
 
 public interface IResumeOrchestrator
 {
-    MemoryStream BuildResume(ResumeHeader header);
-    string BuildResumeHtml(ResumeHeader header);
+    MemoryStream BuildResume(Resume resume);
+    string BuildResumeHtml(Resume resume);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
@@ -20,7 +20,7 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         _service = service;
     }
-    public MemoryStream BuildResume(ResumeHeader header)
+    public MemoryStream BuildResume(Resume header)
     {
         var stream = new MemoryStream();
         HtmlToPdf converter = new HtmlToPdf();
@@ -34,18 +34,18 @@ public class ResumeOrchestrator : IResumeOrchestrator
         return stream;
     }
 
-    public string BuildResumeHtml(ResumeHeader header)
+    public string BuildResumeHtml(Resume resume)
     {
         var html = new TagBuilder("html");
-        html.InnerHtml.AppendHtml(CreateHtml(header));
+        html.InnerHtml.AppendHtml(CreateHtml(resume));
         return(html.Write());
     }
 
-    private TagBuilder CreateHtml(ResumeHeader header)
+    private TagBuilder CreateHtml(Resume resume)
     {
         var page0 = _service.NewPage(0);
-        page0.InnerHtml.AppendHtml(BuildHeader(header));
-        page0.InnerHtml.AppendHtml(_service.BuildSummary(header));
+        page0.InnerHtml.AppendHtml(BuildHeader(resume.Header));
+        page0.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
 
         var body = _service.BuildBody(new List<TagBuilder> { page0 });
         return body;
