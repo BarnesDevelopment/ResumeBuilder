@@ -47,6 +47,11 @@ public class ResumeOrchestrator : IResumeOrchestrator
         page0.InnerHtml.AppendHtml(BuildHeader(resume.Header));
         page0.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
         page0.InnerHtml.AppendHtml(BuildEducation(resume.Education));
+        var experience = BuildExperience(resume.Experience);
+        foreach (var job in experience)
+        {
+            page0.InnerHtml.AppendHtml(job);
+        }
 
         var body = _service.BuildBody(new List<TagBuilder> { page0 });
         return body;
@@ -75,6 +80,51 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
         headerTag.InnerHtml.AppendHtml(details);
         return headerTag;
+    }
+
+    private List<TagBuilder> BuildExperience(List<ResumeExperience> experience)
+    {
+        var experienceTags = new List<TagBuilder>
+        {
+            _service.AddSeparator("Experience")
+        };
+
+        foreach (var job in experience)
+        {
+            var jobTag = new TagBuilder("div");
+            jobTag.AddCssClass("job");
+            var jobHeader = new TagBuilder("div");
+            jobHeader.AddCssClass("job-header");
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.JobTitle, "title"));
+            jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.Employer, "employer"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan("-","spacer"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.City, "city"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(",", "comma"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.State, "state"));
+            jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.StartDate.ToString("MMM, yyyy"), "start"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan("-", "spacer"));
+            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.EndDate != null ? ((DateTime)job.EndDate!).ToString("MMM, yyyy") : "Present", "end"));
+            jobTag.InnerHtml.AppendHtml(jobHeader);
+
+            var responsibilitiesTag = new TagBuilder("div");
+            responsibilitiesTag.AddCssClass("responsibilities");
+            var list = new TagBuilder("ul");
+            list.AddCssClass("list");
+            foreach (var responsibility in job.Responsibilities)
+            {
+                var item = new TagBuilder("li");
+                item.InnerHtml.Append(responsibility);
+                list.InnerHtml.AppendHtml(item);
+            }
+
+            responsibilitiesTag.InnerHtml.AppendHtml(list);
+            jobTag.InnerHtml.AppendHtml(responsibilitiesTag);
+            experienceTags.Add(jobTag);
+        }
+        
+        return experienceTags;
     }
 
     private TagBuilder BuildEducation(List<ResumeEducation> education)

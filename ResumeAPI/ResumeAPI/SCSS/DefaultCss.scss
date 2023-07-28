@@ -79,3 +79,29 @@ body {
     }
   }
 }
+
+.job {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0 2rem 0;
+  .job-header {
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    flex-direction: row;
+    .comma {
+      padding-right: 0.3rem;
+    }
+    .vertical-separator,
+    .spacer {
+      padding: 0 0.3rem 0 0.3rem;
+    }
+    .title {
+      font-weight: bold;
+    }
+  }
+  .responsibilities {
+    margin: 0 3rem 0 3rem;
+  }
+}

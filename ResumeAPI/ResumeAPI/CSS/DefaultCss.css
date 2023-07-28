@@ -74,4 +74,30 @@ body {
   padding: 0.3rem;
 }
 
+.job {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin: 2rem 0 2rem 0;
+}
+.job .job-header {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+}
+.job .job-header .comma {
+  padding-right: 0.3rem;
+}
+.job .job-header .vertical-separator,
+.job .job-header .spacer {
+  padding: 0 0.3rem 0 0.3rem;
+}
+.job .job-header .title {
+  font-weight: bold;
+}
+.job .responsibilities {
+  margin: 0 3rem 0 3rem;
+}
+
 /*# sourceMappingURL=DefaultCss.css.map */
