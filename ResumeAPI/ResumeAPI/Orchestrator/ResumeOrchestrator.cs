@@ -53,6 +53,8 @@ public class ResumeOrchestrator : IResumeOrchestrator
             page0.InnerHtml.AppendHtml(job);
         }
 
+        page0.InnerHtml.AppendHtml(BuildSkills(resume.Skills));
+
         var body = _service.BuildBody(new List<TagBuilder> { page0 });
         return body;
     }
@@ -80,6 +82,26 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
         headerTag.InnerHtml.AppendHtml(details);
         return headerTag;
+    }
+
+    private TagBuilder BuildSkills(List<string> skills)
+    {
+        var skillsTag = new TagBuilder("div");
+        skillsTag.AddCssClass("skills");
+        skillsTag.InnerHtml.AppendHtml(_service.AddSeparator("Skills"));
+        var skillsContainer = new TagBuilder("div");
+        skillsContainer.AddCssClass("container");
+        var skillsList = new TagBuilder("ul");
+        foreach (var skill in skills)
+        {
+            var skillTag = new TagBuilder("li");
+            skillTag.InnerHtml.Append(skill);
+            skillsList.InnerHtml.AppendHtml(skillTag);
+        }
+
+        skillsContainer.InnerHtml.AppendHtml(skillsList);
+        skillsTag.InnerHtml.AppendHtml(skillsContainer);
+        return skillsTag;
     }
 
     private List<TagBuilder> BuildExperience(List<ResumeExperience> experience)
