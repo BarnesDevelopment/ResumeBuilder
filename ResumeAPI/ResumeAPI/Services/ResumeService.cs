@@ -16,7 +16,6 @@ public interface IResumeService
 
 public class ResumeService : IResumeService
 {
-    private static readonly float margin = 20.0f;
     private static readonly int maxWidth = 572;
     
     public ResumeService()
