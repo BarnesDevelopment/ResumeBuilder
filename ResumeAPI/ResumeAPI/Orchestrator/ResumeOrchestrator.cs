@@ -44,19 +44,42 @@ public class ResumeOrchestrator : IResumeOrchestrator
     private TagBuilder CreateHtml(Resume resume)
     {
         var page0 = _service.NewPage(0);
+        var page1 = _service.NewPage(1);
         page0.InnerHtml.AppendHtml(BuildHeader(resume.Header));
         page0.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
         page0.InnerHtml.AppendHtml(BuildEducation(resume.Education));
         var experience = BuildExperience(resume.Experience);
-        foreach (var job in experience)
+        for (int i = 0; i < experience.Count; i++)
         {
-            page0.InnerHtml.AppendHtml(job);
+            if (resume.SplitResume)
+            {
+                if (i <= resume.SplitExperienceAfter)
+                {
+                    page0.InnerHtml.AppendHtml(experience[i]);
+                }
+                else
+                {
+                    page1.InnerHtml.AppendHtml(experience[i]); 
+                }
+            }
+            else
+            {
+                page0.InnerHtml.AppendHtml(experience[i]);
+            }
         }
 
-        page0.InnerHtml.AppendHtml(BuildSkills(resume.Skills));
-
-        var body = _service.BuildBody(new List<TagBuilder> { page0 });
-        return body;
+        if (resume.SplitResume)
+        {
+            page1.InnerHtml.AppendHtml(BuildSkills(resume.Skills));
+            var body = _service.BuildBody(new List<TagBuilder> { page0, page1 });
+            return body;
+        }
+        else
+        {
+            page0.InnerHtml.AppendHtml(BuildSkills(resume.Skills)); 
+            var body = _service.BuildBody(new List<TagBuilder> { page0 });
+            return body;
+        }
     }
     
     private TagBuilder BuildHeader(ResumeHeader header)

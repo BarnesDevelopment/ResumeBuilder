@@ -31,6 +31,8 @@ namespace ResumeAPI.Controllers
         {
             var resume = new Resume
             {
+                SplitResume = true,
+                SplitExperienceAfter = 4,
                 Header = new ResumeHeader
                 {
                     Filename = "test.pdf",
@@ -90,7 +92,7 @@ namespace ResumeAPI.Controllers
                     new()
                     {
                         JobTitle = "Welder 2nd Shift",
-                        Employer = "Vermeer",
+                        Employer = "Vermeer Corporation",
                         City = "Pella",
                         State = "IA",
                         StartDate = new DateTime(2019,05,01),
@@ -100,6 +102,92 @@ namespace ResumeAPI.Controllers
                             "Weld parts to print",
                             "Fill in for welders that are missing",
                             "Clean area at the end of every shift"
+                        }
+                    },
+                    new()
+                    {
+                        JobTitle = "Customer Experience Expediter 1",
+                        Employer = "Vermeer Corporation",
+                        City = "Pella",
+                        State = "IA",
+                        StartDate = new DateTime(2018,05,01),
+                        EndDate = new DateTime(2019,04,01),
+                        Responsibilities = new List<string>
+                        {
+                            "Pick and pack parts",
+                            "Prepare and fill out shipping paperwork",
+                            "Operate machinery",
+                            "Help other team members when necessary",
+                            "Clean when necessary"
+                        }
+                    },
+                    new()
+                    {
+                        JobTitle = "Delivery Driver",
+                        Employer = "Pizza Ranch",
+                        City = "Oskaloosa",
+                        State = "IA",
+                        StartDate = new DateTime(2017,12,01),
+                        EndDate = new DateTime(2018,02,01),
+                        Responsibilities = new List<string>
+                        {
+                            "Deliver orders",
+                            "Wash dishes",
+                            "Sweep/vacuum"
+                        }
+                    },
+                    new()
+                    {
+                        JobTitle = "Shift Manager",
+                        Employer = "Arby's",
+                        City = "Pella",
+                        State = "IA",
+                        StartDate = new DateTime(2015,07,01),
+                        EndDate = new DateTime(2017,05,01),
+                        Responsibilities = new List<string>
+                        {
+                            "Manage employees",
+                            "Operate register",
+                            "Prepare food",
+                            "Train team members",
+                            "Clean",
+                            "Take inventory",
+                            "Manage store operations",
+                            "Manage customer complaints"
+                        }
+                    },
+                    new()
+                    {
+                        JobTitle = "Crew",
+                        Employer = "Culvers",
+                        City = "Pella",
+                        State = "IA",
+                        StartDate = new DateTime(2016,11,01),
+                        EndDate = new DateTime(2017,05,01),
+                        Responsibilities = new List<string>
+                        {
+                            "Grilled burgers",
+                            "Build burgers",
+                            "Clean",
+                            "Operate fryers"
+
+                        }
+                    },
+                    new()
+                    {
+                        JobTitle = "Manger",
+                        Employer = "Mango Tree",
+                        City = "Oskaloosa",
+                        State = "IA",
+                        StartDate = new DateTime(2016,02,01),
+                        EndDate = new DateTime(2021,11,01),
+                        Responsibilities = new List<string>
+                        {
+                            "Manage customer complaints",
+                            "Manage volunteers",
+                            "Clean",
+                            "Operate register",
+                            "Buy product for the store"
                         }
                     }
                 },

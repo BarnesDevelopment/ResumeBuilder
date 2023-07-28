@@ -8,6 +8,8 @@ public class Resume
     public List<ResumeEducation> Education { get; set; }
     public List<ResumeExperience> Experience { get; set; }
     public List<string> Skills { get; set; }
+    public bool SplitResume { get; set; }
+    public int SplitExperienceAfter { get; set; }
 }
 
 public class ResumeExperience

@@ -6,9 +6,10 @@ body {
 
 .page {
   width: 1008px;
-  height: 1308px;
+  height: 1307px;
   margin-top: 18px;
-  border: solid 1px black;
+  padding: 1rem;
+  //border: solid 1px black;
 }
 
 #page0 {
@@ -102,7 +103,7 @@ body {
     }
   }
   .responsibilities {
-    margin: 0 3rem 0 3rem;
+    margin: 0 5rem 0 5rem;
   }
 }
 
@@ -111,13 +112,6 @@ body {
     display: flex;
     flex-direction: row;
     justify-content: center;
-    ul {
-      column-count: 2;
-      list-style-type: square;
-      li {
-        margin-left: 5rem;
-        margin-right: 5rem;
-      }
-    }
+    width: 100%;
   }
 }
