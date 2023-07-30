@@ -9,9 +9,10 @@ public interface IResumeService
     TagBuilder BuildSummary(ResumeHeader header);
     TagBuilder BuildBody(List<TagBuilder> pages);
     TagBuilder NewPage(int newPageId);
-    TagBuilder CreateSpan(string text, string className = "");
+    TagBuilder CreateSpan(string text, string className = "", bool div = false);
     TagBuilder VerticalSeparator();
     TagBuilder AddSeparator(string title);
+    TagBuilder BuildStyle();
 }
 
 public class ResumeService : IResumeService
@@ -26,10 +27,6 @@ public class ResumeService : IResumeService
     public TagBuilder BuildBody(List<TagBuilder> pages)
     {
         var body = new TagBuilder("body");
-        
-        var style = BuildStyle();
-
-        body.InnerHtml.AppendHtml(style);
 
         foreach (var page in pages)
         {
@@ -39,14 +36,16 @@ public class ResumeService : IResumeService
         return body;
     }
 
-    private TagBuilder BuildStyle()
+    public TagBuilder BuildStyle()
     {
+        var head = new TagBuilder("head");
         var style = new TagBuilder("style");
         StreamReader sr = new StreamReader("./CSS/DefaultCss.css");
         var css = sr.ReadToEnd();
         sr.Close();
         style.InnerHtml.AppendHtml(css);
-        return style;
+        head.InnerHtml.AppendHtml(style);
+        return head;
     }
 
     public TagBuilder BuildSummary(ResumeHeader header)
@@ -92,9 +91,9 @@ public class ResumeService : IResumeService
         return separator;
     }
 
-    public TagBuilder CreateSpan(string text, string className = "")
+    public TagBuilder CreateSpan(string text, string className = "", bool div = false)
     {
-            var span = new TagBuilder("span");
+        var span = new TagBuilder(div ? "div" : "span");
             if(!string.IsNullOrEmpty(className)) span.AddCssClass(className);
             span.InnerHtml.Append(text);
             return span;

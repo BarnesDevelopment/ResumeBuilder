@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using iText.Html2pdf;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Services;
-using SelectPdf;
 
 namespace ResumeAPI.Orchestrator;
 
@@ -23,70 +23,61 @@ public class ResumeOrchestrator : IResumeOrchestrator
     public MemoryStream BuildResume(Resume header)
     {
         var stream = new MemoryStream();
-        HtmlToPdf converter = new HtmlToPdf();
-        converter.Options.PdfPageSize = PdfPageSize.Letter;
+        //HtmlToPdf converter = new HtmlToPdf();
+        //converter.Options.PdfPageSize = PdfPageSize.Letter;
         
         var body = CreateHtml(header);
+        var html = body.Write();
 
-        PdfDocument doc = converter.ConvertHtmlString(body.Write());
-        doc.Save(stream);
-        doc.Close();
+        var properties = new ConverterProperties();
+        HtmlConverter.ConvertToPdf(html,stream,properties);
+
+        // PdfDocument doc = converter.ConvertHtmlString(body.Write());
+        // doc.Save(stream);
+        // doc.Close();
+        
+        
+        
         return stream;
     }
 
     public string BuildResumeHtml(Resume resume)
     {
-        var html = new TagBuilder("html");
-        html.InnerHtml.AppendHtml(CreateHtml(resume));
-        return(html.Write());
+        var html = CreateHtml(resume).Write();
+        return html;
     }
 
     private TagBuilder CreateHtml(Resume resume)
     {
-        var page0 = _service.NewPage(0);
-        var page1 = _service.NewPage(1);
-        page0.InnerHtml.AppendHtml(BuildHeader(resume.Header));
-        page0.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
-        page0.InnerHtml.AppendHtml(BuildEducation(resume.Education));
+        var body = new TagBuilder("body");
+        body.InnerHtml.AppendHtml(BuildHeader(resume.Header));
+        body.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
+        body.InnerHtml.AppendHtml(BuildEducation(resume.Education));
         var experience = BuildExperience(resume.Experience);
         for (int i = 0; i < experience.Count; i++)
         {
-            if (resume.SplitResume)
+            body.InnerHtml.AppendHtml(experience[i]);
+            if (resume.SplitResume && i == resume.SplitExperienceAfter)
             {
-                if (i <= resume.SplitExperienceAfter)
-                {
-                    page0.InnerHtml.AppendHtml(experience[i]);
-                }
-                else
-                {
-                    page1.InnerHtml.AppendHtml(experience[i]); 
-                }
-            }
-            else
-            {
-                page0.InnerHtml.AppendHtml(experience[i]);
+                var pageBreak = new TagBuilder("p");
+                pageBreak.MergeAttribute("style", "page-break-before: always");
+                body.InnerHtml.AppendHtml(pageBreak);
             }
         }
-
-        if (resume.SplitResume)
-        {
-            page1.InnerHtml.AppendHtml(BuildSkills(resume.Skills));
-            var body = _service.BuildBody(new List<TagBuilder> { page0, page1 });
-            return body;
-        }
-        else
-        {
-            page0.InnerHtml.AppendHtml(BuildSkills(resume.Skills)); 
-            var body = _service.BuildBody(new List<TagBuilder> { page0 });
-            return body;
-        }
+        
+        body.InnerHtml.AppendHtml(BuildSkills(resume.Skills)); 
+        
+        var html = new TagBuilder("html");
+        html.InnerHtml.AppendHtml(_service.BuildStyle());
+        html.InnerHtml.AppendHtml(body);
+        return html;
     }
     
     private TagBuilder BuildHeader(ResumeHeader header)
     {
         var headerTag = new TagBuilder("div");
         headerTag.AddCssClass("header");
-        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(_service.CreateSpan(header.Name, "name"));
+        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(_service.CreateSpan(header.Name, "name", true));
         
         var details = new TagBuilder("div");
         details.AddCssClass("details");
