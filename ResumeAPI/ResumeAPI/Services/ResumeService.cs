@@ -73,7 +73,7 @@ public class ResumeService : IResumeService
     {
         var sector = maxWidth / 5;
         var hr = new TagBuilder("div");
-        hr.InnerHtml.AppendHtml("<hr>");
+        hr.InnerHtml.AppendHtml(new TagBuilder("div"));
         hr.AddCssClass("separator");
         
         var textSpan = new TagBuilder("span");
@@ -84,11 +84,15 @@ public class ResumeService : IResumeService
         
         var separator = new TagBuilder("div");
         separator.AddCssClass("separator-container");
+        var separatorTable = new TagBuilder("div");
+        separatorTable.AddCssClass("separator-table");
         separator.InnerHtml.AppendHtml(hr);
         separator.InnerHtml.AppendHtml(text);
         separator.InnerHtml.AppendHtml(hr);
+        
+        separatorTable.InnerHtml.AppendHtml(separator);
 
-        return separator;
+        return separatorTable;
     }
 
     public TagBuilder CreateSpan(string text, string className = "", bool div = false)
