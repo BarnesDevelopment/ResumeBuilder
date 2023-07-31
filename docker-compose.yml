@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   api:
-    image: sambobbarnes/resume-api
+    image: sambobbarnes/resume-api:1.0
     depends_on:
       - mysql
     ports:
