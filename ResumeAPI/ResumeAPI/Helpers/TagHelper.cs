@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ResumeAPI.Helpers;
 
-public static class TagWriter
+public static class TagHelper
 {
     public static string Write(this TagBuilder builder)
     {
@@ -12,5 +12,13 @@ public static class TagWriter
             builder.WriteTo(writer, HtmlEncoder.Default);
             return writer.ToString();
         } 
+    }
+
+    public static TagBuilder CreatTag(string tagType, string className = "", string innerText = "")
+    {
+        var tag = new TagBuilder(tagType);
+        if(!string.IsNullOrEmpty(className)) tag.AddCssClass(className);
+        tag.InnerHtml.Append(innerText);
+        return tag;
     }
 }
