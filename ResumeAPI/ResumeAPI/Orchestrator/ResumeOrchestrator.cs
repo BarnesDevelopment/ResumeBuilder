@@ -1,4 +1,9 @@
-﻿using iText.Html2pdf;
+﻿using System.ComponentModel.Design;
+using iText.Html2pdf;
+using iText.Html2pdf.Resolver.Font;
+using iText.IO.Font;
+using iText.IO.Font.Constants;
+using iText.Layout.Font;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
@@ -30,6 +35,10 @@ public class ResumeOrchestrator : IResumeOrchestrator
         var html = body.Write();
 
         var properties = new ConverterProperties();
+        var fontProvider = new DefaultFontProvider(false,false,false);
+        fontProvider.AddDirectory("./Fonts/Roboto");
+        properties.SetFontProvider(fontProvider);
+        
         HtmlConverter.ConvertToPdf(html,stream,properties);
 
         // PdfDocument doc = converter.ConvertHtmlString(body.Write());
