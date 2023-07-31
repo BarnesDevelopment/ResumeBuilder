@@ -1,9 +1,5 @@
-﻿using System.ComponentModel.Design;
-using iText.Html2pdf;
+﻿using iText.Html2pdf;
 using iText.Html2pdf.Resolver.Font;
-using iText.IO.Font;
-using iText.IO.Font.Constants;
-using iText.Layout.Font;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;

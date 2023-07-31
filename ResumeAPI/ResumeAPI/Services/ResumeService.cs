@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
@@ -18,11 +17,6 @@ public interface IResumeService
 public class ResumeService : IResumeService
 {
     private static readonly int maxWidth = 572;
-    
-    public ResumeService()
-    {
-        
-    }
 
     public TagBuilder BuildBody(List<TagBuilder> pages)
     {
