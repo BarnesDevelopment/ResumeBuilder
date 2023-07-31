@@ -114,6 +114,12 @@ public class ResumeOrchestrator : IResumeOrchestrator
         skillsTag.InnerHtml.AppendHtml(_service.AddSeparator("Skills"));
         var skillsContainer = new TagBuilder("div");
         skillsContainer.AddCssClass("container");
+        var skillsRow = new TagBuilder("div");
+        skillsRow.AddCssClass("row");
+        var skillsSpacer = new TagBuilder("div");
+        skillsSpacer.AddCssClass("spacer");
+        var skillsCell = new TagBuilder("div");
+        skillsCell.AddCssClass("cell");
         var skillsList = new TagBuilder("ul");
         foreach (var skill in skills)
         {
@@ -122,7 +128,11 @@ public class ResumeOrchestrator : IResumeOrchestrator
             skillsList.InnerHtml.AppendHtml(skillTag);
         }
 
-        skillsContainer.InnerHtml.AppendHtml(skillsList);
+        skillsCell.InnerHtml.AppendHtml(skillsList);
+        skillsRow.InnerHtml.AppendHtml(skillsSpacer);
+        skillsRow.InnerHtml.AppendHtml(skillsCell);
+        skillsRow.InnerHtml.AppendHtml(skillsSpacer);
+        skillsContainer.InnerHtml.AppendHtml(skillsRow);
         skillsTag.InnerHtml.AppendHtml(skillsContainer);
         return skillsTag;
     }

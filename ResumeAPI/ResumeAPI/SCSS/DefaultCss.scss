@@ -5,40 +5,21 @@ body {
   font-size: 8px;
 }
 
-//.page {
-//  width: 1008px;
-//  height: 1307px;
-//  margin-top: 18px;
-//
-//  //border: solid 1px black;
-//}
-//
-//#page0 {
-//  margin-top: 0;
-//}
-
 .separator-table {
   display: table;
-  //border: solid 1px #000;
   width: 100%;
   .separator-container {
-    //display: flex;
-    //flex-direction: row;
     display: table-row;
     width: 100%;
     .separator-text {
-      //border: solid 1px #000;
       display: table-cell;
       font-size: 1.5rem;
       font-weight: bold;
-      //width: 20%;
       text-align: center;
       vertical-align: middle;
     }
 
     .separator {
-      //border: solid 1px #000;
-      //flex-grow: 1;
       display: table-cell;
       padding: 1rem 1rem 1rem 1rem;
       width: 40%;
@@ -46,8 +27,6 @@ body {
         height: 2px;
         width: 100%;
         vertical-align: middle;
-        //margin-top: auto;
-        //margin-bottom: auto;
         background-color: black;
       }
     }
@@ -55,10 +34,6 @@ body {
 }
 
 .header {
-  //display: flex;
-  //flex-direction: column;
-  //align-items: center;
-  //justify-content: center;
   width: 100%;
   margin-bottom: 1rem;
 
@@ -105,15 +80,10 @@ body {
 
 .job {
   width: 100%;
-  //display: flex;
-  //flex-direction: column;
   margin: 2rem 0 2rem 0;
   .job-header {
     width: 100%;
-    justify-content: center;
     text-align: center;
-    //display: flex;
-    //flex-direction: row;
     .comma {
       padding-right: 0.3rem;
     }
@@ -132,9 +102,22 @@ body {
 
 .skills {
   .container {
-    //display: flex;
-    //flex-direction: row;
-    justify-content: center;
     width: 100%;
+    display: table;
+    margin-top: 1rem;
+    .row {
+      display: table-row;
+      .spacer {
+        display: table-cell;
+        width: 30%;
+      }
+
+      .cell {
+        display: table-cell;
+        ul {
+          margin: 0;
+        }
+      }
+    }
   }
 }
