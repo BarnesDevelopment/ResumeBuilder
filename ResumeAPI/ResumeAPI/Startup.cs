@@ -1,3 +1,4 @@
+using ResumeAPI.Database;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 
@@ -17,6 +18,8 @@ public class Startup
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeService, ResumeService>();
+        
+        services.AddTransient<IMySqlContext, MySqlContext>();
         
     #if DEBUG
         services.AddSassCompiler();

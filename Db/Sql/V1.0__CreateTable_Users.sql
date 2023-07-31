@@ -2,7 +2,7 @@ create table ResumeDb.Users
 (
     username  varchar(255) not null,
     email     varchar(255) not null,
-    salt      binary(1)    not null,
+    salt      varbinary(1024)  not null,
     id        varchar(36)  not null
         primary key,
     firstname varchar(255) not null,

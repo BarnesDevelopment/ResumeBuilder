@@ -5,7 +5,7 @@ using ResumeAPI.Orchestrator;
 namespace ResumeAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("resume/")]
     public class ResumeController : ControllerBase
     {
         private readonly ILogger<ResumeController> _logger;
@@ -17,7 +17,7 @@ namespace ResumeAPI.Controllers
             _logger = logger;
         }
 
-        [HttpPost("/build")]
+        [HttpPost("build")]
         public IActionResult BuildPdf([FromBody] Resume resume)
         {
             var stream = _orchestrator.BuildResume(resume);
@@ -25,7 +25,7 @@ namespace ResumeAPI.Controllers
             return File(stream.GetBuffer(), "application/octet-stream", resume.Header.Filename);
         }
 
-        [HttpGet("/build-test")]
+        [HttpGet("build-test")]
         public IActionResult BuildPdfTest()
         {
             var resume = new Resume
