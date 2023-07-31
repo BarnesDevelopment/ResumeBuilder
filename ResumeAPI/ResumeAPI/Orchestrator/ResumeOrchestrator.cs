@@ -28,8 +28,6 @@ public class ResumeOrchestrator : IResumeOrchestrator
     public MemoryStream BuildResume(Resume header)
     {
         var stream = new MemoryStream();
-        //HtmlToPdf converter = new HtmlToPdf();
-        //converter.Options.PdfPageSize = PdfPageSize.Letter;
         
         var body = CreateHtml(header);
         var html = body.Write();
@@ -40,12 +38,6 @@ public class ResumeOrchestrator : IResumeOrchestrator
         properties.SetFontProvider(fontProvider);
         
         HtmlConverter.ConvertToPdf(html,stream,properties);
-
-        // PdfDocument doc = converter.ConvertHtmlString(body.Write());
-        // doc.Save(stream);
-        // doc.Close();
-        
-        
         
         return stream;
     }
