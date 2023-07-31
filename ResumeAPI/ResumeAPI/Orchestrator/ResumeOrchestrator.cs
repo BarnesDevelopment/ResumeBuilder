@@ -74,22 +74,22 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var headerTag = new TagBuilder("div");
         headerTag.AddCssClass("header");
-        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(_service.CreateSpan(header.Name, "name", true));
+        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(TagHelper.CreatTag("div", "name", header.Name));
         
         var details = new TagBuilder("div");
         details.AddCssClass("details");
         if (!string.IsNullOrEmpty(header.Email))
         {
-            details.InnerHtml.AppendHtml(_service.CreateSpan(header.Email, "email"));
+            details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "email", header.Email));
             details.InnerHtml.AppendHtml(_service.VerticalSeparator());
         }
 
         if (header.Phone != null)
         {
-            details.InnerHtml.AppendHtml(_service.CreateSpan(header.Phone.FormattedNumber, "phone"));
+            details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "phone", header.Phone.FormattedNumber));
             details.InnerHtml.AppendHtml(_service.VerticalSeparator());
         }
-        if(!string.IsNullOrEmpty(header.Website)) details.InnerHtml.AppendHtml(_service.CreateSpan(header.Website, "website"));
+        if(!string.IsNullOrEmpty(header.Website)) details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "website", header.Website));
 
         headerTag.InnerHtml.AppendHtml(details);
         return headerTag;
@@ -138,17 +138,17 @@ public class ResumeOrchestrator : IResumeOrchestrator
             jobTag.AddCssClass("job");
             var jobHeader = new TagBuilder("div");
             jobHeader.AddCssClass("job-header");
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.JobTitle, "title"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "title", job.JobTitle));
             jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.Employer, "employer"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan("-","spacer"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.City, "city"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(",", "comma"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.State, "state"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "employer", job.Employer));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", job.City));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "comma", ","));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", job.State));
             jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.StartDate.ToString("MMM, yyyy"), "start"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan("-", "spacer"));
-            jobHeader.InnerHtml.AppendHtml(_service.CreateSpan(job.EndDate != null ? ((DateTime)job.EndDate!).ToString("MMM, yyyy") : "Present", "end"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "start", job.StartDate.ToString("MMM, yyyy")));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "end", job.EndDate != null ? ((DateTime)job.EndDate!).ToString("MMM, yyyy") : "Present"));
             jobTag.InnerHtml.AppendHtml(jobHeader);
 
             var responsibilitiesTag = new TagBuilder("div");
@@ -193,23 +193,23 @@ public class ResumeOrchestrator : IResumeOrchestrator
         {
             var degree = new TagBuilder("div");
             degree.AddCssClass("degree");
-            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.TypeOfDegree, "type"));
-            degree.InnerHtml.AppendHtml(_service.CreateSpan(": ", "colon"));
-            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.Major, "Major"));
-            degree.InnerHtml.AppendHtml(_service.CreateSpan(", "));
-            degree.InnerHtml.AppendHtml(_service.CreateSpan(school.Degree.Minor, "Minor"));
+            degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "type", school.Degree.TypeOfDegree));
+            degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "colon", ": "));
+            degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "major", school.Degree.Major));
+            degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "", ", "));
+            degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "minor", school.Degree.Minor));
             schoolTag.InnerHtml.AppendHtml(degree);
         }
 
         var schoolNameTag = new TagBuilder("div");
         schoolNameTag.AddCssClass("school-name");
-        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.School, "name"));
+        schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "name", school.School));
         schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
-        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.City, "city"));
-        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(", "));
-        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.State, "state"));
+        schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", school.City));
+        schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "", ", "));
+        schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", school.State));
         schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
-        schoolNameTag.InnerHtml.AppendHtml(_service.CreateSpan(school.GraduationYear, "grad-year"));
+        schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "grad-year", school.GraduationYear));
         schoolTag.InnerHtml.AppendHtml(schoolNameTag);
 
         educationTag.InnerHtml.AppendHtml(schoolTag);

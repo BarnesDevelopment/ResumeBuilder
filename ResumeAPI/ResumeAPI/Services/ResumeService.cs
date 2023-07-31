@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
@@ -8,7 +9,6 @@ public interface IResumeService
     TagBuilder BuildSummary(ResumeHeader header);
     TagBuilder BuildBody(List<TagBuilder> pages);
     TagBuilder NewPage(int newPageId);
-    TagBuilder CreateSpan(string text, string className = "", bool div = false);
     TagBuilder VerticalSeparator();
     TagBuilder AddSeparator(string title);
     TagBuilder BuildStyle();
@@ -89,16 +89,8 @@ public class ResumeService : IResumeService
         return separatorTable;
     }
 
-    public TagBuilder CreateSpan(string text, string className = "", bool div = false)
-    {
-        var span = new TagBuilder(div ? "div" : "span");
-            if(!string.IsNullOrEmpty(className)) span.AddCssClass(className);
-            span.InnerHtml.Append(text);
-            return span;
-    }
-
     public TagBuilder VerticalSeparator()
     {
-        return CreateSpan("|", "vertical-separator");
+        return TagHelper.CreatTag("span", "vertical-separator","|");
     }
 }
