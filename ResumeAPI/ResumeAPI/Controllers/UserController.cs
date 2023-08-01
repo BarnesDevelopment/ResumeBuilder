@@ -1,10 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using ResumeAPI.Database;
-using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
-using PasswordVerificationResult = ResumeAPI.Helpers.PasswordVerificationResult;
 
 namespace ResumeAPI.Controllers;
 
@@ -58,9 +55,9 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPost("user")]
     [ProducesResponseType(typeof(User),201)]
-    public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput, [FromHeader] string key)
+    public async Task<IActionResult> CreateUser([FromBody] UserInfo userInput, [FromHeader] string key)
     {
-        return Ok(await _orchestrator.CreateAccount(userInput, key));
+        return Ok(await _orchestrator.CreateAccount((UserViewModel)userInput, key));
     }
     
     /// <summary>
@@ -71,9 +68,9 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
-    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserViewModel userInput)
+    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput)
     {
-        return Ok(await _service.UpdateUser(id,userInput));
+        return Ok(await _service.UpdateUser(id,(UserViewModel)userInput));
     }
     
     /// <summary>
@@ -104,7 +101,7 @@ public class UserController : ControllerBase
     /// <param name="username"></param>
     /// <param name="key"></param>
     /// <returns>Cookie</returns>
-    [HttpGet]
+    [HttpGet("login")]
     [ProducesResponseType(typeof(Cookie),200)]
     [ProducesResponseType(401)]
     public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string key)

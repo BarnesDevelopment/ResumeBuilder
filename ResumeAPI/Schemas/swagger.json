@@ -151,22 +151,31 @@
           "User"
         ],
         "summary": "Create user",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "description": "User object",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             }
           }
@@ -217,17 +226,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserViewModel"
+                "$ref": "#/components/schemas/UserInfo"
               }
             }
           }
@@ -298,46 +307,17 @@
         }
       }
     },
-    "/users/user/key": {
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Create Pass Key",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "header",
-            "description": "UserId",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "key",
-            "in": "header",
-            "description": "PassKey",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          }
-        }
-      },
+    "/users/login": {
       "get": {
         "tags": [
           "User"
         ],
-        "summary": "Verify Pass Key",
+        "summary": "Login",
         "parameters": [
           {
-            "name": "id",
+            "name": "username",
             "in": "header",
-            "description": "UserId",
+            "description": "",
             "schema": {
               "type": "string"
             }
@@ -345,7 +325,7 @@
           {
             "name": "key",
             "in": "header",
-            "description": "PassKey",
+            "description": "",
             "schema": {
               "type": "string"
             }
@@ -353,7 +333,44 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cookie"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cookie"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cookie"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -361,20 +378,23 @@
   },
   "components": {
     "schemas": {
-      "PasswordHash": {
+      "Cookie": {
         "type": "object",
         "properties": {
-          "id": {
+          "key": {
             "type": "string",
-            "format": "uuid"
+            "nullable": true
           },
           "userId": {
             "type": "string",
-            "format": "uuid"
-          },
-          "hash": {
-            "type": "string",
             "nullable": true
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "active": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -591,6 +611,11 @@
             "type": "string",
             "nullable": true
           },
+          "fullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
           "email": {
             "type": "string",
             "nullable": true
@@ -598,9 +623,6 @@
           "id": {
             "type": "string",
             "nullable": true
-          },
-          "passwordHash": {
-            "$ref": "#/components/schemas/PasswordHash"
           },
           "createdDate": {
             "type": "string",
@@ -613,13 +635,9 @@
         },
         "additionalProperties": false
       },
-      "UserViewModel": {
+      "UserInfo": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
           "username": {
             "type": "string",
             "nullable": true
@@ -638,6 +656,37 @@
             "readOnly": true
           },
           "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserViewModel": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "nullable": true
+          },
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
             "type": "string",
             "nullable": true
           }

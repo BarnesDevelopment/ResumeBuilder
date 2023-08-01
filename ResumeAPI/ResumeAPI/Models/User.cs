@@ -7,7 +7,7 @@ public class User : UserViewModel
     public DateTime UpdatedDate { get; set; }
 }
 
-public class UserViewModel
+public class UserViewModel : UserInfo
 {
     protected Guid _id;
 
@@ -21,6 +21,10 @@ public class UserViewModel
         get => _id.ToString();
         set => _id = Guid.Parse(value);
     }
+}
+
+public class UserInfo
+{
     public string Username { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
