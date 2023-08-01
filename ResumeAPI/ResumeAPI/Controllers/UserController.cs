@@ -133,13 +133,16 @@ public class UserController : ControllerBase
     /// <param name="key">PassKey</param>
     /// <returns></returns>
     [HttpGet("user/key")]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
     {
         var hash = await _db.RetrieveKey(Guid.Parse(id));
         if (hash != null)
         {
-            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok("Accepted");
-            return Ok("Denied");
+            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok();
+            return Unauthorized();
         }
         return NotFound("No key found for user.");
     }
