@@ -34,6 +34,9 @@ public class Startup
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeService, ResumeService>();
         
+        services.AddTransient<IUserOrchestrator, UserOrchestrator>();
+        services.AddTransient<IUserService, UserService>();
+        
         services.AddTransient<IMySqlContext, MySqlContext>();
         
         services.AddHttpClient();

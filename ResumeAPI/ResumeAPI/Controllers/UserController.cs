@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
+using ResumeAPI.Services;
 using PasswordVerificationResult = ResumeAPI.Helpers.PasswordVerificationResult;
 
 namespace ResumeAPI.Controllers;
@@ -14,11 +14,13 @@ public class UserController : ControllerBase
     private readonly ILogger<ResumeController> _logger;
     private readonly IMySqlContext _db;
     private readonly PasswordHasher _hasher;
+    private readonly IUserService _service;
     
-    public UserController(ILogger<ResumeController> logger, IMySqlContext db)
+    public UserController(ILogger<ResumeController> logger, IMySqlContext db, IUserService service)
     {
         _logger = logger;
         _db = db;
+        _service = service;
         _hasher = new PasswordHasher();
     }
 
@@ -32,7 +34,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(UserViewModel[]),200)]
     public async Task<IActionResult> GetUsers()
     {
-        return Ok(await _db.GetUsers());
+        return Ok(await _service.GetUsers());
     }
     
     /// <summary>
@@ -45,7 +47,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetUser([FromQuery] string username)
     {
-        var user = await _db.GetUser(username);
+        var user = await _service.GetUser(username);
         if(user != null) return Ok(user);
         return NotFound();
     }
@@ -59,16 +61,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(User),201)]
     public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput)
     {
-        var user = new User
-        {
-            Username = userInput.Username,
-            FirstName = userInput.FirstName,
-            LastName = userInput.LastName,
-            Email = userInput.Email,
-            Id = Guid.NewGuid().ToString(),
-        };
-
-        return Ok(await _db.CreateUser(user));
+        return Ok(await _service.CreateUser(userInput));
     }
     
     /// <summary>
@@ -81,7 +74,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(User),202)]
     public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserViewModel userInput)
     {
-        return Ok(await _db.UpdateUser(Guid.Parse(id),userInput));
+        return Ok(await _service.UpdateUser(id,userInput));
     }
     
     /// <summary>
@@ -94,16 +87,11 @@ public class UserController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteUser([FromRoute] string id)
     {
-        var success = await _db.DeleteUser(Guid.Parse(id));
-
-        if (success)
+        if (await _service.DeleteUser(id))
         {
             return Accepted();
         }
-        else
-        {
-            return NotFound();
-        }
+        return NotFound();
         
     }
     
