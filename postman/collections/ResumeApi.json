@@ -7,37 +7,296 @@
 	},
 	"item": [
 		{
-			"name": "Build",
-			"id": "62f7cd16-325b-4500-b65a-8db30167c996",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"SplitResume\": true,\r\n    \"SplitExperienceAfter\": 4,\r\n    \"Header\": {\r\n        \"Filename\": \"resume.pdf\",\r\n        \"Name\": \"Samuel Barnes\",\r\n        \"Email\": \"SamuelRBarnes@outlook.com\",\r\n        \"Website\": \"Barnes7619.com\",\r\n        \"Phone\": {\r\n            \"AreaCode\": 641,\r\n            \"Prefix\": 230,\r\n            \"LineNumber\": 1458\r\n        },\r\n        \"Summary\": \"Dedicated and detail-oriented Customer Service specialist with 10 years of computer related experience. Skilled at prioritizing, completing multiple tasks simultaneously and following through to achieve goals. Flexible and goal-oriented team player with expertise in scheduling, customer relationship management and document control.\"\r\n    },\r\n    \"Education\":[\r\n        {\r\n            \"School\": \"William Penn University\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"GraduationYear\": \"2020\",\r\n            \"Degree\": {\r\n                \"TypeOfDegree\": \"Bachelor of Arts\",\r\n                \"Major\": \"Software Engineering & Information Technology\",\r\n                \"Minor\": \"Electrical Engineering\"\r\n            }\r\n        }\r\n    ],\r\n    \"Experience\": [\r\n        {\r\n            \"JobTitle\": \"Software Engineer\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2021-03-01T00:07:00.000Z\",\r\n            \"EndDate\": null,\r\n            \"Responsibilities\": [\r\n                \"Develop software for dealer facing applications\",\r\n                \"Manage and track time and work completed\",\r\n                \"Complete tasks under time pressure\",\r\n                \"Multitask working and training other team members\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Welder 2nd Shift\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2019-05-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2021-03-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Weld parts to print\",\r\n                \"Fill in for welders that are missing\",\r\n                \"Clean area at the end of every shift\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Customer Experience Expediter 1\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2018-05-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2019-04-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Pick and pack parts\",\r\n                \"Prepare and fill out shipping paperwork\",\r\n                \"Operate machinery\",\r\n                \"Help other team members when necessary\",\r\n                \"Clean when necessary\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Delivery Driver\",\r\n            \"Employer\": \"Pizza Ranch\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2017-12-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2018-02-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Deliver orders\",\r\n                \"Wash dishes\",\r\n                \"Sweep/vacuum\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Shift Manager\",\r\n            \"Employer\": \"Arby's\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2015-07-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2017-05-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Manage employees\",\r\n                \"Operate register\",\r\n                \"Prepare food\",\r\n                \"Train team members\",\r\n                \"Clean\",\r\n                \"Take inventory\",\r\n                \"Manage store operations\",\r\n                \"Manage customer complaints\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Crew\",\r\n            \"Employer\": \"Culvers\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2016-11-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2017-05-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Grilled burgers\",\r\n                \"Build burgers\",\r\n                \"Clean\",\r\n                \"Operate fryers\"\r\n\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Manger\",\r\n            \"Employer\": \"Mango Tree\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2016-02-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2016-11-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Manage customer complaints\",\r\n                \"Manage volunteers\",\r\n                \"Clean\",\r\n                \"Operate register\",\r\n                \"Buy product for the store\"\r\n            ]\r\n        }\r\n    ],\r\n    \"Skills\": [\r\n        \"Proficient in computing\",\r\n        \"Excellent customer service skills\",\r\n        \"Responsible and punctual\",\r\n        \"ServeSafe certified\",\r\n        \"Coding experience\",\r\n        \"Client-focused\",\r\n        \"Quick learner\"\r\n    ]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Resume",
+			"item": [
+				{
+					"name": "Build",
+					"id": "62f7cd16-325b-4500-b65a-8db30167c996",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"SplitResume\": true,\r\n    \"SplitExperienceAfter\": 4,\r\n    \"Header\": {\r\n        \"Filename\": \"resume.pdf\",\r\n        \"Name\": \"Samuel Barnes\",\r\n        \"Email\": \"SamuelRBarnes@outlook.com\",\r\n        \"Website\": \"Barnes7619.com\",\r\n        \"Phone\": {\r\n            \"AreaCode\": 641,\r\n            \"Prefix\": 230,\r\n            \"LineNumber\": 1458\r\n        },\r\n        \"Summary\": \"Dedicated and detail-oriented Customer Service specialist with 10 years of computer related experience. Skilled at prioritizing, completing multiple tasks simultaneously and following through to achieve goals. Flexible and goal-oriented team player with expertise in scheduling, customer relationship management and document control.\"\r\n    },\r\n    \"Education\":[\r\n        {\r\n            \"School\": \"William Penn University\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"GraduationYear\": \"2020\",\r\n            \"Degree\": {\r\n                \"TypeOfDegree\": \"Bachelor of Arts\",\r\n                \"Major\": \"Software Engineering & Information Technology\",\r\n                \"Minor\": \"Electrical Engineering\"\r\n            }\r\n        }\r\n    ],\r\n    \"Experience\": [\r\n        {\r\n            \"JobTitle\": \"Software Engineer\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2021-03-01T00:07:00.000Z\",\r\n            \"EndDate\": null,\r\n            \"Responsibilities\": [\r\n                \"Develop software for dealer facing applications\",\r\n                \"Manage and track time and work completed\",\r\n                \"Complete tasks under time pressure\",\r\n                \"Multitask working and training other team members\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Welder 2nd Shift\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2019-05-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2021-03-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Weld parts to print\",\r\n                \"Fill in for welders that are missing\",\r\n                \"Clean area at the end of every shift\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Customer Experience Expediter 1\",\r\n            \"Employer\": \"Vermeer Corporation\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2018-05-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2019-04-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Pick and pack parts\",\r\n                \"Prepare and fill out shipping paperwork\",\r\n                \"Operate machinery\",\r\n                \"Help other team members when necessary\",\r\n                \"Clean when necessary\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Delivery Driver\",\r\n            \"Employer\": \"Pizza Ranch\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2017-12-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2018-02-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Deliver orders\",\r\n                \"Wash dishes\",\r\n                \"Sweep/vacuum\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Shift Manager\",\r\n            \"Employer\": \"Arby's\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2015-07-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2017-05-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Manage employees\",\r\n                \"Operate register\",\r\n                \"Prepare food\",\r\n                \"Train team members\",\r\n                \"Clean\",\r\n                \"Take inventory\",\r\n                \"Manage store operations\",\r\n                \"Manage customer complaints\"\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Crew\",\r\n            \"Employer\": \"Culvers\",\r\n            \"City\": \"Pella\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2016-11-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2017-05-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Grilled burgers\",\r\n                \"Build burgers\",\r\n                \"Clean\",\r\n                \"Operate fryers\"\r\n\r\n            ]\r\n        },\r\n        {\r\n            \"JobTitle\": \"Manger\",\r\n            \"Employer\": \"Mango Tree\",\r\n            \"City\": \"Oskaloosa\",\r\n            \"State\": \"IA\",\r\n            \"StartDate\": \"2016-02-01T00:07:00.000Z\",\r\n            \"EndDate\": \"2016-11-01T00:07:00.000Z\",\r\n            \"Responsibilities\": [\r\n                \"Manage customer complaints\",\r\n                \"Manage volunteers\",\r\n                \"Clean\",\r\n                \"Operate register\",\r\n                \"Buy product for the store\"\r\n            ]\r\n        }\r\n    ],\r\n    \"Skills\": [\r\n        \"Proficient in computing\",\r\n        \"Excellent customer service skills\",\r\n        \"Responsible and punctual\",\r\n        \"ServeSafe certified\",\r\n        \"Coding experience\",\r\n        \"Client-focused\",\r\n        \"Quick learner\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/build",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"build"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/resume/build",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"resume",
-						"build"
-					]
+				{
+					"name": "Build Web Test",
+					"id": "b767afe6-ac46-4904-8c6a-3b66b15289cd",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/build-test",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"build-test"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			],
+			"id": "5ed53313-2bcd-443b-bb3a-c72911417f1a"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Get Users",
+							"id": "a7b783a2-c1c8-4138-afaa-5db4770e9be9",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ResumeApiHost}}/users",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get User",
+							"id": "2312be2a-7098-47f9-97c0-50994925acca",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user?username=test22",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user"
+									],
+									"query": [
+										{
+											"key": "username",
+											"value": "test22"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create User",
+							"id": "493b13b0-b423-48d6-9b53-e7c2c6f4325d",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"test-user\",\r\n  \"firstName\": \"testfirstname\",\r\n  \"lastName\": \"testlastname\",\r\n  \"email\": \"testemail@email.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update User",
+							"id": "084e860c-2296-43f7-b3af-aa3eefddc509",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"username\": \"test-user-name\",\r\n  \"firstName\": \"testfirstname\",\r\n  \"lastName\": \"testlastname\",\r\n  \"email\": \"testemail@email.com\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user/:id",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "62241978-98f8-4100-8606-1559a4bee5b5"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete User",
+							"id": "84eab419-a3f0-47d7-a4b0-6e5b729ba04a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user/:id",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "62241978-98f8-4100-8606-1559a4bee5b5"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "aeb059f4-e261-479b-8e1d-755e527e02d6"
+				},
+				{
+					"name": "Key",
+					"item": [
+						{
+							"name": "Create Key",
+							"id": "34382578-ae7d-432a-ba82-6cd463a4b496",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "id",
+										"value": "62241978-98f8-4100-8606-1559a4bee5b5",
+										"type": "text"
+									},
+									{
+										"key": "key",
+										"value": "passkey123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user/key",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user",
+										"key"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verify Key",
+							"id": "b69d675f-57d5-4e1e-88a3-5dd49b6a9294",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "id",
+										"value": "62241978-98f8-4100-8606-1559a4bee5b5",
+										"type": "text"
+									},
+									{
+										"key": "key",
+										"value": "passkey123",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{ResumeApiHost}}/users/user/key",
+									"host": [
+										"{{ResumeApiHost}}"
+									],
+									"path": [
+										"users",
+										"user",
+										"key"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "442a6171-421c-4129-87b8-d473003a6b81"
+				}
+			],
+			"id": "6ae20d7e-9a39-492a-b748-2f892a2376e9"
 		}
 	]
 }
