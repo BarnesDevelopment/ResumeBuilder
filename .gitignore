@@ -136,3 +136,5 @@ bin/
 obj/
 
 CSS/
+
+.DotSettings.user
