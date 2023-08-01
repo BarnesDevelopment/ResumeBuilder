@@ -53,6 +53,7 @@
         "tags": [
           "User"
         ],
+        "summary": "Get all users",
         "responses": {
           "200": {
             "description": "Success",
@@ -91,10 +92,12 @@
         "tags": [
           "User"
         ],
+        "summary": "Gets user by username",
         "parameters": [
           {
             "name": "username",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "string"
@@ -150,7 +153,9 @@
         "tags": [
           "User"
         ],
+        "summary": "Create user",
         "requestBody": {
+          "description": "User object",
           "content": {
             "application/json": {
               "schema": {
@@ -191,58 +196,6 @@
             }
           }
         }
-      },
-      "put": {
-        "tags": [
-          "User"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Success"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "User"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
       }
     },
     "/users/user/{id}": {
@@ -250,10 +203,12 @@
         "tags": [
           "User"
         ],
+        "summary": "Update user information",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "UserId",
             "required": true,
             "schema": {
               "type": "string"
@@ -261,6 +216,7 @@
           }
         ],
         "requestBody": {
+          "description": "User object",
           "content": {
             "application/json": {
               "schema": {
@@ -306,10 +262,12 @@
         "tags": [
           "User"
         ],
+        "summary": "Delete User",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "UserId",
             "required": true,
             "schema": {
               "type": "string"
@@ -339,6 +297,66 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/users/user/key": {
+      "put": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Create Pass Key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "header",
+            "description": "UserId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "header",
+            "description": "PassKey",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Verify Pass Key",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "header",
+            "description": "UserId",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "header",
+            "description": "PassKey",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
           }
         }
       }
