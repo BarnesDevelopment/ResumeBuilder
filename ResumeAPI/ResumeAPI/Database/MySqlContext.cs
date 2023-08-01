@@ -16,7 +16,9 @@ public interface IMySqlContext
     Task CreateKey(string hash, Guid userId);
     Task<string?> RetrieveKey(Guid userId);
     Task DeactivateKey(Guid userId);
-
+    Task<Cookie> CreateCookie(Guid userId);
+    Task DeactivateCookie(Guid cookie);
+    Task<Cookie?> RetrieveCookie(Guid userId);
 }
 
 public class MySqlContext : IMySqlContext
@@ -147,6 +149,48 @@ public class MySqlContext : IMySqlContext
     {
         await _db.ExecuteAsync("update PasswordHashes set active = false where userid = @userid",
             new { userid = userId });
+    }
+
+    #endregion
+
+    #region Cookies
+
+    public async Task<Cookie> CreateCookie(Guid userId)
+    {
+        var cookie = Guid.NewGuid();
+        await _db.ExecuteAsync("insert into Cookies (cookie, expiration, userid) values(@cookie, @expiration, @userid)", new
+        {
+            cookie = cookie,
+            expiration = DateTime.Now.AddDays(1),
+            userid = userId
+        });
+
+        return (await _db.QueryAsync<Cookie>(
+            $@"select cookie {nameof(Cookie.Key)}, 
+                    active {nameof(Cookie.Active)}, 
+                    expiration {nameof(Cookie.Expiration)}, 
+                    userid {nameof(Cookie.UserId)}
+                    from Cookies where cookie = @cookie", new
+            {
+                cookie = cookie
+            })).First();
+    }
+
+    public async Task DeactivateCookie(Guid cookie)
+    {
+        await _db.ExecuteAsync("update Cookies set active = false where cookie = @cookie", new { cookie = cookie });
+    }
+
+    public async Task<Cookie?> RetrieveCookie(Guid userId)
+    {
+        return (await _db.QueryAsync<Cookie>($@"select cookie {nameof(Cookie.Key)}, 
+                    active {nameof(Cookie.Active)}, 
+                    expiration {nameof(Cookie.Expiration)}, 
+                    userid {nameof(Cookie.UserId)}
+                    from Cookies where userid = @userid and active = true", new
+        {
+            userid = userId
+        })).FirstOrDefault();
     }
 
     #endregion
