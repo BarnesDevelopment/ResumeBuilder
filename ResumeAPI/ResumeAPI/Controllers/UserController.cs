@@ -57,7 +57,7 @@ public class UserController : ControllerBase
 
     [HttpPut("user")]
     [ProducesResponseType(201)]
-    public async Task<IActionResult> UpdateUser([FromHeader] string id, [FromHeader] string key)
+    public async Task<IActionResult> CreateKey([FromHeader] string id, [FromHeader] string key)
     {
         var hashedKey = _hasher.HashPassword(key);
         await _db.CreateKey(hashedKey, Guid.Parse(id));
@@ -75,8 +75,12 @@ public class UserController : ControllerBase
     public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
     {
         var hash = await _db.RetrieveKey(Guid.Parse(id));
-        if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok();
-        return NotFound();
+        if (hash != null)
+        {
+            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok("Accepted");
+            return Ok("Denied");
+        }
+        return NotFound("No key found for user.");
     }
     
     [HttpDelete("user/{id}")]

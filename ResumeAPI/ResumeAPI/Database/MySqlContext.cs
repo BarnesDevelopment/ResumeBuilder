@@ -14,7 +14,7 @@ public interface IMySqlContext
     Task<UserViewModel?> GetUser(string username);
     Task<User> GetUser(Guid id);
     Task CreateKey(string hash, Guid userId);
-    Task<string> RetrieveKey(Guid userId);
+    Task<string?> RetrieveKey(Guid userId);
     Task DeactivateKey(Guid userId);
 
 }
@@ -137,12 +137,10 @@ public class MySqlContext : IMySqlContext
         });
     }
 
-    public async Task<string> RetrieveKey(Guid userId)
+    public async Task<string?> RetrieveKey(Guid userId)
     {
-        var result =
-            await _db.QueryAsync<string>(
-                "select hash from PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId});
-        return (result).First();
+        return (await _db.QueryAsync<string>(
+            "select hash from PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId})).FirstOrDefault();
     }
 
     public async Task DeactivateKey(Guid userId)
