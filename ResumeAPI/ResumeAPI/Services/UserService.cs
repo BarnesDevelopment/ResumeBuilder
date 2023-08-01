@@ -1,4 +1,5 @@
 using ResumeAPI.Database;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
@@ -10,15 +11,18 @@ public interface IUserService
     Task<User> CreateUser(UserViewModel userInput);
     Task<UserViewModel> UpdateUser(string id, UserViewModel userInput);
     Task<bool> DeleteUser(string id);
+    Task<VerificationResult> VerifyKey(Guid id, string key);
 }
 
 public class UserService : IUserService
 {
     private readonly IMySqlContext _db;
+    private readonly IPasswordHasher _hasher;
     
-    public UserService(IMySqlContext db)
+    public UserService(IMySqlContext db, IPasswordHasher hasher)
     {
         _db = db;
+        _hasher = hasher;
     }
 
     #region User
@@ -56,6 +60,18 @@ public class UserService : IUserService
     {
         return await _db.DeleteUser(Guid.Parse(id));
     }
-    
+
     #endregion
+    
+    public async Task<VerificationResult> VerifyKey(Guid id, string key)
+    {
+        var hash = await _db.RetrieveKey(id);
+        if (hash != null)
+        {
+            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return VerificationResult.Correct;
+            return VerificationResult.Incorrect;
+        }
+
+        return VerificationResult.NotFound;
+    }
 }

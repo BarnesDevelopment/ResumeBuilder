@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
+using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 using PasswordVerificationResult = ResumeAPI.Helpers.PasswordVerificationResult;
 
@@ -15,12 +16,14 @@ public class UserController : ControllerBase
     private readonly IMySqlContext _db;
     private readonly PasswordHasher _hasher;
     private readonly IUserService _service;
+    private readonly IUserOrchestrator _orchestrator;
     
-    public UserController(ILogger<ResumeController> logger, IMySqlContext db, IUserService service)
+    public UserController(ILogger<ResumeController> logger, IMySqlContext db, IUserService service, IUserOrchestrator orchestrator)
     {
         _logger = logger;
         _db = db;
         _service = service;
+        _orchestrator = orchestrator;
         _hasher = new PasswordHasher();
     }
 
@@ -136,4 +139,15 @@ public class UserController : ControllerBase
     }
     
     #endregion
+
+    public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string key)
+    {
+        var attempt = await _orchestrator.Login(username, key);
+        if (attempt.Success)
+        {
+            return Ok(attempt.Cookie);
+        }
+
+        return Unauthorized();
+    }
 }

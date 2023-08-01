@@ -5,7 +5,13 @@ namespace ResumeAPI.Helpers;
 
 /* Copied from https://www.meziantou.net/how-to-store-a-password-in-a-web-application.htm */
 
-public sealed class PasswordHasher
+public interface IPasswordHasher
+{
+    string HashPassword(string password);
+    PasswordVerificationResult VerifyHashedPassword(string hashedPassword, string password);
+}
+
+public sealed class PasswordHasher : IPasswordHasher
 {
     public byte Version => 1;
     public int Pbkdf2IterCount { get; } = 50000;

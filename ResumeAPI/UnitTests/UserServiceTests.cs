@@ -1,5 +1,6 @@
 using Moq;
 using ResumeAPI.Database;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Services;
 
@@ -9,11 +10,14 @@ public class UserServiceTests
 {
     private readonly IUserService _service;
     private readonly Mock<IMySqlContext> _db;
+    private readonly Mock<IPasswordHasher> _hasher;
 
     public UserServiceTests()
     {
         _db = new Mock<IMySqlContext>();
-        _service = new UserService(_db.Object);
+        _hasher = new Mock<IPasswordHasher>();
+        _service = new UserService(_db.Object,_hasher.Object);
+        
     }
 
     [Fact]
@@ -101,5 +105,49 @@ public class UserServiceTests
         var actual = await _service.DeleteUser(guid.ToString());
 
         actual.Should().Be(true);
+    }
+
+    [Fact]
+    public async Task VerifyKey_CorrectKey()
+    {
+        var guid = Guid.NewGuid();
+        var key = "pass123";
+        var hash = "123456789123";
+
+        _db.Setup(x => x.RetrieveKey(guid)).ReturnsAsync(hash);
+        _hasher.Setup(x => x.VerifyHashedPassword(hash, key)).Returns(PasswordVerificationResult.Success);
+
+        var actual = await _service.VerifyKey(guid, key);
+
+        actual.Should().Be(VerificationResult.Correct);
+    }
+    
+    [Fact]
+    public async Task VerifyKey_IncorrectKey()
+    {
+        var guid = Guid.NewGuid();
+        var key = "pass123";
+        var hash = "123456789123";
+
+        _db.Setup(x => x.RetrieveKey(guid)).ReturnsAsync(hash);
+        _hasher.Setup(x => x.VerifyHashedPassword(hash, key)).Returns(PasswordVerificationResult.Failed);
+
+        var actual = await _service.VerifyKey(guid, key);
+
+        actual.Should().Be(VerificationResult.Incorrect);
+    }
+    
+    [Fact]
+    public async Task VerifyKey_NoKeyFound()
+    {
+        var guid = Guid.NewGuid();
+        var key = "pass123";
+        var hash = "123456789123";
+
+        _db.Setup(x => x.RetrieveKey(guid)).ReturnsAsync((string?)null);
+
+        var actual = await _service.VerifyKey(guid, key);
+
+        actual.Should().Be(VerificationResult.NotFound);
     }
 }

@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
+using ResumeAPI.Helpers;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 
@@ -38,6 +39,7 @@ public class Startup
         services.AddTransient<IUserService, UserService>();
         
         services.AddTransient<IMySqlContext, MySqlContext>();
+        services.AddTransient<IPasswordHasher, PasswordHasher>();
         
         services.AddHttpClient();
         
