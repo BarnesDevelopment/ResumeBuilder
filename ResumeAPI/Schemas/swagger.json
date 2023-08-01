@@ -155,6 +155,7 @@
           {
             "name": "key",
             "in": "header",
+            "description": "",
             "schema": {
               "type": "string"
             }
