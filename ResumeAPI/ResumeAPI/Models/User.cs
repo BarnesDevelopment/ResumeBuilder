@@ -13,8 +13,6 @@ public class User
         get => _id.ToString();
         set => _id = Guid.Parse(value);
     }
-
-    public byte[] Salt { get; set; }
     public PasswordHash PasswordHash { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime UpdatedDate { get; set; }

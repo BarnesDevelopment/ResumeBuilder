@@ -10,7 +10,6 @@ public interface IMySqlContext
     Task<List<UserViewModel>> GetUsers();
     Task<User> CreateUser(User user);
     Task<UserViewModel> UpdateUser(Guid id,UserViewModel user);
-    Task<bool> UpdateSalt(User user);
     Task<bool> DeleteUser(Guid id);
     Task<UserViewModel?> GetUser(string username);
     Task<User> GetUser(Guid id);
@@ -62,7 +61,6 @@ public class MySqlContext : IMySqlContext
                     email {nameof(User.Email)},
                     firstname {nameof(User.FirstName)},
                     lastname {nameof(User.LastName)},
-                    salt {nameof(User.Salt)},
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
                     from Users where id = @id", new { id = id }))
@@ -72,7 +70,7 @@ public class MySqlContext : IMySqlContext
     public async Task<User> CreateUser(User user)
     {
         await _db.ExecuteAsync(
-            @"insert into Users (id,username,email,firstname,lastname,salt) values(@id,@username,@email,@firstname,@lastname,@salt)",
+            @"insert into Users (id,username,email,firstname,lastname) values(@id,@username,@email,@firstname,@lastname)",
             new
             {
                 id = user.Id,
@@ -80,7 +78,6 @@ public class MySqlContext : IMySqlContext
                 email = user.Email,
                 firstname = user.FirstName,
                 lastname = user.LastName,
-                salt = user.Salt
             });
 
         return (await _db.QueryAsync<User>($@"select 
@@ -89,7 +86,6 @@ public class MySqlContext : IMySqlContext
                     email {nameof(User.Email)},
                     firstname {nameof(User.FirstName)},
                     lastname {nameof(User.LastName)},
-                    salt {nameof(User.Salt)},
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
                     from Users where id = @id", new { id = user.Id }))
@@ -117,11 +113,6 @@ public class MySqlContext : IMySqlContext
                     lastname {nameof(UserViewModel.LastName)},
                     from Users where id = @id", new { id = id }))
             .First();
-    }
-
-    public async Task<bool> UpdateSalt(User user)
-    {
-        return await _db.ExecuteAsync("update Users set salt = @salt where id = @id", new { id = user.Id, salt = user.Salt }) > 0;
     }
 
     public async Task<bool> DeleteUser(Guid id)

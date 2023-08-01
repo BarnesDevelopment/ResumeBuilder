@@ -46,7 +46,6 @@ public class UserController : ControllerBase
             LastName = userInput.LastName,
             Email = userInput.Email,
             Id = Guid.NewGuid().ToString(),
-            Salt = PasswordHasher.GenerateSalt(128/8)
         };
 
         return Ok(await _db.CreateUser(user));
