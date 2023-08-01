@@ -20,6 +20,7 @@ public interface IMySqlContext
     Task<Cookie> CreateCookie(Guid userId);
     Task DeactivateCookie(Guid cookie);
     Task<Cookie?> RetrieveCookie(Guid userId);
+    Task<bool> DeleteCookies(Guid userId);
 }
 
 public class MySqlContext : IMySqlContext
@@ -198,6 +199,12 @@ public class MySqlContext : IMySqlContext
         {
             userid = userId
         })).FirstOrDefault();
+    }
+
+    public async Task<bool> DeleteCookies(Guid userId)
+    {
+        return await _db.ExecuteAsync("delete from Cookies where userid = @userid",
+            new { userid = userId }) > 0;
     }
 
     #endregion

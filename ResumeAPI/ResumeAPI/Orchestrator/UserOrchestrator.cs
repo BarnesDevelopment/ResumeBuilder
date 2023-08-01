@@ -48,6 +48,7 @@ public class UserOrchestrator : IUserOrchestrator
     public async Task<bool> DeleteUser(Guid id)
     {
         await _db.DeleteKeys(id);
+        await _db.DeleteCookies(id);
         return await _db.DeleteUser(id);
     }
 }
