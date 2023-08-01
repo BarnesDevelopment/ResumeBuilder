@@ -13,7 +13,10 @@ public interface IMySqlContext
     Task<bool> DeleteUser(Guid id);
     Task<UserViewModel?> GetUser(string username);
     Task<User> GetUser(Guid id);
-    
+    Task CreateKey(string hash, Guid userId);
+    Task<string> RetrieveKey(Guid userId);
+    Task DeactivateKey(Guid userId);
+
 }
 
 public class MySqlContext : IMySqlContext
@@ -48,7 +51,7 @@ public class MySqlContext : IMySqlContext
                     username {nameof(UserViewModel.Username)},
                     email {nameof(UserViewModel.Email)},
                     firstname {nameof(UserViewModel.FirstName)},
-                    lastname {nameof(UserViewModel.LastName)},
+                    lastname {nameof(UserViewModel.LastName)}
                     from Users where username = @username", new { username = username }))
             .FirstOrDefault();
     }
@@ -110,7 +113,7 @@ public class MySqlContext : IMySqlContext
                     username {nameof(UserViewModel.Username)},
                     email {nameof(UserViewModel.Email)},
                     firstname {nameof(UserViewModel.FirstName)},
-                    lastname {nameof(UserViewModel.LastName)},
+                    lastname {nameof(UserViewModel.LastName)}
                     from Users where id = @id", new { id = id }))
             .First();
     }
@@ -122,4 +125,31 @@ public class MySqlContext : IMySqlContext
     
     #endregion
 
+    #region Keys
+
+    public async Task CreateKey(string hash, Guid userId)
+    {
+        await _db.ExecuteAsync("insert into PasswordHashes (id,userid,hash) values(@id,@userid,@hash)", new
+        {
+            id = Guid.NewGuid(),
+            userid = userId,
+            hash = hash
+        });
+    }
+
+    public async Task<string> RetrieveKey(Guid userId)
+    {
+        var result =
+            await _db.QueryAsync<string>(
+                "select hash from PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId});
+        return (result).First();
+    }
+
+    public async Task DeactivateKey(Guid userId)
+    {
+        await _db.ExecuteAsync("update PasswordHashes set active = false where userid = @userid",
+            new { userid = userId });
+    }
+
+    #endregion
 }

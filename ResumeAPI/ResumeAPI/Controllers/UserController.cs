@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
+using PasswordVerificationResult = ResumeAPI.Helpers.PasswordVerificationResult;
 
 namespace ResumeAPI.Controllers;
 
@@ -11,11 +13,13 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<ResumeController> _logger;
     private readonly IMySqlContext _db;
+    private readonly PasswordHasher _hasher;
     
     public UserController(ILogger<ResumeController> logger, IMySqlContext db)
     {
         _logger = logger;
         _db = db;
+        _hasher = new PasswordHasher();
     }
 
     [HttpGet("")]
@@ -50,12 +54,29 @@ public class UserController : ControllerBase
 
         return Ok(await _db.CreateUser(user));
     }
+
+    [HttpPut("user")]
+    [ProducesResponseType(201)]
+    public async Task<IActionResult> UpdateUser([FromHeader] string id, [FromHeader] string key)
+    {
+        var hashedKey = _hasher.HashPassword(key);
+        await _db.CreateKey(hashedKey, Guid.Parse(id));
+        return Created("Key Created", null);
+    }
     
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
-    public async Task<IActionResult> UpdateUser([FromRoute] string id,[FromBody] UserViewModel userInput)
+    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserViewModel userInput)
     {
         return Ok(await _db.UpdateUser(Guid.Parse(id),userInput));
+    }
+
+    [HttpGet("user")]
+    public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
+    {
+        var hash = await _db.RetrieveKey(Guid.Parse(id));
+        if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok();
+        return NotFound();
     }
     
     [HttpDelete("user/{id}")]
