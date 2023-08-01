@@ -1,6 +1,5 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace ResumeAPI.Helpers;
 
@@ -9,6 +8,8 @@ namespace ResumeAPI.Helpers;
 public sealed class PasswordHasher
 {
     public byte Version => 1;
+    public int Pbkdf2IterCount { get; } = 50000;
+    public int Pbkdf2SubkeyLength { get; } = 256 / 8; // 256 bits
     public int SaltSize { get; } = 128 / 8; // 128 bits
     public HashAlgorithmName HashAlgorithmName { get; } = HashAlgorithmName.SHA256;
 
@@ -17,14 +18,18 @@ public sealed class PasswordHasher
         if (password == null)
             throw new ArgumentNullException(nameof(password));
 
-        // The salt must be unique for each password
-        byte[] salt = GenerateSalt(SaltSize);
-        byte[] hash = HashPasswordWithSalt(password, salt);
+        byte[] salt;
+        byte[] bytes;
+        using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, SaltSize, Pbkdf2IterCount, HashAlgorithmName))
+        {
+            salt = rfc2898DeriveBytes.Salt;
+            bytes = rfc2898DeriveBytes.GetBytes(Pbkdf2SubkeyLength);
+        }
 
-        var inArray = new byte[1 + SaltSize + hash.Length];
+        var inArray = new byte[1 + SaltSize + Pbkdf2SubkeyLength];
         inArray[0] = Version;
         Buffer.BlockCopy(salt, 0, inArray, 1, SaltSize);
-        Buffer.BlockCopy(hash, 0, inArray, 1 + SaltSize, hash.Length);
+        Buffer.BlockCopy(bytes, 0, inArray, 1 + SaltSize, Pbkdf2SubkeyLength);
 
         return Convert.ToBase64String(inArray);
     }
@@ -37,7 +42,7 @@ public sealed class PasswordHasher
         if (hashedPassword == null)
             return PasswordVerificationResult.Failed;
 
-        Span<byte> numArray = Convert.FromBase64String(hashedPassword);
+        byte[] numArray = Convert.FromBase64String(hashedPassword);
         if (numArray.Length < 1)
             return PasswordVerificationResult.Failed;
 
@@ -45,39 +50,20 @@ public sealed class PasswordHasher
         if (version > Version)
             return PasswordVerificationResult.Failed;
 
-        var salt = numArray.Slice(1, SaltSize).ToArray();
-        var bytes = numArray.Slice(1 + SaltSize).ToArray();
+        byte[] salt = new byte[SaltSize];
+        Buffer.BlockCopy(numArray, 1, salt, 0, SaltSize);
+        byte[] a = new byte[Pbkdf2SubkeyLength];
+        Buffer.BlockCopy(numArray, 1 + SaltSize, a, 0, Pbkdf2SubkeyLength);
+        byte[] bytes;
+        using (var rfc2898DeriveBytes = new Rfc2898DeriveBytes(password, salt, Pbkdf2IterCount, HashAlgorithmName))
+        {
+            bytes = rfc2898DeriveBytes.GetBytes(Pbkdf2SubkeyLength);
+        }
 
-        var hash = HashPasswordWithSalt(password, salt);
-
-        if (FixedTimeEquals(hash, bytes))
+        if (FixedTimeEquals(a, bytes))
             return PasswordVerificationResult.Success;
 
         return PasswordVerificationResult.Failed;
-    }
-
-    private byte[] HashPasswordWithSalt(string password, byte[] salt)
-    {
-        byte[] hash;
-        using (var hashAlgorithm = HashAlgorithm.Create(HashAlgorithmName.Name))
-        {
-            byte[] input = Encoding.UTF8.GetBytes(password);
-            hashAlgorithm.TransformBlock(salt, 0, salt.Length, salt, 0);
-            hashAlgorithm.TransformFinalBlock(input, 0, input.Length);
-            hash = hashAlgorithm.Hash;
-        }
-
-        return hash;
-    }
-
-    private static byte[] GenerateSalt(int byteLength)
-    {
-        using (var cryptoServiceProvider = new RNGCryptoServiceProvider())
-        {
-            var data = new byte[byteLength];
-            cryptoServiceProvider.GetBytes(data);
-            return data;
-        }
     }
 
     // In .NET Core 2.1, you can use CryptographicOperations.FixedTimeEquals
