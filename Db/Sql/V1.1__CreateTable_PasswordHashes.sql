@@ -1,14 +1,14 @@
 create table ResumeDb.PasswordHashes
 (
-    id     varchar(36)  not null
+    id           varchar(36)                          not null
         primary key,
-    userid varchar(36)  not null,
-    hash   varchar(500) not null,
+    userid       varchar(36)                          not null,
+    hash         varchar(500)                         not null,
+    active       tinyint(1) default 1                 null,
+    created_date datetime   default CURRENT_TIMESTAMP not null,
     constraint PasswordHashes_pk2
-        unique (id)
+        unique (id),
+    constraint PasswordHashes_Users_id_fk
+        foreign key (userid) references ResumeDb.Users (id)
 );
-
-alter table PasswordHashes
-    add constraint PasswordHashes_Users_id_fk
-        foreign key (userid) references Users (id);
 
