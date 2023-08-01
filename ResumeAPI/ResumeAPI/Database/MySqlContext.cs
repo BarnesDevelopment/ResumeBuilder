@@ -9,6 +9,7 @@ public interface IMySqlContext
 {
     Task<List<UserViewModel>> GetUsers();
     Task<User> CreateUser(User user);
+    Task<UserViewModel> UpdateUser(Guid id,UserViewModel user);
     Task<bool> UpdateSalt(User user);
     Task<bool> DeleteUser(Guid id);
     Task<UserViewModel?> GetUser(string username);
@@ -49,8 +50,6 @@ public class MySqlContext : IMySqlContext
                     email {nameof(UserViewModel.Email)},
                     firstname {nameof(UserViewModel.FirstName)},
                     lastname {nameof(UserViewModel.LastName)},
-                    created_date {nameof(UserViewModel.CreatedDate)},
-                    updated_date {nameof(UserViewModel.UpdatedDate)}
                     from Users where username = @username", new { username = username }))
             .FirstOrDefault();
     }
@@ -94,6 +93,29 @@ public class MySqlContext : IMySqlContext
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
                     from Users where id = @id", new { id = user.Id }))
+            .First();
+    }
+    
+    public async Task<UserViewModel> UpdateUser(Guid id, UserViewModel user)
+    {
+        await _db.ExecuteAsync(
+            @"update Users set username = @username, email = @email, firstname = @firstname, lastname = @lastname, updated_date = now() where id = @id",
+            new
+            {
+                id = id,
+                username = user.Username,
+                email = user.Email,
+                firstname = user.FirstName,
+                lastname = user.LastName
+            });
+
+        return (await _db.QueryAsync<UserViewModel>($@"select 
+                    id {nameof(UserViewModel.Id)},
+                    username {nameof(UserViewModel.Username)},
+                    email {nameof(UserViewModel.Email)},
+                    firstname {nameof(UserViewModel.FirstName)},
+                    lastname {nameof(UserViewModel.LastName)},
+                    from Users where id = @id", new { id = id }))
             .First();
     }
 

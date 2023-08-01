@@ -37,7 +37,6 @@ public class UserController : ControllerBase
 
     [HttpPost("user")]
     [ProducesResponseType(typeof(User),201)]
-    [ProducesResponseType(typeof(User),202)]
     public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput)
     {
         var user = new User
@@ -51,6 +50,13 @@ public class UserController : ControllerBase
         };
 
         return Ok(await _db.CreateUser(user));
+    }
+    
+    [HttpPost("user/{id}")]
+    [ProducesResponseType(typeof(User),202)]
+    public async Task<IActionResult> UpdateUser([FromRoute] string id,[FromBody] UserViewModel userInput)
+    {
+        return Ok(await _db.UpdateUser(Guid.Parse(id),userInput));
     }
     
     [HttpDelete("user/{id}")]
