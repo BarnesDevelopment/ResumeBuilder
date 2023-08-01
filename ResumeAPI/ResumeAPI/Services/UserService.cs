@@ -13,6 +13,7 @@ public interface IUserService
     Task<bool> DeleteUser(string id);
     Task<bool> CreateKey(Guid id, string key);
     Task<VerificationResult> VerifyKey(Guid id, string key);
+    Task<bool> VerifyCookie(Guid id, Guid cookie);
 }
 
 public class UserService : IUserService
@@ -80,5 +81,12 @@ public class UserService : IUserService
         }
 
         return VerificationResult.NotFound;
+    }
+
+    public async Task<bool> VerifyCookie(Guid id, Guid userCookie)
+    {
+        var cookie = await _db.RetrieveCookie(id);
+        if (cookie != null) return userCookie == cookie.KeyGuid();
+        return false;
     }
 }

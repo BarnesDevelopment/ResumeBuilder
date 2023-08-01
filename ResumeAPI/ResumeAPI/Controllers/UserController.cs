@@ -69,8 +69,10 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
-    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput)
+    [ProducesResponseType(401)]
+    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput, [FromHeader] string cookie)
     {
+        if (!await _service.VerifyCookie(Guid.Parse(id), Guid.Parse(cookie))) return Unauthorized();
         return Ok(await _service.UpdateUser(id,new UserViewModel(userInput)));
     }
     
