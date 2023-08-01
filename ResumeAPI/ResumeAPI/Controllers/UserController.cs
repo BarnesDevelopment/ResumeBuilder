@@ -40,10 +40,10 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="username"></param>
     /// <returns></returns>
-    [HttpGet("user/{username}")]
+    [HttpGet("user")]
     [ProducesResponseType(typeof(UserViewModel),200)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetUser([FromRoute] string username)
+    public async Task<IActionResult> GetUser([FromQuery] string username)
     {
         var user = await _db.GetUser(username);
         if(user != null) return Ok(user);

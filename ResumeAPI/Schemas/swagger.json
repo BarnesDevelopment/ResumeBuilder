@@ -87,7 +87,7 @@
         }
       }
     },
-    "/users/user/{username}": {
+    "/users/user": {
       "get": {
         "tags": [
           "User"
@@ -96,9 +96,8 @@
         "parameters": [
           {
             "name": "username",
-            "in": "path",
+            "in": "query",
             "description": "",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -146,9 +145,7 @@
             }
           }
         }
-      }
-    },
-    "/users/user": {
+      },
       "post": {
         "tags": [
           "User"
