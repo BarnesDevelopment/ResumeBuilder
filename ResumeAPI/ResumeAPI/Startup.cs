@@ -1,7 +1,11 @@
 using System.Reflection;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
+using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 
@@ -25,7 +29,7 @@ public class Startup
                 Title = "ResumeAPI", 
                 Version = "v1",
             });
-            //c.DocumentFilter<HealthChecksFilter>();
+            c.DocumentFilter<HealthChecksFilter>();
             
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
@@ -42,9 +46,10 @@ public class Startup
         services.AddTransient<IPasswordHasher, PasswordHasher>();
         
         services.AddHttpClient();
-        
-        // services.AddHealthChecks()
-        //     .AddOracle(appSettings.ConnectionStrings.Glovia, "select * from v$version", "Glovia Db");
+
+        var mysql = configRoot.GetConnectionString("mysql");
+        services.AddHealthChecks()
+            .AddMySql(configRoot.GetConnectionString("mysql")!);
         
     #if DEBUG
         services.AddSassCompiler();
@@ -69,17 +74,17 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            // endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions
-            // {
-            //     AllowCachingResponses = false,
-            //     ResultStatusCodes =
-            //     {
-            //         [HealthStatus.Healthy] = StatusCodes.Status200OK,
-            //         [HealthStatus.Degraded] = StatusCodes.Status200OK,
-            //         [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
-            //     },
-            //     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-            // });
+            endpoints.MapHealthChecks("/healthcheck", new HealthCheckOptions
+            {
+                AllowCachingResponses = false,
+                ResultStatusCodes =
+                {
+                    [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                    [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                    [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+                },
+                ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+            });
         });
 
         app.Run();

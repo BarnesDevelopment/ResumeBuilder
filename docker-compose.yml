@@ -1,13 +1,16 @@
 version: "3.8"
 services:
   api:
-    image: sambobbarnes/resume-api:1.0
+    image: sambobbarnes/resume-api:latest
     depends_on:
       - mysql
     ports:
       - "8080:80"
     expose:
       - "80"
+    volumes:
+      # map the dotnet user-secret folder
+      - $APPDATA/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
     
     networks:
       - api
