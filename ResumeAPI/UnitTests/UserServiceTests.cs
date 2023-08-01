@@ -150,4 +150,18 @@ public class UserServiceTests
 
         actual.Should().Be(VerificationResult.NotFound);
     }
+
+    [Fact]
+    public async Task CreateKey_ShouldCreateKey()
+    {
+        var guid = Guid.NewGuid();
+        var key = "pass123";
+        var hash = "123456";
+        _hasher.Setup(x => x.HashPassword(key)).Returns(hash);
+        _db.Setup(x => x.CreateKey(hash, guid)).ReturnsAsync(true);
+
+        var actual = await _service.CreateKey(guid, key);
+
+        actual.Should().Be(true);
+    }
 }

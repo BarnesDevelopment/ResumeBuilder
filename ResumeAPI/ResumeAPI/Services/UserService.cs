@@ -11,6 +11,7 @@ public interface IUserService
     Task<User> CreateUser(UserViewModel userInput);
     Task<UserViewModel> UpdateUser(string id, UserViewModel userInput);
     Task<bool> DeleteUser(string id);
+    Task<bool> CreateKey(Guid id, string key);
     Task<VerificationResult> VerifyKey(Guid id, string key);
 }
 
@@ -59,6 +60,12 @@ public class UserService : IUserService
     public async Task<bool> DeleteUser(string id)
     {
         return await _db.DeleteUser(Guid.Parse(id));
+    }
+
+    public async Task<bool> CreateKey(Guid id, string key)
+    {
+        var hashedKey = _hasher.HashPassword(key);
+        return await _db.CreateKey(hashedKey, id);
     }
 
     #endregion

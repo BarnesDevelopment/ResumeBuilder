@@ -13,7 +13,7 @@ public interface IMySqlContext
     Task<bool> DeleteUser(Guid id);
     Task<UserViewModel?> GetUser(string username);
     Task<User> GetUser(Guid id);
-    Task CreateKey(string hash, Guid userId);
+    Task<bool> CreateKey(string hash, Guid userId);
     Task<string?> RetrieveKey(Guid userId);
     Task DeactivateKey(Guid userId);
     Task<Cookie> CreateCookie(Guid userId);
@@ -129,14 +129,14 @@ public class MySqlContext : IMySqlContext
 
     #region Keys
 
-    public async Task CreateKey(string hash, Guid userId)
+    public async Task<bool> CreateKey(string hash, Guid userId)
     {
-        await _db.ExecuteAsync("insert into PasswordHashes (id,userid,hash) values(@id,@userid,@hash)", new
+        return await _db.ExecuteAsync("insert into PasswordHashes (id,userid,hash) values(@id,@userid,@hash)", new
         {
             id = Guid.NewGuid(),
             userid = userId,
             hash = hash
-        });
+        }) > 0;
     }
 
     public async Task<string?> RetrieveKey(Guid userId)

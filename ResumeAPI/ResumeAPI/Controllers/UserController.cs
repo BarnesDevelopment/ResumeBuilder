@@ -13,18 +13,14 @@ namespace ResumeAPI.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<ResumeController> _logger;
-    private readonly IMySqlContext _db;
-    private readonly PasswordHasher _hasher;
     private readonly IUserService _service;
     private readonly IUserOrchestrator _orchestrator;
     
-    public UserController(ILogger<ResumeController> logger, IMySqlContext db, IUserService service, IUserOrchestrator orchestrator)
+    public UserController(ILogger<ResumeController> logger, IUserService service, IUserOrchestrator orchestrator)
     {
         _logger = logger;
-        _db = db;
         _service = service;
         _orchestrator = orchestrator;
-        _hasher = new PasswordHasher();
     }
 
     #region User
@@ -62,9 +58,9 @@ public class UserController : ControllerBase
     /// <returns></returns>
     [HttpPost("user")]
     [ProducesResponseType(typeof(User),201)]
-    public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput)
+    public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput, [FromHeader] string key)
     {
-        return Ok(await _service.CreateUser(userInput));
+        return Ok(await _orchestrator.CreateAccount(userInput, key));
     }
     
     /// <summary>
@@ -103,43 +99,14 @@ public class UserController : ControllerBase
     #region Key
 
     /// <summary>
-    /// Create Pass Key
+    /// Login
     /// </summary>
-    /// <param name="id">UserId</param>
-    /// <param name="key">PassKey</param>
-    /// <returns></returns>
-    [HttpPut("user/key")]
-    [ProducesResponseType(201)]
-    public async Task<IActionResult> CreateKey([FromHeader] string id, [FromHeader] string key)
-    {
-        var hashedKey = _hasher.HashPassword(key);
-        await _db.CreateKey(hashedKey, Guid.Parse(id));
-        return Created("Key Created", null);
-    }
-    
-    /// <summary>
-    /// Verify Pass Key
-    /// </summary>
-    /// <param name="id">UserId</param>
-    /// <param name="key">PassKey</param>
-    /// <returns></returns>
-    [HttpGet("user/key")]
-    [ProducesResponseType(200)]
+    /// <param name="username"></param>
+    /// <param name="key"></param>
+    /// <returns>Cookie</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(Cookie),200)]
     [ProducesResponseType(401)]
-    [ProducesResponseType(404)]
-    public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
-    {
-        var hash = await _db.RetrieveKey(Guid.Parse(id));
-        if (hash != null)
-        {
-            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok();
-            return Unauthorized();
-        }
-        return NotFound("No key found for user.");
-    }
-    
-    #endregion
-
     public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string key)
     {
         var attempt = await _orchestrator.Login(username, key);
@@ -150,4 +117,6 @@ public class UserController : ControllerBase
 
         return Unauthorized();
     }
+    
+    #endregion
 }

@@ -7,6 +7,7 @@ namespace ResumeAPI.Orchestrator;
 public interface IUserOrchestrator
 {
     Task<LoginAttempt> Login(string username, string key);
+    Task<UserViewModel> CreateAccount(UserViewModel userInput, string key);
 }
 
 public class UserOrchestrator : IUserOrchestrator
@@ -32,5 +33,12 @@ public class UserOrchestrator : IUserOrchestrator
         }
 
         return new LoginAttempt();
+    }
+
+    public async Task<UserViewModel> CreateAccount(UserViewModel userInput, string key)
+    {
+        var user = await _service.CreateUser(userInput);
+        await _service.CreateKey(user.IdGuid(), key);
+        return user;
     }
 }

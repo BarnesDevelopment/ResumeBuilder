@@ -84,4 +84,35 @@ public class UserOrchestratorTests
 
         actual.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public async Task CreateAccount_ShouldReturnUserInfo()
+    {
+        var guid = Guid.NewGuid();
+        var key = "pass123456";
+        var userInput = new UserViewModel
+        {
+            Username = "test",
+            FirstName = "first",
+            LastName = "last",
+            Email = "email@email.com"
+        };
+        var user = new User
+        {
+            Id = guid.ToString(),
+            Username = "test",
+            FirstName = "first",
+            LastName = "last",
+            Email = "email@email.com",
+            CreatedDate = DateTime.Now,
+            UpdatedDate = DateTime.Now
+        };
+        
+        _service.Setup(x => x.CreateUser(userInput)).ReturnsAsync(user);
+        _service.Setup(x => x.CreateKey(guid, key));
+
+        var actual = await _orchestrator.CreateAccount(userInput, key);
+
+        actual.Should().BeEquivalentTo(user);
+    }
 }
