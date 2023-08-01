@@ -220,6 +220,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "cookie",
+            "in": "header",
+            "description": "User cookie",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "requestBody": {
@@ -259,6 +267,26 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }

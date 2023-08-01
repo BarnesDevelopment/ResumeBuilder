@@ -66,6 +66,7 @@ public class UserController : ControllerBase
     /// </summary>
     /// <param name="id">UserId</param>
     /// <param name="userInput">User object</param>
+    /// <param name="cookie">User cookie</param>
     /// <returns></returns>
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
