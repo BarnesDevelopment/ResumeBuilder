@@ -42,6 +42,48 @@ public class UserOrchestratorTests
         
         _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
         _service.Setup(x => x.VerifyKey(user.IdGuid(), key)).ReturnsAsync(VerificationResult.Correct);
+        _db.Setup(x => x.RetrieveCookie(guid)).ReturnsAsync((Cookie)null);
+        _db.Setup(x => x.CreateCookie(user.IdGuid())).ReturnsAsync(cookie);
+
+        var actual = await _orchestrator.Login(username, key);
+
+        actual.Should().BeEquivalentTo(expected);
+    }
+    
+    [Fact]
+    public async Task Login_Success_OldCookie()
+    {
+        var guid = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var guid3 = Guid.NewGuid();
+        var username = "testuser";
+        var key = "pass123";
+        var user = new UserViewModel
+        {
+            Id = guid.ToString(),
+            Username = username
+        };
+        var oldCookie = new Cookie
+        {
+            Key = guid3.ToString(),
+            UserId = guid.ToString(),
+            Expiration = DateTime.Now.AddHours(1),
+            Active = true
+        };
+
+        var cookie = new Cookie
+        {
+            Active = true,
+            Key = guid2.ToString(),
+            Expiration = DateTime.Today.AddDays(1),
+            UserId = guid.ToString()
+        };
+        var expected = new LoginAttempt(cookie);
+        
+        _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
+        _service.Setup(x => x.VerifyKey(user.IdGuid(), key)).ReturnsAsync(VerificationResult.Correct);
+        _db.Setup(x => x.RetrieveCookie(guid)).ReturnsAsync(oldCookie);
+        _db.Setup(x => x.DeactivateCookie(oldCookie.KeyGuid()));
         _db.Setup(x => x.CreateCookie(user.IdGuid())).ReturnsAsync(cookie);
 
         var actual = await _orchestrator.Login(username, key);

@@ -58,7 +58,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(User),201)]
     public async Task<IActionResult> CreateUser([FromBody] UserInfo userInput, [FromHeader] string key)
     {
-        return Ok(await _orchestrator.CreateAccount((UserViewModel)userInput, key));
+        return Ok(await _orchestrator.CreateAccount(new UserViewModel(userInput), key));
     }
     
     /// <summary>
@@ -71,7 +71,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(User),202)]
     public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput)
     {
-        return Ok(await _service.UpdateUser(id,(UserViewModel)userInput));
+        return Ok(await _service.UpdateUser(id,new UserViewModel(userInput)));
     }
     
     /// <summary>
@@ -84,7 +84,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteUser([FromRoute] string id)
     {
-        if (await _service.DeleteUser(id))
+        if (await _orchestrator.DeleteUser(Guid.Parse(id)))
         {
             return Accepted();
         }

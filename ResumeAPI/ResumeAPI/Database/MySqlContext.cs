@@ -15,7 +15,8 @@ public interface IMySqlContext
     Task<User> GetUser(Guid id);
     Task<bool> CreateKey(string hash, Guid userId);
     Task<string?> RetrieveKey(Guid userId);
-    Task DeactivateKey(Guid userId);
+    Task<bool> DeactivateKey(Guid userId);
+    Task<bool> DeleteKeys(Guid userId);
     Task<Cookie> CreateCookie(Guid userId);
     Task DeactivateCookie(Guid cookie);
     Task<Cookie?> RetrieveCookie(Guid userId);
@@ -145,10 +146,16 @@ public class MySqlContext : IMySqlContext
             "select hash from PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId})).FirstOrDefault();
     }
 
-    public async Task DeactivateKey(Guid userId)
+    public async Task<bool> DeleteKeys(Guid userId)
     {
-        await _db.ExecuteAsync("update PasswordHashes set active = false where userid = @userid",
-            new { userid = userId });
+        return await _db.ExecuteAsync("delete from PasswordHashes where userid = @userid",
+            new { userid = userId }) > 0;
+    }
+
+    public async Task<bool> DeactivateKey(Guid userId)
+    {
+        return await _db.ExecuteAsync("update PasswordHashes set active = false where userid = @userid",
+            new { userid = userId }) > 0;
     }
 
     #endregion
@@ -166,7 +173,7 @@ public class MySqlContext : IMySqlContext
         });
 
         return (await _db.QueryAsync<Cookie>(
-            $@"select cookie {nameof(Cookie.Key)}, 
+            $@"select cookie `{nameof(Cookie.Key)}`, 
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}
@@ -183,7 +190,7 @@ public class MySqlContext : IMySqlContext
 
     public async Task<Cookie?> RetrieveCookie(Guid userId)
     {
-        return (await _db.QueryAsync<Cookie>($@"select cookie {nameof(Cookie.Key)}, 
+        return (await _db.QueryAsync<Cookie>($@"select cookie `{nameof(Cookie.Key)}`, 
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}

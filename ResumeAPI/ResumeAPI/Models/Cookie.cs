@@ -6,6 +6,11 @@ public class Cookie
     private Guid _key;
     private Guid _userId;
 
+    public Guid KeyGuid()
+    {
+        return _key;
+    }
+
     public string Key
     {
         get => _key.ToString();

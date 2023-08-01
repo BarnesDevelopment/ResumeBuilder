@@ -8,6 +8,7 @@ public interface IUserOrchestrator
 {
     Task<LoginAttempt> Login(string username, string key);
     Task<UserViewModel> CreateAccount(UserViewModel userInput, string key);
+    Task<bool> DeleteUser(Guid id);
 }
 
 public class UserOrchestrator : IUserOrchestrator
@@ -28,7 +29,9 @@ public class UserOrchestrator : IUserOrchestrator
         var verified = await _service.VerifyKey(user.IdGuid(), key);
         if (verified == VerificationResult.Correct)
         {
-            var cookie = await _db.CreateCookie(user.IdGuid());
+            var cookie = await _db.RetrieveCookie(user.IdGuid());
+            if (cookie != null) await _db.DeactivateCookie(cookie.KeyGuid());
+            cookie = await _db.CreateCookie(user.IdGuid());
             return new LoginAttempt(cookie);
         }
 
@@ -40,5 +43,11 @@ public class UserOrchestrator : IUserOrchestrator
         var user = await _service.CreateUser(userInput);
         await _service.CreateKey(user.IdGuid(), key);
         return user;
+    }
+
+    public async Task<bool> DeleteUser(Guid id)
+    {
+        await _db.DeleteKeys(id);
+        return await _db.DeleteUser(id);
     }
 }

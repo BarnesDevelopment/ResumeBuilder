@@ -9,6 +9,19 @@ public class User : UserViewModel
 
 public class UserViewModel : UserInfo
 {
+    public UserViewModel(UserInfo info)
+    {
+        Username = info.Username;
+        FirstName = info.FirstName;
+        LastName = info.LastName;
+        Email = info.Email;
+    }
+
+    public UserViewModel()
+    {
+        
+    }
+    
     protected Guid _id;
 
     public Guid IdGuid()
