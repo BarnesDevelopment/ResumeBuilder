@@ -22,13 +22,24 @@ public class UserController : ControllerBase
         _hasher = new PasswordHasher();
     }
 
+    #region User
+    
+    /// <summary>
+    /// Get all users
+    /// </summary>
+    /// <returns>List of users</returns>
     [HttpGet("")]
     [ProducesResponseType(typeof(UserViewModel[]),200)]
     public async Task<IActionResult> GetUsers()
     {
         return Ok(await _db.GetUsers());
     }
-
+    
+    /// <summary>
+    /// Gets user by username
+    /// </summary>
+    /// <param name="username"></param>
+    /// <returns></returns>
     [HttpGet("user/{username}")]
     [ProducesResponseType(typeof(UserViewModel),200)]
     [ProducesResponseType(404)]
@@ -39,6 +50,11 @@ public class UserController : ControllerBase
         return NotFound();
     }
 
+    /// <summary>
+    /// Create user
+    /// </summary>
+    /// <param name="userInput">User object</param>
+    /// <returns></returns>
     [HttpPost("user")]
     [ProducesResponseType(typeof(User),201)]
     public async Task<IActionResult> CreateUser([FromBody] UserViewModel userInput)
@@ -54,39 +70,29 @@ public class UserController : ControllerBase
 
         return Ok(await _db.CreateUser(user));
     }
-
-    [HttpPut("user")]
-    [ProducesResponseType(201)]
-    public async Task<IActionResult> CreateKey([FromHeader] string id, [FromHeader] string key)
-    {
-        var hashedKey = _hasher.HashPassword(key);
-        await _db.CreateKey(hashedKey, Guid.Parse(id));
-        return Created("Key Created", null);
-    }
     
+    /// <summary>
+    /// Update user information
+    /// </summary>
+    /// <param name="id">UserId</param>
+    /// <param name="userInput">User object</param>
+    /// <returns></returns>
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
     public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserViewModel userInput)
     {
         return Ok(await _db.UpdateUser(Guid.Parse(id),userInput));
     }
-
-    [HttpGet("user")]
-    public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
-    {
-        var hash = await _db.RetrieveKey(Guid.Parse(id));
-        if (hash != null)
-        {
-            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok("Accepted");
-            return Ok("Denied");
-        }
-        return NotFound("No key found for user.");
-    }
     
+    /// <summary>
+    /// Delete User
+    /// </summary>
+    /// <param name="id">UserId</param>
+    /// <returns></returns>
     [HttpDelete("user/{id}")]
     [ProducesResponseType(202)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> CreateUser([FromRoute] string id)
+    public async Task<IActionResult> DeleteUser([FromRoute] string id)
     {
         var success = await _db.DeleteUser(Guid.Parse(id));
 
@@ -100,4 +106,43 @@ public class UserController : ControllerBase
         }
         
     }
+    
+    #endregion
+
+    #region Key
+
+    /// <summary>
+    /// Create Pass Key
+    /// </summary>
+    /// <param name="id">UserId</param>
+    /// <param name="key">PassKey</param>
+    /// <returns></returns>
+    [HttpPut("user/key")]
+    [ProducesResponseType(201)]
+    public async Task<IActionResult> CreateKey([FromHeader] string id, [FromHeader] string key)
+    {
+        var hashedKey = _hasher.HashPassword(key);
+        await _db.CreateKey(hashedKey, Guid.Parse(id));
+        return Created("Key Created", null);
+    }
+    
+    /// <summary>
+    /// Verify Pass Key
+    /// </summary>
+    /// <param name="id">UserId</param>
+    /// <param name="key">PassKey</param>
+    /// <returns></returns>
+    [HttpGet("user/key")]
+    public async Task<IActionResult> VerifyKey([FromHeader] string id, [FromHeader] string key)
+    {
+        var hash = await _db.RetrieveKey(Guid.Parse(id));
+        if (hash != null)
+        {
+            if (_hasher.VerifyHashedPassword(hash, key) == PasswordVerificationResult.Success) return Ok("Accepted");
+            return Ok("Denied");
+        }
+        return NotFound("No key found for user.");
+    }
+    
+    #endregion
 }
