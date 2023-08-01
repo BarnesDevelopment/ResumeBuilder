@@ -8,6 +8,16 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DocumentationFile>bin\Debug\ResumeAPI.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DocumentationFile>bin\Release\ResumeAPI.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.64.1" />
     <PackageReference Include="Dapper" Version="2.0.143" />
@@ -20,6 +30,14 @@
 
   <ItemGroup>
     <Folder Include="Fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="out\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="out\appsettings.json" />
+    <_ContentIncludedByDefault Remove="out\ResumeAPI.deps.json" />
+    <_ContentIncludedByDefault Remove="out\ResumeAPI.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="out\ResumeAPI.staticwebassets.runtime.json" />
   </ItemGroup>
 
 </Project>
