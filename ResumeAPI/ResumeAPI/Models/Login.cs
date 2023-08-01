@@ -14,7 +14,7 @@ public class LoginAttempt
     }
     
     public bool Success { get; }
-    public Cookie Cookie { get; }
+    public Cookie? Cookie { get; }
 }
 
 public enum VerificationResult

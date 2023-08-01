@@ -142,7 +142,6 @@ public class UserServiceTests
     {
         var guid = Guid.NewGuid();
         var key = "pass123";
-        var hash = "123456789123";
 
         _db.Setup(x => x.RetrieveKey(guid)).ReturnsAsync((string?)null);
 

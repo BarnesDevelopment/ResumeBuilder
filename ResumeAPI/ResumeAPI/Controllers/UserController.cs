@@ -52,6 +52,7 @@ public class UserController : ControllerBase
     /// Create user
     /// </summary>
     /// <param name="userInput">User object</param>
+    /// <param name="key"></param>
     /// <returns></returns>
     [HttpPost("user")]
     [ProducesResponseType(typeof(User),201)]
