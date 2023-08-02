@@ -128,7 +128,13 @@
 							},
 							"request": {
 								"method": "POST",
-								"header": [],
+								"header": [
+									{
+										"key": "Key",
+										"value": "Pass123!",
+										"type": "text"
+									}
+								],
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n  \"username\": \"test-user\",\r\n  \"firstName\": \"testfirstname\",\r\n  \"lastName\": \"testlastname\",\r\n  \"email\": \"testemail@email.com\"\r\n}",
@@ -159,7 +165,13 @@
 							},
 							"request": {
 								"method": "POST",
-								"header": [],
+								"header": [
+									{
+										"key": "cookie",
+										"value": "03a54769-58cf-4441-bf3d-ad63973dc70a",
+										"type": "text"
+									}
+								],
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n  \"username\": \"test-user-name\",\r\n  \"firstName\": \"testfirstname\",\r\n  \"lastName\": \"testlastname\",\r\n  \"email\": \"testemail@email.com\"\r\n}",
@@ -182,7 +194,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "62241978-98f8-4100-8606-1559a4bee5b5"
+											"value": "a16a97ee-9f03-4d2b-902a-7e43f79a9837"
 										}
 									]
 								}
@@ -211,7 +223,7 @@
 									"variable": [
 										{
 											"key": "id",
-											"value": "62241978-98f8-4100-8606-1559a4bee5b5"
+											"value": "58dc79fe-aea3-4934-9612-ce9edad62b2e"
 										}
 									]
 								}
@@ -225,42 +237,8 @@
 					"name": "Key",
 					"item": [
 						{
-							"name": "Create Key",
-							"id": "34382578-ae7d-432a-ba82-6cd463a4b496",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "id",
-										"value": "62241978-98f8-4100-8606-1559a4bee5b5",
-										"type": "text"
-									},
-									{
-										"key": "key",
-										"value": "passkey123",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{ResumeApiHost}}/users/user/key",
-									"host": [
-										"{{ResumeApiHost}}"
-									],
-									"path": [
-										"users",
-										"user",
-										"key"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Verify Key",
-							"id": "b69d675f-57d5-4e1e-88a3-5dd49b6a9294",
+							"name": "Login",
+							"id": "f8f87fe0-3fac-4993-af09-2f799c310b1e",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
 							},
@@ -268,25 +246,24 @@
 								"method": "GET",
 								"header": [
 									{
-										"key": "id",
-										"value": "62241978-98f8-4100-8606-1559a4bee5b5",
+										"key": "username",
+										"value": "test-user",
 										"type": "text"
 									},
 									{
 										"key": "key",
-										"value": "passkey123",
+										"value": "Pass123!",
 										"type": "text"
 									}
 								],
 								"url": {
-									"raw": "{{ResumeApiHost}}/users/user/key",
+									"raw": "{{ResumeApiHost}}/users/login",
 									"host": [
 										"{{ResumeApiHost}}"
 									],
 									"path": [
 										"users",
-										"user",
-										"key"
+										"login"
 									]
 								}
 							},
@@ -297,6 +274,27 @@
 				}
 			],
 			"id": "6ae20d7e-9a39-492a-b748-2f892a2376e9"
+		},
+		{
+			"name": "Healthcheck",
+			"id": "b8f69a66-852c-479b-9153-476a10464105",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ResumeApiHost}}/healthcheck",
+					"host": [
+						"{{ResumeApiHost}}"
+					],
+					"path": [
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
