@@ -64,7 +64,11 @@
               "browserTarget": "resume-builder:build:development"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "development",
+          "options": {
+            "sslKey": "./cert/CA/localhost/localhost.decrypted.key",
+            "sslCert": "./cert/CA/localhost/localhost.crt"
+          }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
