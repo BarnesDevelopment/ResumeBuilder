@@ -8,9 +8,12 @@ services:
       - "8080:80"
     expose:
       - "80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       # map the dotnet user-secret folder
-      - $APPDATA/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - $APPDATA/Microsoft/UserSecrets/:/root/.microsoft/usersecrets/
+      - $HOME/.microsoft/usersecrets/:/root/.microsoft/usersecrets/
     
     networks:
       - api
