@@ -32,7 +32,8 @@ public class MySqlContext : IMySqlContext
     public MySqlContext(IOptions<AWSSecrets> options)
     {
         var secrets = options.Value;
-        _db = new MySqlConnection(secrets.ConnectionStrings.MySql);
+        Console.WriteLine($"MySqlContext:{secrets.ConnectionStrings_MySql}");
+        _db = new MySqlConnection(secrets.ConnectionStrings_MySql);
     }
 
     #region Users

@@ -1,6 +1,8 @@
 version: "3.8"
 services:
   api:
+    env_file:
+      - .env
     image: sambobbarnes/resume-api:latest
     depends_on:
       - mysql
@@ -9,11 +11,9 @@ services:
     expose:
       - "80"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    volumes:
-      # map the dotnet user-secret folder
-      - $APPDATA/Microsoft/UserSecrets/:/root/.microsoft/usersecrets/
-      - $HOME/.microsoft/usersecrets/:/root/.microsoft/usersecrets/
+      - ASPNETCORE_ENVIRONMENT=Release
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     
     networks:
       - api

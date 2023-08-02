@@ -2,6 +2,7 @@ using System.Reflection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
@@ -46,12 +47,13 @@ public class Startup
         
         services.AddTransient<IMySqlContext, MySqlContext>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
-        
-        services.AddHttpClient();
 
-        var mysql = configRoot.GetConnectionString("mysql");
+        services.AddHttpClient();
+        
+        var awsSecrets = configRoot.Get<AWSSecrets>();
+
         services.AddHealthChecks()
-            .AddMySql(configRoot.GetConnectionString("mysql")!);
+            .AddMySql(awsSecrets.ConnectionStrings_MySql);
         
     #if DEBUG
         services.AddSassCompiler();
