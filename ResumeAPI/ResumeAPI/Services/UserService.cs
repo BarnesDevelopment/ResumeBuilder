@@ -86,7 +86,7 @@ public class UserService : IUserService
     public async Task<bool> VerifyCookie(Guid id, Guid userCookie)
     {
         var cookie = await _db.RetrieveCookie(id);
-        if (cookie != null) return userCookie == cookie.KeyGuid();
+        if (cookie != null) return userCookie == cookie.KeyGuid() && cookie.Expiration > DateTime.Now;
         return false;
     }
 }
