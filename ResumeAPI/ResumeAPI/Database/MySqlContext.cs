@@ -1,6 +1,8 @@
 using System.Data.Common;
 using Dapper;
+using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Database;
@@ -27,9 +29,10 @@ public class MySqlContext : IMySqlContext
 {
     private readonly DbConnection _db;
 
-    public MySqlContext(IConfiguration config)
+    public MySqlContext(IOptions<AWSSecrets> options)
     {
-        _db = new MySqlConnection(config.GetConnectionString("mysql"));
+        var secrets = options.Value;
+        _db = new MySqlConnection(secrets.ConnectionStrings.MySql);
     }
 
     #region Users

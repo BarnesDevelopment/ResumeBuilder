@@ -36,6 +36,8 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
+        services.Configure<AWSSecrets>(configRoot);
+
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeService, ResumeService>();
         
