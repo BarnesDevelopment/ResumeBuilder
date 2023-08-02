@@ -19,7 +19,7 @@ public class AmazonSecretsManagerConfigurationProvider : ConfigurationProvider
     {
         var secret = GetSecret();
 
-        Data = JsonSerializer.Deserialize<Dictionary<string, string>>(secret);
+        Data = JsonSerializer.Deserialize<Dictionary<string, string>>(secret)!;
     }
 
     private string GetSecret()
