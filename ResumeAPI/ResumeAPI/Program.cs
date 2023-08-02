@@ -1,5 +1,5 @@
 using ResumeAPI;
-using ResumeAPI.Helpers;
+using ResumeAPI.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

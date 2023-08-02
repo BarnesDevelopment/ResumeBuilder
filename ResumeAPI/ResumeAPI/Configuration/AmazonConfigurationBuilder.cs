@@ -1,4 +1,4 @@
-namespace ResumeAPI.Helpers;
+namespace ResumeAPI.Configuration;
 
 public static class AmazonConfigurationBuilder
 {

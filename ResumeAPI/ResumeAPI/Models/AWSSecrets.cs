@@ -1,4 +1,5 @@
-namespace ResumeAPI.Helpers;
+#nullable disable
+namespace ResumeAPI.Models;
 
 public class AWSSecrets
 {

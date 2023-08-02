@@ -3,7 +3,7 @@ using Amazon;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 
-namespace ResumeAPI.Helpers;
+namespace ResumeAPI.Configuration;
 public class AmazonSecretsManagerConfigurationProvider : ConfigurationProvider
 {
     private readonly string _region;
