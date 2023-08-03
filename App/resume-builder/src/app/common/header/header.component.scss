@@ -8,21 +8,50 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-}
 
-.edge-div {
-  width: 5rem;
-  margin: 1rem;
-}
+  .edge-div {
+    width: 8rem;
+    margin: 1rem;
+  }
 
-.menu {
-}
+  .menu {
+  }
 
-.title {
-  h2 {
-    color: $light;
+  .title {
+    h2 {
+      color: $light;
+    }
+  }
+
+  .user-info {
+    .user {
+      display: flex;
+      flex-direction: row;
+      color: $light;
+      gap: 0.5rem;
+      justify-content: right;
+    }
+
+    .login {
+      display: flex;
+      flex-direction: row;
+      justify-content: right;
+
+      app-button {
+        width: 5rem;
+      }
+    }
   }
 }
 
-.user-info {
+.user-panel {
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  width: 6rem;
+  text-align: center;
+  background-color: $dark;
+  color: $light;
+  padding: 0.5rem;
+  border: solid $light 2px;
 }
