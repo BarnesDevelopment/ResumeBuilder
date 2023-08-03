@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { LoginModule } from './login/login.module';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { CommonModule } from './common/common.module';
+import { CommonComponentsModule } from './common/common-components.module';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, PageNotFoundComponent],
@@ -14,7 +14,7 @@ import { CommonModule } from './common/common.module';
     BrowserModule,
     AppRoutingModule,
     LoginModule,
-    CommonModule,
+    CommonComponentsModule,
     FontAwesomeModule,
   ],
   providers: [],

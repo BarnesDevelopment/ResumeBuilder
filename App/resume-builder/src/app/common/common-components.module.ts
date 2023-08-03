@@ -9,4 +9,4 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
   exports: [HeaderComponent, ButtonComponent],
   imports: [NgIf, FontAwesomeModule],
 })
-export class CommonModule {}
+export class CommonComponentsModule {}
