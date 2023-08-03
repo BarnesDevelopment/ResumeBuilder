@@ -1,1 +1,14 @@
-<p>header works!</p>
+<div class="base">
+  <div class="menu edge-div"></div>
+  <div class="title">
+    <h2>Barnes Resume Builder</h2>
+  </div>
+  <div class="user-info edge-div">
+    <div *ngIf="user != undefined" class="user">
+      <span>{{this.user?.fullName}}</span>
+    </div>
+    <div *ngIf="user == undefined" class="login">
+      <app-button href="/login" text="Login" [style]="ButtonStyle.Transparent"></app-button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+div {
+  border: solid black 2px;
+  border-radius: 0.2rem;
+  padding: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+
+  &.primary {
+    background-color: #27c919;
+  }
+
+  &.secondary {
+    background-color: #6c1d26;
+  }
+
+  &.alert {
+    background-color: #ef8005;
+  }
+
+  &.transparent {
+    background-color: transparent;
+  }
+}
