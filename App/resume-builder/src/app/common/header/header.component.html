@@ -1,11 +1,11 @@
 <div class="base">
   <div class="menu edge-div"></div>
   <div class="title">
-    <h2>Barnes Resume Builder</h2>
+    <h2 (click)="GoToHome()">Barnes Resume Builder</h2>
   </div>
   <div class="user-info edge-div">
     <div *ngIf="user != undefined" class="user" (click)="ToggleUserPanel()">
-      <span>{{this.user?.fullName}}</span>
+      <span>{{this.user!.fullName}}</span>
       <fa-icon [icon]="faCaretDown"></fa-icon>
     </div>
     <div *ngIf="user == undefined" class="login">

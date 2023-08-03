@@ -51,7 +51,6 @@ export class PageNotFoundComponent {
   }
 
   getRandom(max: number) {
-    let min = Math.ceil(1);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - 1 + 1) + 1);
   }
