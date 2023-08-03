@@ -5,26 +5,26 @@ div {
   padding: 0.5rem;
   text-align: center;
   cursor: pointer;
-  color: $alice-blue;
+  color: $light;
 
   &.dark {
-    border: solid $walnut-brown 2px;
+    border: solid $dark 2px;
   }
 
   &.light {
-    border: solid $alice-blue 2px;
+    border: solid $light 2px;
   }
 
   &.primary {
-    background-color: $ucla-blue;
+    background-color: $primary;
   }
 
   &.secondary {
-    background-color: $ash-gray;
+    background-color: $secondary;
   }
 
   &.alert {
-    background-color: $fire-engine-red;
+    background-color: $alert;
   }
 
   &.transparent {
