@@ -1,20 +1,30 @@
+@import "../../../variables";
+
 div {
-  border: solid black 2px;
   border-radius: 0.2rem;
   padding: 0.5rem;
   text-align: center;
   cursor: pointer;
+  color: $alice-blue;
+
+  &.dark {
+    border: solid $walnut-brown 2px;
+  }
+
+  &.light {
+    border: solid $alice-blue 2px;
+  }
 
   &.primary {
-    background-color: #27c919;
+    background-color: $ucla-blue;
   }
 
   &.secondary {
-    background-color: #6c1d26;
+    background-color: $ash-gray;
   }
 
   &.alert {
-    background-color: #ef8005;
+    background-color: $fire-engine-red;
   }
 
   &.transparent {

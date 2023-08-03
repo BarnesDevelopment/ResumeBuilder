@@ -8,7 +8,7 @@
       <span>{{this.user?.fullName}}</span>
     </div>
     <div *ngIf="user == undefined" class="login">
-      <app-button href="/login" text="Login" [style]="ButtonStyle.Transparent"></app-button>
+      <app-button href="/login" text="Login" [buttonStyle]="ButtonStyle.Transparent" [borderStyle]="BorderStyle.Light"></app-button>
     </div>
   </div>
 </div>

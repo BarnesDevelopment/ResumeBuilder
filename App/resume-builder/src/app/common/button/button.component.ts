@@ -9,7 +9,8 @@ import { Router } from '@angular/router';
 export class ButtonComponent {
   @Input() href: string = '';
   @Input() text: string = '';
-  @Input() style: ButtonStyle = ButtonStyle.Primary;
+  @Input() buttonStyle: ButtonStyle = ButtonStyle.Primary;
+  @Input() borderStyle: BorderStyle = BorderStyle.Dark;
 
   constructor(private router: Router) {}
 
@@ -23,4 +24,9 @@ export enum ButtonStyle {
   Secondary = 'secondary',
   Alert = 'alert',
   Transparent = 'transparent',
+}
+
+export enum BorderStyle {
+  Light = 'light',
+  Dark = 'dark',
 }

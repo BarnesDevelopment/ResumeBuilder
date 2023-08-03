@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { User } from '../../models/User';
-import { ButtonStyle } from '../button/button.component';
+import { BorderStyle, ButtonStyle } from '../button/button.component';
 
 @Component({
   selector: 'app-header',
@@ -10,4 +10,5 @@ import { ButtonStyle } from '../button/button.component';
 export class HeaderComponent {
   @Input() user: User | undefined;
   protected readonly ButtonStyle = ButtonStyle;
+  protected readonly BorderStyle = BorderStyle;
 }
