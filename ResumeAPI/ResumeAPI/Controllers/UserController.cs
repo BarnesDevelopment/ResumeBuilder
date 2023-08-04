@@ -34,17 +34,23 @@ public class UserController : ControllerBase
     }
     
     /// <summary>
-    /// Gets user by username
+    /// Gets user by id
     /// </summary>
-    /// <param name="username"></param>
+    /// <param name="userId"></param>
+    /// <param name="cookie"></param>
     /// <returns></returns>
     [HttpGet("user")]
     [ProducesResponseType(typeof(UserViewModel),200)]
+    [ProducesResponseType(401)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetUser([FromQuery] string username)
+    public async Task<IActionResult> GetUser([FromQuery] string userId, [FromHeader] string cookie)
     {
-        var user = await _service.GetUser(username);
-        if(user != null) return Ok(user);
+        var user = await _service.GetUser(Guid.Parse(userId));
+        if (user != null)
+        {
+            if (!await _service.VerifyCookie(Guid.Parse(userId), Guid.Parse(cookie))) return Unauthorized();
+            return Ok(user);
+        }
         return NotFound();
     }
 

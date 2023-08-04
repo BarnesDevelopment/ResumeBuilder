@@ -7,6 +7,7 @@ namespace ResumeAPI.Services;
 public interface IUserService
 {
     Task<List<UserViewModel>> GetUsers();
+    Task<UserViewModel?> GetUser(Guid id);
     Task<UserViewModel?> GetUser(string username);
     Task<User> CreateUser(UserViewModel userInput);
     Task<UserViewModel> UpdateUser(string id, UserViewModel userInput);
@@ -34,6 +35,11 @@ public class UserService : IUserService
         return await _db.GetUsers();
     }
 
+    public async Task<UserViewModel?> GetUser(Guid id)
+    {
+        return await _db.GetUser(id);
+    }
+    
     public async Task<UserViewModel?> GetUser(string username)
     {
         return await _db.GetUser(username);

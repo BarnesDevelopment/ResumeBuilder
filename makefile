@@ -3,6 +3,7 @@ SHELL=CMD
 docker-build:
 ifdef v
 	docker build -t sambobbarnes/resume-api:$(v) .
+	docker build -t sambobbarnes/resume-api:latest .
 else
 	docker build -t sambobbarnes/resume-api .
 endif
@@ -13,8 +14,9 @@ docker-push:
 docker-build-push:
 ifdef v
 	docker build -t sambobbarnes/resume-api:$(v) .
+	docker build -t sambobbarnes/resume-api:latest .
 else
-	docker build -t sambobbarnes/resume-api .
+	docker build -t sambobbarnes/resume-api:latest .
 endif
 	docker push -a sambobbarnes/resume-api
 	
