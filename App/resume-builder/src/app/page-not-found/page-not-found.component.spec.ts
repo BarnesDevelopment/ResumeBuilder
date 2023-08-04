@@ -1,7 +1,6 @@
-import {render, screen} from '@testing-library/angular';
+import { screen} from '@testing-library/angular';
 import {Joke, PageNotFoundComponent} from './page-not-found.component';
 import {renderRootComponent} from "../common/RenderRootComponent";
-import {NO_ERRORS_SCHEMA} from "@angular/core";
 
 describe('PageNotFoundComponent', () => {
 

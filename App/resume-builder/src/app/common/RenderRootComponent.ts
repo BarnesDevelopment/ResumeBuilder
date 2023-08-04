@@ -25,7 +25,7 @@ export async function renderRootComponent<T>(
     routes = []
   }: TestRenderOptions<T> = {}
 ): Promise<RenderResult<T,T>> {
-  const result = await render(component, {
+  return await render(component, {
     excludeComponentDeclaration: false,
     declarations: [...declarations],
     imports: [RouterTestingModule.withRoutes(routes),CommonModule,HttpClientTestingModule,ReactiveFormsModule,...imports],
@@ -33,5 +33,4 @@ export async function renderRootComponent<T>(
     schemas: [NO_ERRORS_SCHEMA],
     componentProperties
   });
-  return result;
 }
