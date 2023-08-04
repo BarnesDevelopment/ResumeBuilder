@@ -1,7 +1,7 @@
 <div class="base">
   <div class="menu edge-div"></div>
   <div class="title">
-    <h2 (click)="GoToHome()">Barnes Resume Builder</h2>
+    <h2 (click)="GoTo('/')">Barnes Resume Builder</h2>
   </div>
   <div class="user-info edge-div">
     <div *ngIf="user != undefined" class="user" (click)="ToggleUserPanel()">
@@ -15,5 +15,12 @@
 </div>
 
 <div *ngIf="showUserPanel" class="user-panel" title="userPanel">
-  <span>Panel</span>
+  <table>
+    <tr>
+      <td (click)="GoTo('/account')">Account</td>
+    </tr>
+    <tr>
+      <td (click)="Logout()">Logout</td>
+    </tr>
+  </table>
 </div>

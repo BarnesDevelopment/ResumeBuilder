@@ -49,10 +49,29 @@
   position: absolute;
   top: 3rem;
   right: 0;
-  width: 6rem;
+  width: 7rem;
   text-align: center;
   background-color: $dark;
   color: $light;
-  padding: 0.5rem;
+  //padding: 0.5rem;
   border: solid $light 2px;
+
+  table {
+    width: 100%;
+    tr {
+      //width: 100%;
+      td {
+        //width: 100%;
+        //text-align: center;
+        padding: 0.5rem;
+        border: solid $light 2px;
+
+        &:hover {
+          background-color: $light;
+          color: $dark;
+          cursor: pointer;
+        }
+      }
+    }
+  }
 }

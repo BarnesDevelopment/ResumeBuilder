@@ -23,7 +23,11 @@ export class HeaderComponent {
     this.showUserPanel = !this.showUserPanel;
   } //TODO: Add functionality to close on mouseout of blur
 
-  GoToHome() {
-    this.router.navigate(['/']);
+  GoTo(url: string) {
+    this.router.navigate([url]);
   }
+
+  Logout() {
+    console.log('logout');
+  } //TODO: Add logout functionality
 }
