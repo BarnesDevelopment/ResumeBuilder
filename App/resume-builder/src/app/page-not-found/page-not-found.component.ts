@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import { Title } from '@angular/platform-browser';
 
 @Component({
@@ -6,7 +6,7 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.scss'],
 })
-export class PageNotFoundComponent {
+export class PageNotFoundComponent implements OnInit{
   jokes: Joke[] = [
     {
       title: 'Knock knock',
@@ -44,19 +44,21 @@ export class PageNotFoundComponent {
 
   joke: Joke;
 
-  constructor(private titleService: Title) {
-    this.titleService.setTitle('404');
-    const jokeIndex = this.getRandom(this.jokes.length);
-    this.joke = this.jokes[jokeIndex - 1];
-  }
+  constructor(private titleService: Title) {}
 
   getRandom(max: number) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - 1 + 1) + 1);
   }
+
+  ngOnInit() {
+    this.titleService.setTitle('404');
+    const jokeIndex = this.getRandom(this.jokes.length);
+    this.joke = this.jokes[jokeIndex - 1];
+  }
 }
 
-interface Joke {
+export interface Joke {
   title: string;
   body: string;
 }
