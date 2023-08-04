@@ -1,21 +1,36 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {fireEvent, screen} from '@testing-library/angular';
 import { ButtonComponent } from './button.component';
+import {renderRootComponent} from "../RenderRootComponent";
+import {Router} from "@angular/router";
 
 describe('ButtonComponent', () => {
-  let component: ButtonComponent;
-  let fixture: ComponentFixture<ButtonComponent>;
-
+  let routerSpy: jest.SpyInstance;
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [ButtonComponent]
-    });
-    fixture = TestBed.createComponent(ButtonComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    routerSpy = jest.spyOn(Router.prototype, "navigate");
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should display text', async () => {
+    await render('/','some text');
+    expect(screen.getByText('some text')).toBeTruthy();
   });
+
+  it('should have correct href', async () => {
+    await render('/some/url','some text');
+    const button = screen.getByText('some text');
+    fireEvent.click(button);
+
+    expect(routerSpy).toHaveBeenCalledTimes(1);
+    expect(routerSpy).toHaveBeenCalledWith(['/some/url']);
+  });
+
 });
+
+
+async function render(href:string,text:string){
+  return await renderRootComponent(ButtonComponent, {
+    componentProperties: {
+      href: href,
+      text: text,
+    }
+  })
+}
