@@ -10,9 +10,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent {
-  @Input() user: User | undefined;
+  @Input() user: User;
   faCaretDown = faCaretDown;
-  showUserPanel: boolean = false;
+  showUserPanel: boolean;
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
