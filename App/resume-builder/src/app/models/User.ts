@@ -6,10 +6,3 @@ export interface User {
   fullName: string;
   email: string;
 }
-
-export interface Cookie {
-  key: string;
-  userId: string;
-  expiration: Date;
-  active: boolean;
-}

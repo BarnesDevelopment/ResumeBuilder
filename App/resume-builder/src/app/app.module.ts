@@ -7,6 +7,9 @@ import { LoginModule } from './login/login.module';
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CommonComponentsModule } from './common/common-components.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, PageNotFoundComponent],
@@ -16,6 +19,9 @@ import { CommonComponentsModule } from './common/common-components.module';
     LoginModule,
     CommonComponentsModule,
     FontAwesomeModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

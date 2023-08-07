@@ -1,0 +1,27 @@
+@import "../../../../variables";
+
+.base {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .submit-button {
+    font-family: "Roboto", "Courier New", courier, sans-serif;
+    color: $light;
+    background-color: $primary;
+  }
+}

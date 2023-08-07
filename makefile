@@ -20,6 +20,11 @@ else
 endif
 	docker push -a sambobbarnes/resume-api
 	
+docker-test:
+	docker build -t sambobbarnes/resume-api:latest .
+	docker push sambobbarnes/resume-api
+	docker-compose up -d
+	
 docker-run:
 	docker run -p 8080:80/tcp -p 10443:443/tcp sambobbarnes/resume-api
 	
