@@ -1,5 +1,6 @@
 using System.Reflection;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -17,6 +18,7 @@ public class Startup
     public IConfiguration configRoot {
         get;
     }
+    
     public Startup(IConfiguration configuration) {
         configRoot = configuration;
     }
@@ -35,8 +37,25 @@ public class Startup
             var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
+            
+            c.AddSecurityDefinition("User cookie", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.ApiKey,
+                Description = "User cookie",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+            });
         });
 
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(
+                policy =>
+                {
+                    policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost").AllowAnyHeader().AllowAnyMethod();
+                });
+        });
+        
         services.Configure<AWSSecrets>(configRoot);
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
@@ -70,6 +89,7 @@ public class Startup
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors();
 
         app.UseHttpsRedirection();
 
