@@ -35,7 +35,7 @@ export class LoginService {
     });
   }
 
-  private getUser(cookie: Cookie): Observable<User> {
+  public getUser(cookie: Cookie): Observable<User> {
     const headers = new HttpHeaders().set('Authorization', cookie.key);
     return this.http.get<User>(
       `${this.env.apiBasePath}/users/user?userId=${cookie.userId}`,
@@ -53,10 +53,21 @@ export class LoginService {
       domain: this.env.domain,
       secure: true,
     });
+
+    this.cookieService.set(`resume-builder-userid`, cookie.userId, {
+      expires: new Date(cookie.expiration),
+      sameSite: 'Strict',
+      path: '/',
+      domain: this.env.domain,
+      secure: true,
+    });
     return cookie;
   }
 
-  public getCookie(): string {
-    return this.cookieService.get('resume-builder-cookie');
+  public getCookie() {
+    return {
+      cookie: this.cookieService.get('resume-builder-cookie'),
+      userId: this.cookieService.get('resume-builder-userid'),
+    };
   }
 }
