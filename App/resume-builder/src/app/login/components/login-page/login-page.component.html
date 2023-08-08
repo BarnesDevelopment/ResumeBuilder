@@ -7,8 +7,8 @@
     </mat-form-field>
     <mat-form-field appearance="outline">
       <mat-label>Enter your password</mat-label>
-      <input matInput required [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-      <button mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+      <input matInput required (keyup.enter)="onSubmit()" [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+      <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
         <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
     </mat-form-field>
