@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../../services/login.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -12,6 +13,7 @@ export class LoginPageComponent {
   constructor(
     private titleService: Title,
     private service: LoginService,
+    private router: Router,
   ) {
     this.titleService.setTitle('Login');
   }
@@ -31,7 +33,7 @@ export class LoginPageComponent {
       this.service
         .login(this.username.value, this.password.value)
         .subscribe((x) => {
-          console.log(x);
+          this.router.navigate(['/']);
         });
     }
   }

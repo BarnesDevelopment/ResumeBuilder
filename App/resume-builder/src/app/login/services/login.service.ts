@@ -46,20 +46,17 @@ export class LoginService {
   }
 
   private addCookie(cookie: Cookie): Cookie {
-    this.cookieService.set(`resume-builder-cookie`, cookie.key);
-    this.cookieService.set(
-      `resume-builder-expiration`,
-      cookie.expiration.toString(),
-    );
-    this.cookieService.set(`resume-builder-user`, cookie.userId);
+    this.cookieService.set(`resume-builder-cookie`, cookie.key, {
+      expires: new Date(cookie.expiration),
+      sameSite: 'Strict',
+      path: '/',
+      domain: this.env.domain,
+      secure: true,
+    });
     return cookie;
   }
 
-  private getCookie(): Cookie {
-    return {
-      key: this.cookieService.get('resume-builder-cookie'),
-      expiration: new Date(this.cookieService.get('resume-builder-expiration')),
-      userId: this.cookieService.get('resume-builder-user'),
-    };
+  public getCookie(): string {
+    return this.cookieService.get('resume-builder-cookie');
   }
 }
