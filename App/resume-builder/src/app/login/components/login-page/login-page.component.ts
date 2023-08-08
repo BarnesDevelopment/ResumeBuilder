@@ -3,6 +3,8 @@ import { Title } from '@angular/platform-browser';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
+import { catchError } from 'rxjs/operators';
+import { Cookie } from '../../../models/Cookie';
 
 @Component({
   selector: 'app-login-page',
@@ -30,11 +32,15 @@ export class LoginPageComponent {
 
   onSubmit() {
     if (this.username.valid && this.password.valid) {
-      this.service
-        .login(this.username.value, this.password.value)
-        .subscribe((x) => {
-          this.router.navigate(['/']);
-        });
+      this.service.login(this.username.value, this.password.value).subscribe({
+        next: (cookie: Cookie) => {
+          console.log({ cookie });
+          // this.router.navigate(['/']);
+        },
+        error: (error) => {
+          console.log({ error });
+        },
+      });
     }
   }
 }
