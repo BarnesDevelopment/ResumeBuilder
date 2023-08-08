@@ -64,6 +64,11 @@ export class LoginService {
     return cookie;
   }
 
+  public logout() {
+    this.cookieService.delete(`resume-builder-cookie`);
+    this.cookieService.delete(`resume-builder-userid`);
+  }
+
   public getCookie() {
     return {
       cookie: this.cookieService.get('resume-builder-cookie'),

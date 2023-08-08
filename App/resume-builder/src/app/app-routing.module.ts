@@ -12,12 +12,13 @@ const routes: Routes = [
   {
     path: 'login',
     component: LoginPageComponent,
+    runGuardsAndResolvers: 'always',
   },
   { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

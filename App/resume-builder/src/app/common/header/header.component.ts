@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { User } from '../../models/User';
 import { BorderStyle, ButtonStyle } from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
 
 @Component({
@@ -10,7 +10,8 @@ import { LoginService } from '../../login/services/login.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
+  navigationSubscription;
   user: User;
   faCaretDown = faCaretDown;
   showUserPanel: boolean;
@@ -21,19 +22,36 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private login: LoginService,
-  ) {}
+  ) {
+    this.navigationSubscription = this.router.events.subscribe((e: any) => {
+      // If it is a NavigationEnd event re-initalise the component
+      if (e instanceof NavigationEnd) {
+        this.user = null;
+      }
+    });
+  }
 
   ngOnInit() {
     const cookie = this.login.getCookie();
-    this.login
-      .getUser({
-        key: cookie.cookie,
-        userId: cookie.userId,
-        expiration: new Date(),
-      })
-      .subscribe((x) => {
-        this.user = x;
-      });
+    if (cookie.cookie !== '' && cookie.userId !== '') {
+      this.login
+        .getUser({
+          key: cookie.cookie,
+          userId: cookie.userId,
+          expiration: new Date(),
+        })
+        .subscribe((x) => {
+          this.user = x;
+        });
+    } else {
+      this.user = null;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
+    }
   }
 
   ToggleUserPanel() {
@@ -45,6 +63,8 @@ export class HeaderComponent implements OnInit {
   }
 
   Logout() {
-    console.log('logout');
-  } //TODO: Add logout functionality
+    this.login.logout();
+    this.showUserPanel = false;
+    this.router.navigate(['/']);
+  }
 }
