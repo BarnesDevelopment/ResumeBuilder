@@ -1,18 +1,9 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import {
-  AbstractControl,
-  FormControl,
-  FormGroup,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../../services/login.service';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
 import { Cookie } from '../../../models/Cookie';
-import { of } from 'rxjs';
 
 @Component({
   selector: 'app-login-page',
@@ -53,7 +44,7 @@ export class LoginPageComponent {
           this.service.addCookie(cookie);
           this.router.navigate(['/']);
         },
-        error: (error) => {
+        error: () => {
           this.username.setErrors(['badLogin']);
           this.password.setErrors(['badLogin']);
           this.badLogin = true;

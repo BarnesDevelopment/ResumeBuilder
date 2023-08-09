@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '../../models/User';
 import { BorderStyle, ButtonStyle } from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
