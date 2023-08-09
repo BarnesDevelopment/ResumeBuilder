@@ -4,10 +4,10 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError, map, EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Cookie } from '../../models/Cookie';
-import { Environment } from '../../../environment/environment';
+import { environment } from '../../../environment/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { User } from '../../models/User';
 
@@ -19,28 +19,15 @@ export class LoginService {
     private http: HttpClient,
     private cookieService: CookieService,
   ) {}
-  env = Environment;
+  env = environment;
 
   public login(username: string, password: string): Observable<any> {
     const headers = new HttpHeaders()
       .set('username', username)
       .set('key', password);
-    return this.http
-      .get(`${this.env.apiBasePath}/users/login`, {
-        headers,
-      })
-      .pipe(
-        catchError((error) => {
-          let errorMsg: string;
-          if (error.error instanceof ErrorEvent) {
-            errorMsg = `Error: ${error.error.message}`;
-          } else {
-            errorMsg = this.getServerErrorMessage(error);
-          }
-
-          return throwError(errorMsg);
-        }),
-      );
+    return this.http.get(`${this.env.apiBasePath}/users/login`, {
+      headers,
+    });
   }
 
   public getUser(cookie: Cookie): Observable<User> {
@@ -82,25 +69,5 @@ export class LoginService {
       cookie: this.cookieService.get('resume-builder-cookie'),
       userId: this.cookieService.get('resume-builder-userid'),
     };
-  }
-
-  private getServerErrorMessage(error: HttpErrorResponse): string {
-    switch (error.status) {
-      case 401: {
-        return `Unauthorized: ${error.message}`;
-      }
-      case 404: {
-        return `Not Found: ${error.message}`;
-      }
-      case 403: {
-        return `Access Denied: ${error.message}`;
-      }
-      case 500: {
-        return `Internal Server Error: ${error.message}`;
-      }
-      default: {
-        return `Unknown Server Error: ${error.message}`;
-      }
-    }
   }
 }

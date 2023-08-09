@@ -1,6 +1,7 @@
 <app-header></app-header>
 <div class="base">
   <form [formGroup]="loginInfo" (ngSubmit)="onSubmit()">
+    <mat-error *ngIf="badLogin" class="error">Username or password is incorrect.</mat-error>
     <mat-form-field appearance="outline">
       <mat-label>Username</mat-label>
       <input matNativeControl required name="Username" title="Username" formControlName="username">
