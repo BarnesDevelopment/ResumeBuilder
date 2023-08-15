@@ -1,7 +1,12 @@
+using System.Net;
+using System.Security;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
+using Cookie = ResumeAPI.Models.Cookie;
 
 namespace ResumeAPI.Controllers;
 
@@ -35,16 +40,18 @@ public class UserController : ControllerBase
     
     /// <summary>
     /// Gets user by id
+    /// Requires Authorization header with cookie
     /// </summary>
     /// <param name="userId"></param>
-    /// <param name="cookie"></param>
     /// <returns></returns>
     [HttpGet("user")]
     [ProducesResponseType(typeof(UserViewModel),200)]
     [ProducesResponseType(401)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetUser([FromQuery] string userId, [FromHeader] string cookie)
+    public async Task<IActionResult> GetUser([FromQuery] string userId)
     {
+        var cookie = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(cookie)) return Unauthorized();
         var user = await _service.GetUser(Guid.Parse(userId));
         if (user != null)
         {
@@ -69,16 +76,18 @@ public class UserController : ControllerBase
     
     /// <summary>
     /// Update user information
+    /// Requires Authorization header with cookie
     /// </summary>
     /// <param name="id">UserId</param>
     /// <param name="userInput">User object</param>
-    /// <param name="cookie">User cookie</param>
     /// <returns></returns>
     [HttpPost("user/{id}")]
     [ProducesResponseType(typeof(User),202)]
     [ProducesResponseType(401)]
-    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput, [FromHeader] string cookie)
+    public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput)
     {
+        var cookie = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(cookie)) return Unauthorized();
         if (!await _service.VerifyCookie(Guid.Parse(id), Guid.Parse(cookie))) return Unauthorized();
         return Ok(await _service.UpdateUser(id,new UserViewModel(userInput)));
     }

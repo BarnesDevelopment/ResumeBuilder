@@ -1,0 +1,38 @@
+@import "../../../variables";
+
+div {
+  border-radius: 0.2rem;
+  padding: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+
+  &.primary {
+    background-color: $primary;
+    color: $light;
+  }
+
+  &.secondary {
+    background-color: $secondary;
+    color: $dark;
+  }
+
+  &.alert {
+    background-color: $alert;
+    color: $light;
+  }
+
+  &.transparent {
+    background-color: transparent;
+    margin: -2px 0 -2px 0;
+
+    &.dark {
+      border: solid $dark 2px;
+      color: $dark;
+    }
+
+    &.light {
+      border: solid $light 2px;
+      color: $light;
+    }
+  }
+}

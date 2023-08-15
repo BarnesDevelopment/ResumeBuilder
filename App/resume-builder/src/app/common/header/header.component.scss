@@ -1,0 +1,77 @@
+@import "../../../variables";
+
+.base {
+  width: 100%;
+  height: 3rem;
+  background-color: $dark;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  .edge-div {
+    width: 8rem;
+    margin: 1rem;
+  }
+
+  .menu {
+  }
+
+  .title {
+    h2 {
+      color: $light;
+      cursor: pointer;
+    }
+  }
+
+  .user-info {
+    .user {
+      display: flex;
+      flex-direction: row;
+      color: $light;
+      gap: 0.5rem;
+      justify-content: right;
+    }
+
+    .login {
+      display: flex;
+      flex-direction: row;
+      justify-content: right;
+
+      app-button {
+        width: 5rem;
+      }
+    }
+  }
+}
+
+.user-panel {
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  width: 7rem;
+  text-align: center;
+  background-color: $dark;
+  color: $light;
+  //padding: 0.5rem;
+  border: solid $light 2px;
+
+  table {
+    width: 100%;
+    tr {
+      //width: 100%;
+      td {
+        //width: 100%;
+        //text-align: center;
+        padding: 0.5rem;
+        border: solid $light 2px;
+
+        &:hover {
+          background-color: $light;
+          color: $dark;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

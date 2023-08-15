@@ -1,0 +1,18 @@
+<app-header></app-header>
+<div class="base">
+  <form [formGroup]="loginInfo" (ngSubmit)="onSubmit()">
+    <mat-error *ngIf="badLogin" class="error">Username or password is incorrect.</mat-error>
+    <mat-form-field appearance="outline">
+      <mat-label>Username</mat-label>
+      <input matNativeControl required name="Username" title="Username" formControlName="username">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Enter your password</mat-label>
+      <input matInput required (keyup.enter)="onSubmit()" [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+      <button type="button" mat-icon-button matSuffix (click)="hidePassword = !hidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hidePassword">
+        <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+    </mat-form-field>
+    <button class="submit-button" mat-flat-button type="submit">Login</button>
+  </form>
+</div>
