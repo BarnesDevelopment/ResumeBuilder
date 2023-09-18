@@ -1,7 +1,3 @@
-using System.Net;
-using System.Security;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
@@ -14,11 +10,11 @@ namespace ResumeAPI.Controllers;
 [Route("users/")]
 public class UserController : ControllerBase
 {
-    private readonly ILogger<ResumeController> _logger;
+    private readonly ILogger<UserController> _logger;
     private readonly IUserService _service;
     private readonly IUserOrchestrator _orchestrator;
     
-    public UserController(ILogger<ResumeController> logger, IUserService service, IUserOrchestrator orchestrator)
+    public UserController(ILogger<UserController> logger, IUserService service, IUserOrchestrator orchestrator)
     {
         _logger = logger;
         _service = service;
@@ -35,7 +31,16 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(UserViewModel[]),200)]
     public async Task<IActionResult> GetUsers()
     {
-        return Ok(await _service.GetUsers());
+        try
+        {
+            return Ok(await _service.GetUsers());
+        }
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
+        
     }
     
     /// <summary>
@@ -50,15 +55,23 @@ public class UserController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetUser([FromQuery] string userId)
     {
-        var cookie = Request.Headers.Authorization.ToString();
-        if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-        var user = await _service.GetUser(Guid.Parse(userId));
-        if (user != null)
+        try
         {
-            if (!await _service.VerifyCookie(Guid.Parse(userId), Guid.Parse(cookie))) return Unauthorized();
-            return Ok(user);
+            var cookie = Request.Headers.Authorization.ToString();
+            if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+            var user = await _service.GetUser(Guid.Parse(userId));
+            if (user != null)
+            {
+                if (!await _service.VerifyCookie(Guid.Parse(userId), Guid.Parse(cookie))) return Unauthorized();
+                return Ok(user);
+            }
+            return NotFound();
         }
-        return NotFound();
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
     }
 
     /// <summary>
@@ -71,7 +84,15 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(User),201)]
     public async Task<IActionResult> CreateUser([FromBody] UserInfo userInput, [FromHeader] string key)
     {
-        return Ok(await _orchestrator.CreateAccount(new UserViewModel(userInput), key));
+        try
+        {
+            return Ok(await _orchestrator.CreateAccount(new UserViewModel(userInput), key));
+        }
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
     }
     
     /// <summary>
@@ -86,10 +107,18 @@ public class UserController : ControllerBase
     [ProducesResponseType(401)]
     public async Task<IActionResult> UpdateUser([FromRoute] string id, [FromBody] UserInfo userInput)
     {
-        var cookie = Request.Headers.Authorization.ToString();
-        if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-        if (!await _service.VerifyCookie(Guid.Parse(id), Guid.Parse(cookie))) return Unauthorized();
-        return Ok(await _service.UpdateUser(id,new UserViewModel(userInput)));
+        try
+        {
+            var cookie = Request.Headers.Authorization.ToString();
+            if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+            if (!await _service.VerifyCookie(Guid.Parse(id), Guid.Parse(cookie))) return Unauthorized();
+            return Ok(await _service.UpdateUser(id,new UserViewModel(userInput)));
+        }
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
     }
     
     /// <summary>
@@ -102,11 +131,19 @@ public class UserController : ControllerBase
     [ProducesResponseType(404)]
     public async Task<IActionResult> DeleteUser([FromRoute] string id)
     {
-        if (await _orchestrator.DeleteUser(Guid.Parse(id)))
+        try
         {
-            return Accepted();
+            if (await _orchestrator.DeleteUser(Guid.Parse(id)))
+            {
+                return Accepted();
+            }
+            return NotFound();
         }
-        return NotFound();
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
         
     }
     
@@ -125,13 +162,21 @@ public class UserController : ControllerBase
     [ProducesResponseType(401)]
     public async Task<IActionResult> Login([FromHeader] string username, [FromHeader] string key)
     {
-        var attempt = await _orchestrator.Login(username, key);
-        if (attempt.Success)
+        try
         {
-            return Ok(attempt.Cookie);
-        }
+            var attempt = await _orchestrator.Login(username, key);
+            if (attempt.Success)
+            {
+                return Ok(attempt.Cookie);
+            }
 
-        return Unauthorized();
+            return Unauthorized();
+        }
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
+            return Problem(e.Message);
+        }
     }
     
     #endregion
