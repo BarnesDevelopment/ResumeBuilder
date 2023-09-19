@@ -64,7 +64,8 @@ public class Startup
         services.AddTransient<IUserOrchestrator, UserOrchestrator>();
         services.AddTransient<IUserService, UserService>();
         
-        services.AddTransient<IMySqlContext, MySqlContext>();
+        services.AddTransient<IUserData, UserData>();
+        services.AddTransient<IResumeData, ResumeData>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
 
         services.AddHttpClient();

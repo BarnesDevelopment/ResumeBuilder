@@ -13,10 +13,10 @@ public interface IUserOrchestrator
 
 public class UserOrchestrator : IUserOrchestrator
 {
-    private readonly IMySqlContext _db;   
+    private readonly IUserData _db;   
     private readonly IUserService _service;
 
-    public UserOrchestrator(IUserService service, IMySqlContext db)
+    public UserOrchestrator(IUserService service, IUserData db)
     {
         _db = db;
         _service = service;

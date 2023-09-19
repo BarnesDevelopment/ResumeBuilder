@@ -19,10 +19,10 @@ public interface IUserService
 
 public class UserService : IUserService
 {
-    private readonly IMySqlContext _db;
+    private readonly IUserData _db;
     private readonly IPasswordHasher _hasher;
     
-    public UserService(IMySqlContext db, IPasswordHasher hasher)
+    public UserService(IUserData db, IPasswordHasher hasher)
     {
         _db = db;
         _hasher = hasher;
@@ -89,10 +89,10 @@ public class UserService : IUserService
         return VerificationResult.NotFound;
     }
 
-    public async Task<bool> VerifyCookie(Guid id, Guid userCookie)
+    public async Task<bool> VerifyCookie(Guid id, Guid cookie)
     {
-        var cookie = await _db.RetrieveCookie(id);
-        if (cookie != null) return userCookie == cookie.KeyGuid() && cookie.Expiration > DateTime.Now;
+        var userCookie = await _db.RetrieveCookie(id);
+        if (userCookie != null) return cookie == userCookie.KeyGuid() && userCookie.Expiration > DateTime.Now;
         return false;
     }
 }

@@ -9,12 +9,12 @@ namespace UnitTests;
 public class UserServiceTests
 {
     private readonly IUserService _service;
-    private readonly Mock<IMySqlContext> _db;
+    private readonly Mock<IUserData> _db;
     private readonly Mock<IPasswordHasher> _hasher;
 
     public UserServiceTests()
     {
-        _db = new Mock<IMySqlContext>();
+        _db = new Mock<IUserData>();
         _hasher = new Mock<IPasswordHasher>();
         _service = new UserService(_db.Object,_hasher.Object);
         

@@ -9,13 +9,13 @@ namespace UnitTests;
 public class UserOrchestratorTests
 {
     private readonly Mock<IUserService> _service;
-    private readonly Mock<IMySqlContext> _db;
+    private readonly Mock<IUserData> _db;
     private readonly IUserOrchestrator _orchestrator;
 
     public UserOrchestratorTests()
     {
         _service = new Mock<IUserService>();
-        _db = new Mock<IMySqlContext>();
+        _db = new Mock<IUserData>();
         _orchestrator = new UserOrchestrator(_service.Object, _db.Object);
     }
 
@@ -115,7 +115,6 @@ public class UserOrchestratorTests
     [Fact]
     public async Task Login_NoPasswordStored()
     {
-        var guid = Guid.NewGuid();
         var username = "testuser";
         var key = "pass123";
         var expected = new LoginAttempt();
