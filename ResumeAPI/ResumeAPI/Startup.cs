@@ -65,7 +65,7 @@ public class Startup
         services.AddTransient<IUserService, UserService>();
         
         services.AddTransient<IUserData, UserData>();
-        services.AddTransient<IResumeData, ResumeData>();
+        services.AddTransient<IResumeTree, ResumeTree>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
 
         services.AddHttpClient();
