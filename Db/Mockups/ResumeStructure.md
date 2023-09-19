@@ -1,18 +1,10 @@
-Resume Section
-
-| Name         |  type  |
-|:-------------|:------:|
-| SectionName  | string |
-| Order        |  int   |
-| Section Type |  int   |
-
-Resume Section Content
+Resume Tree
 
 | Name        |  type  |
 |:------------|:------:|
-| SectionType |  int   |
+| Id          |  guid  |
+| ParentId    |  guid  |
+| UserId      |  guid  |
 | Order       |  int   |
+| SectionType |  int   |
 | Content     | string |
-
-
-
