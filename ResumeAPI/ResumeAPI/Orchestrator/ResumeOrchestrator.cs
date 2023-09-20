@@ -13,6 +13,7 @@ public interface IResumeOrchestrator
     string BuildResumeHtml(Resume resume);
     Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie);
+    Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
@@ -52,6 +53,11 @@ public class ResumeOrchestrator : IResumeOrchestrator
     }
 
     public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie)
     {
         throw new NotImplementedException();
     }

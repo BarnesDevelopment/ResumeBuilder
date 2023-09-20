@@ -6,7 +6,6 @@ using ResumeAPI.Controllers;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
-using ResumeAPI.Services;
 
 namespace UnitTests;
 
@@ -22,6 +21,8 @@ public class ResumeControllerTests
         _logger = new Mock<ILogger<ResumeController>>();
         _controller = new ResumeController(_logger.Object,_orchestrator.Object);
     }
+    
+    #region GetResumeById
     
     [Fact]
     public async Task GetResumeById_ShouldReturnResume()
@@ -108,6 +109,10 @@ public class ResumeControllerTests
         ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
         ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
     }
+    
+    #endregion
+    
+    #region GetAllResumes
 
     [Fact]
     public async Task GetAllResumes_ShouldReturnResumes()
@@ -170,4 +175,63 @@ public class ResumeControllerTests
         ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
         ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
     }
+    
+    #endregion
+    
+    #region CreateResume
+
+    [Fact]
+    public async Task CreateResume_ReturnsCreatedResume()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.CreateResume(resume, "some cookie")).ReturnsAsync(resume);
+        
+        var actual = (await _controller.CreateResume(resume)).GetObject();
+        
+        actual.Should().BeEquivalentTo(resume);
+    }
+
+    [Fact]
+    public async Task CreateResume_ReturnsUnauthorized()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
+        };
+        
+        var actual = await _controller.CreateResume(resume);
+        
+        actual.Result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task CreateResume_ReturnsProblem()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.CreateResume(resume, "some cookie")).ThrowsAsync(new Exception("some error"));
+        
+        var actual = await _controller.CreateResume(resume);
+        
+        ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
+        ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
+    }
+    
+    #endregion
 }

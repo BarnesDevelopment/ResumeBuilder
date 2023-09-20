@@ -246,7 +246,17 @@ namespace ResumeAPI.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<ResumeTreeNode>> CreateResume([FromBody] ResumeTreeNode resume)
         {
-            throw new NotImplementedException();
+            try
+            {  
+                var cookie = Request.Headers.Authorization.ToString();
+                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+                return Ok(await _orchestrator.CreateResume(resume, cookie));
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return Problem(e.Message);
+            }
         }
         
         [HttpPost("update/{id:guid}")]
