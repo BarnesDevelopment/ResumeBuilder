@@ -15,6 +15,7 @@ public interface IUserService
     Task<bool> CreateKey(Guid id, string key);
     Task<VerificationResult> VerifyKey(Guid id, string key);
     Task<bool> VerifyCookie(Guid id, Guid cookie);
+    Task<Guid> GetUserByCookie(Guid cookie);
 }
 
 public class UserService : IUserService
@@ -43,6 +44,11 @@ public class UserService : IUserService
     public async Task<UserViewModel?> GetUser(string username)
     {
         return await _db.GetUser(username);
+    }
+    
+    public async Task<Guid> GetUserByCookie(Guid cookie)
+    {
+        return await _db.GetUserByCookie(cookie);
     }
 
     public async Task<User> CreateUser(UserViewModel userInput)

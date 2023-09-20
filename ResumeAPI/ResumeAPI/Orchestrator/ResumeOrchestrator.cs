@@ -11,11 +11,11 @@ public interface IResumeOrchestrator
 {
     MemoryStream BuildResume(Resume resume);
     string BuildResumeHtml(Resume resume);
-    Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie);
-    Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie);
-    Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie);
-    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, string cookie);
-    Task<bool> DeleteNode(Guid id, string cookie);
+    Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId);
+    Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
+    Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId);
+    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, Guid userId);
+    Task<bool> DeleteNode(Guid id, Guid userId);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
@@ -49,27 +49,27 @@ public class ResumeOrchestrator : IResumeOrchestrator
         return html;
     }
 
-    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie)
+    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie)
+    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie)
+    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, string cookie)
+    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, Guid userId)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<bool> DeleteNode(Guid id, string cookie)
+    public async Task<bool> DeleteNode(Guid id, Guid userId)
     {
         throw new NotImplementedException();
     }

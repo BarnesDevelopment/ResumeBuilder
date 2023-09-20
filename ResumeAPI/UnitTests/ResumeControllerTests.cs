@@ -14,12 +14,14 @@ public class ResumeControllerTests
     private readonly ResumeController _controller;
     private readonly Mock<IResumeOrchestrator> _orchestrator;
     private readonly Mock<ILogger<ResumeController>> _logger;
+    private readonly Mock<ICookieValidator> _cookieValidator;
     
     public ResumeControllerTests()
     {
         _orchestrator = new Mock<IResumeOrchestrator>();
         _logger = new Mock<ILogger<ResumeController>>();
-        _controller = new ResumeController(_logger.Object,_orchestrator.Object);
+        _cookieValidator = new Mock<ICookieValidator>();
+        _controller = new ResumeController(_logger.Object,_orchestrator.Object,_cookieValidator.Object);
     }
     
     #region GetResumeById
@@ -28,6 +30,7 @@ public class ResumeControllerTests
     public async Task GetResumeById_ShouldReturnResume()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var expected = new ResumeTreeNode{ Id = id };
         _controller.ControllerContext = new ControllerContext
         {
@@ -39,7 +42,9 @@ public class ResumeControllerTests
                 }
             }
         };
-        _orchestrator.Setup(x => x.GetResumeTree(id,"some cookie")).ReturnsAsync(expected);
+        
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.GetResumeTree(id,userId)).ReturnsAsync(expected);
         
         var actual = (await _controller.GetResumeById(id)).GetObject();
         
@@ -50,6 +55,7 @@ public class ResumeControllerTests
     public async Task GetResumeById_ShouldReturnNotFound()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext
@@ -60,7 +66,8 @@ public class ResumeControllerTests
                 }
             }
         };
-        _orchestrator.Setup(x => x.GetResumeTree(id, "some cookie")).ReturnsAsync((ResumeTreeNode?)null);
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.GetResumeTree(id, userId)).ReturnsAsync((ResumeTreeNode?)null);
         
         var actual = await _controller.GetResumeById(id);
         
@@ -82,6 +89,8 @@ public class ResumeControllerTests
             }
         };
         
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
+        
         var actual = await _controller.GetResumeById(id);
         
         actual.Result.Should().BeOfType<UnauthorizedResult>();
@@ -91,6 +100,7 @@ public class ResumeControllerTests
     public async Task GetResumeById_ShouldReturnProblem()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext
@@ -101,8 +111,9 @@ public class ResumeControllerTests
                 }
             }
         };
-
-        _orchestrator.Setup(x => x.GetResumeTree(id, "some cookie")).ThrowsAsync(new Exception("some error"));
+        
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.GetResumeTree(id, userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.GetResumeById(id);
         
@@ -117,6 +128,7 @@ public class ResumeControllerTests
     [Fact]
     public async Task GetAllResumes_ShouldReturnResumes()
     {
+        var userId = Guid.NewGuid();
         var expected = new List<ResumeTreeNode>{ new() };
         _controller.ControllerContext = new ControllerContext
         {
@@ -128,7 +140,9 @@ public class ResumeControllerTests
                 }
             }
         };
-        _orchestrator.Setup(x => x.GetTopLevelResumes("some cookie")).ReturnsAsync(expected);
+        
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.GetTopLevelResumes(userId)).ReturnsAsync(expected);
         
         var actual = (await _controller.GetAllResumes()).GetObject();
         
@@ -149,6 +163,8 @@ public class ResumeControllerTests
             }
         };
         
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
+        
         var actual = (await _controller.GetAllResumes());
         
         actual.Result.Should().BeOfType<UnauthorizedResult>();
@@ -157,6 +173,7 @@ public class ResumeControllerTests
     [Fact]
     public async Task GetAllResumes_ShouldReturnProblem()
     {
+        var userId = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext
@@ -168,7 +185,8 @@ public class ResumeControllerTests
             }
         };
         
-        _orchestrator.Setup(x => x.GetTopLevelResumes("some cookie")).ThrowsAsync(new Exception("some error"));
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.GetTopLevelResumes(userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = (await _controller.GetAllResumes());
         
@@ -184,6 +202,7 @@ public class ResumeControllerTests
     public async Task CreateResume_ReturnsCreatedResume()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode{ Id = id };
 
         _controller.ControllerContext = new ControllerContext
@@ -191,7 +210,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.CreateResume(resume, "some cookie")).ReturnsAsync(resume);
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.CreateResume(resume, userId)).ReturnsAsync(resume);
         
         var actual = (await _controller.CreateResume(resume)).GetObject();
         
@@ -209,6 +229,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
         };
         
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
+        
         var actual = await _controller.CreateResume(resume);
         
         actual.Result.Should().BeOfType<UnauthorizedResult>();
@@ -218,6 +240,7 @@ public class ResumeControllerTests
     public async Task CreateResume_ReturnsProblem()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode{ Id = id };
 
         _controller.ControllerContext = new ControllerContext
@@ -225,7 +248,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.CreateResume(resume, "some cookie")).ThrowsAsync(new Exception("some error"));
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.CreateResume(resume, userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.CreateResume(resume);
         
@@ -241,6 +265,7 @@ public class ResumeControllerTests
     public async Task UpdateNode_ReturnsUpdatedResume()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode{ Id = id };
 
         _controller.ControllerContext = new ControllerContext
@@ -248,7 +273,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.UpdateNode(resume, "some cookie")).ReturnsAsync(resume);
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.UpdateNode(resume, userId)).ReturnsAsync(resume);
         
         var actual = (await _controller.UpdateNode(resume)).GetObject();
         
@@ -266,6 +292,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
         };
         
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
+        
         var actual = await _controller.UpdateNode(resume);
         
         actual.Result.Should().BeOfType<UnauthorizedResult>();
@@ -275,6 +303,7 @@ public class ResumeControllerTests
     public async Task UpdateNode_ReturnsProblem()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode{ Id = id };
 
         _controller.ControllerContext = new ControllerContext
@@ -282,7 +311,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.UpdateNode(resume, "some cookie")).ThrowsAsync(new Exception("some error"));
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.UpdateNode(resume, userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.UpdateNode(resume);
         
@@ -298,13 +328,15 @@ public class ResumeControllerTests
     public async Task DeleteNode_ReturnsAccepted()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ReturnsAsync(true);
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ReturnsAsync(true);
         
         var actual = (await _controller.DeleteNode(id));
         
@@ -315,13 +347,15 @@ public class ResumeControllerTests
     public async Task DeleteNode_ReturnsNotFound()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ReturnsAsync(false);
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ReturnsAsync(false);
         
         var actual = (await _controller.DeleteNode(id));
         
@@ -338,6 +372,8 @@ public class ResumeControllerTests
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
         };
         
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
+        
         var actual = await _controller.DeleteNode(id);
         
         actual.Should().BeOfType<UnauthorizedResult>();
@@ -347,13 +383,15 @@ public class ResumeControllerTests
     public async Task DeleteNode_ReturnsProblem()
     {
         var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
 
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
         };
         
-        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ThrowsAsync(new Exception("some error"));
+        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
+        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.DeleteNode(id);
         

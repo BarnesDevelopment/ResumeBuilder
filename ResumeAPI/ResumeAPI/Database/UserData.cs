@@ -9,6 +9,7 @@ public interface IUserData
     Task<List<UserViewModel>> GetUsers();
     Task<UserViewModel?> GetUser(string username);
     Task<User> GetUser(Guid id);
+    Task<Guid> GetUserByCookie(Guid cookie);
     Task<User> CreateUser(User user);
     Task<UserViewModel> UpdateUser(Guid id, UserViewModel user);
     Task<bool> DeleteUser(Guid id);
@@ -66,6 +67,11 @@ public class UserData : MySqlContext, IUserData
                     updated_date {nameof(User.UpdatedDate)}
                     from Users where id = @id", new { id = id }))
             .First();
+    }
+
+    public async Task<Guid> GetUserByCookie(Guid cookie)
+    {
+        return (await Db.QueryAsync<Guid>($@"select userid from Cookies where cookie = @cookie", new { cookie = cookie })).First();
     }
 
     public async Task<User> CreateUser(User user)

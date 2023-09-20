@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 
@@ -10,11 +11,13 @@ namespace ResumeAPI.Controllers
     {
         private readonly ILogger<ResumeController> _logger;
         private readonly IResumeOrchestrator _orchestrator;
+        private readonly ICookieValidator _validator;
 
-        public ResumeController(ILogger<ResumeController> logger, IResumeOrchestrator orchestrator)
+        public ResumeController(ILogger<ResumeController> logger, IResumeOrchestrator orchestrator, ICookieValidator validator)
         {
-            _orchestrator = orchestrator;
             _logger = logger;
+            _orchestrator = orchestrator;
+            _validator = validator;
         }
 
         [HttpPost("build")]
@@ -214,9 +217,9 @@ namespace ResumeAPI.Controllers
         {
             try
             {
-                var cookie = Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-                return Ok(await _orchestrator.GetTopLevelResumes(cookie));
+                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
+                if (userId == null) return Unauthorized();
+                return Ok(await _orchestrator.GetTopLevelResumes((Guid)userId));
             }
             catch(Exception e)
             {
@@ -230,9 +233,9 @@ namespace ResumeAPI.Controllers
         {
             try
             {
-                var cookie = Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-                var resume = await _orchestrator.GetResumeTree(id, cookie);
+                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
+                if (userId == null) return Unauthorized();
+                var resume = await _orchestrator.GetResumeTree(id, (Guid)userId);
                 if (resume != null) return Ok(resume);
                 return NotFound();
             }
@@ -248,9 +251,9 @@ namespace ResumeAPI.Controllers
         {
             try
             {  
-                var cookie = Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-                return Ok(await _orchestrator.CreateResume(resume, cookie));
+                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
+                if (userId == null) return Unauthorized();
+                return Ok(await _orchestrator.CreateResume(resume, (Guid)userId));
             }
             catch(Exception e)
             {
@@ -264,9 +267,9 @@ namespace ResumeAPI.Controllers
         {
             try
             {
-                var cookie = Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-                return Ok(await _orchestrator.UpdateNode(resume, cookie));
+                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
+                if (userId == null) return Unauthorized();
+                return Ok(await _orchestrator.UpdateNode(resume, (Guid)userId));
             }
             catch (Exception e)
             {
@@ -280,9 +283,9 @@ namespace ResumeAPI.Controllers
         {
             try
             {
-                var cookie = Request.Headers.Authorization.ToString();
-                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
-                if(await _orchestrator.DeleteNode(id, cookie)) return Accepted();
+                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
+                if (userId == null) return Unauthorized();
+                if(await _orchestrator.DeleteNode(id, (Guid)userId)) return Accepted();
                 return NotFound();
             }
             catch(Exception e)
