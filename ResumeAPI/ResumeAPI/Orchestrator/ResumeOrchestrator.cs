@@ -11,6 +11,8 @@ public interface IResumeOrchestrator
 {
     MemoryStream BuildResume(Resume resume);
     string BuildResumeHtml(Resume resume);
+    Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie);
+    Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
@@ -21,11 +23,11 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         _service = service;
     }
-    public MemoryStream BuildResume(Resume header)
+    public MemoryStream BuildResume(Resume resume)
     {
         var stream = new MemoryStream();
         
-        var body = CreateHtml(header);
+        var body = CreateHtml(resume);
         var html = body.Write();
 
         var properties = new ConverterProperties();
@@ -42,6 +44,16 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var html = CreateHtml(resume).Write();
         return html;
+    }
+
+    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie)
+    {
+        throw new NotImplementedException();
     }
 
     private TagBuilder CreateHtml(Resume resume)

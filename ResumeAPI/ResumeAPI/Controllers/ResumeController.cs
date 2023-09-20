@@ -25,6 +25,8 @@ namespace ResumeAPI.Controllers
             return File(stream.GetBuffer(), "application/octet-stream", resume.Header.Filename);
         }
 
+        #region Testing
+        
         [HttpGet("build-test")]
         public IActionResult BuildPdfTest()
         {
@@ -78,7 +80,7 @@ namespace ResumeAPI.Controllers
                         Employer = "Vermeer Corporation",
                         City = "Pella",
                         State = "IA",
-                        StartDate = new DateTime(2021,03,01),
+                        StartDate = new(2021,03,01, 0,0,0, DateTimeKind.Utc),
                         EndDate = null,
                         Responsibilities = new List<string>
                         {
@@ -94,8 +96,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Vermeer Corporation",
                         City = "Pella",
                         State = "IA",
-                        StartDate = new DateTime(2019,05,01),
-                        EndDate = new DateTime(2021,03,01),
+                        StartDate = new DateTime(2019,05,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2021,03,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Weld parts to print",
@@ -109,8 +111,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Vermeer Corporation",
                         City = "Pella",
                         State = "IA",
-                        StartDate = new DateTime(2018,05,01),
-                        EndDate = new DateTime(2019,04,01),
+                        StartDate = new DateTime(2018,05,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2019,04,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Pick and pack parts",
@@ -126,8 +128,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Pizza Ranch",
                         City = "Oskaloosa",
                         State = "IA",
-                        StartDate = new DateTime(2017,12,01),
-                        EndDate = new DateTime(2018,02,01),
+                        StartDate = new DateTime(2017,12,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2018,02,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Deliver orders",
@@ -141,8 +143,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Arby's",
                         City = "Pella",
                         State = "IA",
-                        StartDate = new DateTime(2015,07,01),
-                        EndDate = new DateTime(2017,05,01),
+                        StartDate = new DateTime(2015,07,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2017,05,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Manage employees",
@@ -161,8 +163,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Culvers",
                         City = "Pella",
                         State = "IA",
-                        StartDate = new DateTime(2016,11,01),
-                        EndDate = new DateTime(2017,05,01),
+                        StartDate = new DateTime(2016,11,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2017,05,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Grilled burgers",
@@ -178,8 +180,8 @@ namespace ResumeAPI.Controllers
                         Employer = "Mango Tree",
                         City = "Oskaloosa",
                         State = "IA",
-                        StartDate = new DateTime(2016,02,01),
-                        EndDate = new DateTime(2021,11,01),
+                        StartDate = new DateTime(2016,02,01, 0,0,0, DateTimeKind.Utc),
+                        EndDate = new DateTime(2021,11,01, 0,0,0, DateTimeKind.Utc),
                         Responsibilities = new List<string>
                         {
                             "Manage customer complaints",
@@ -203,6 +205,60 @@ namespace ResumeAPI.Controllers
             };
 
             return Content(_orchestrator.BuildResumeHtml(resume), "text/html");
+        }
+        
+        #endregion
+        
+        [HttpGet("get-all")]
+        public async Task<ActionResult<IEnumerable<ResumeTreeNode>>> GetAllResumes()
+        {
+            try
+            {
+                var cookie = Request.Headers.Authorization.ToString();
+                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+                return Ok(await _orchestrator.GetTopLevelResumes(cookie));
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return Problem(e.Message);
+            }
+        }
+        
+        [HttpGet("get/{id:guid}")]
+        public async Task<ActionResult<ResumeTreeNode>> GetResumeById(Guid id)
+        {
+            try
+            {
+                var cookie = Request.Headers.Authorization.ToString();
+                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+                var resume = await _orchestrator.GetResumeTree(id, cookie);
+                if (resume != null) return Ok(resume);
+                return NotFound();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return Problem(e.Message);
+            }
+        }
+        
+        [HttpPost("create")]
+        public async Task<ActionResult<ResumeTreeNode>> CreateResume([FromBody] ResumeTreeNode resume)
+        {
+            throw new NotImplementedException();
+        }
+        
+        [HttpPost("update/{id:guid}")]
+        public async Task<ActionResult<ResumeTreeNode>> UpdateNode(Guid id, [FromBody] ResumeTreeNode resume)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpDelete("delete/{id:guid}")]
+        public async Task<ActionResult> DeleteNode(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
