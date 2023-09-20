@@ -1,3 +1,4 @@
+using Dapper;
 using Microsoft.Extensions.Options;
 using ResumeAPI.Models;
 
@@ -19,17 +20,47 @@ public class ResumeTree : MySqlContext, IResumeTree
 
     public async Task<ResumeTreeNode> GetNode(Guid id)
     {
-        throw new NotImplementedException();
+        var query = $@"SELECT 
+                        id {nameof(ResumeTreeNode.Id)},
+                        userId {nameof(ResumeTreeNode.UserId)},
+                        parentId {nameof(ResumeTreeNode.ParentId)},
+                        content {nameof(ResumeTreeNode.Content)},
+                        placementorder {nameof(ResumeTreeNode.Order)},
+                        depth {nameof(ResumeTreeNode.Depth)},
+                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        active {nameof(ResumeTreeNode.Active)}
+                        FROM ResumeTree WHERE Id = @Id";
+        return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = id });
     }
 
     public async Task<List<ResumeTreeNode>> GetChildren(Guid id)
     {
-        throw new NotImplementedException();
+        var query = $@"SELECT 
+                        id {nameof(ResumeTreeNode.Id)},
+                        userId {nameof(ResumeTreeNode.UserId)},
+                        parentId {nameof(ResumeTreeNode.ParentId)},
+                        content {nameof(ResumeTreeNode.Content)},
+                        placementorder {nameof(ResumeTreeNode.Order)},
+                        depth {nameof(ResumeTreeNode.Depth)},
+                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        active {nameof(ResumeTreeNode.Active)}
+                        FROM ResumeTree WHERE parentid = @Id";
+        return (await Db.QueryAsync<ResumeTreeNode>(query, new { Id = id })).ToList();
     }
 
     public async Task<List<ResumeTreeNode>> GetTopLevelNodes(Guid userId)
     {
-        throw new NotImplementedException();
+        var query = $@"SELECT 
+                        id {nameof(ResumeTreeNode.Id)},
+                        userId {nameof(ResumeTreeNode.UserId)},
+                        parentId {nameof(ResumeTreeNode.ParentId)},
+                        content {nameof(ResumeTreeNode.Content)},
+                        placementorder {nameof(ResumeTreeNode.Order)},
+                        depth {nameof(ResumeTreeNode.Depth)},
+                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        active {nameof(ResumeTreeNode.Active)}
+                        FROM ResumeTree WHERE depth = 0";
+        return (await Db.QueryAsync<ResumeTreeNode>(query)).ToList();
     }
 
     public async Task<ResumeTreeNode> CreateNode(ResumeTreeNode node)

@@ -10,4 +10,5 @@ public class ResumeTreeNode
     public string Content { get; set; }
     public string SectionType { get; set; }
     public int Depth { get; set; }
+    public int Order { get; set; }
 }

@@ -5,7 +5,7 @@ CREATE TABLE ResumeDb.ResumeTree (
      parentid            varchar(36)                 null,
      placementorder      int                     not null,
      content             varchar(5000)           not null,
-     section_type        varchar(255)            not null,
+     sectiontype         varchar(255)            not null,
      depth               int                     not null default 0,
 
      constraint ResumeTree_pk
