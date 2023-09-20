@@ -11,7 +11,7 @@ public interface IResumeTree
     Task<List<ResumeTreeNode>> GetTopLevelNodes(Guid userId);
     Task<ResumeTreeNode> CreateNode(ResumeTreeNode node);
     Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node);
-    Task<ResumeTreeNode> DeleteNode(Guid id);
+    Task<bool> DeleteNode(Guid id);
 }
 
 public class ResumeTree : MySqlContext, IResumeTree
@@ -65,16 +65,51 @@ public class ResumeTree : MySqlContext, IResumeTree
 
     public async Task<ResumeTreeNode> CreateNode(ResumeTreeNode node)
     {
-        throw new NotImplementedException();
+        var createQuery = $@"INSERT INTO ResumeTree 
+                            (id, userId, parentId, content, placementorder, depth, sectiontype, active) 
+                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active)";
+        await Db.ExecuteAsync(createQuery, node);
+        var query = $@"SELECT 
+                        id {nameof(ResumeTreeNode.Id)},
+                        userId {nameof(ResumeTreeNode.UserId)},
+                        parentId {nameof(ResumeTreeNode.ParentId)},
+                        content {nameof(ResumeTreeNode.Content)},
+                        placementorder {nameof(ResumeTreeNode.Order)},
+                        depth {nameof(ResumeTreeNode.Depth)},
+                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        active {nameof(ResumeTreeNode.Active)}
+                        FROM ResumeTree WHERE id = @Id";
+        return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = node.Id });
     }
 
     public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node)
     {
-        throw new NotImplementedException();
+        var updateQuery = $@"UPDATE ResumeTree SET 
+                            userId = @UserId, 
+                            parentId = @ParentId, 
+                            content = @Content, 
+                            placementorder = @Order, 
+                            depth = @Depth, 
+                            sectiontype = @SectionType, 
+                            active = @Active 
+                            WHERE id = @Id";
+        await Db.ExecuteAsync(updateQuery, node);
+        var query = $@"SELECT 
+                        id {nameof(ResumeTreeNode.Id)},
+                        userId {nameof(ResumeTreeNode.UserId)},
+                        parentId {nameof(ResumeTreeNode.ParentId)},
+                        content {nameof(ResumeTreeNode.Content)},
+                        placementorder {nameof(ResumeTreeNode.Order)},
+                        depth {nameof(ResumeTreeNode.Depth)},
+                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        active {nameof(ResumeTreeNode.Active)}
+                        FROM ResumeTree WHERE id = @Id";
+        return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = node.Id });
     }
 
-    public async Task<ResumeTreeNode> DeleteNode(Guid id)
+    public async Task<bool> DeleteNode(Guid id)
     {
-        throw new NotImplementedException();
+        var query = "DELETE FROM ResumeTree WHERE id = @Id";
+        return (await Db.ExecuteAsync(query, new { Id = id })) > 0;
     }
 }
