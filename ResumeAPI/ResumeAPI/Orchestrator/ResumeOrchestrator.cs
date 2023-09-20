@@ -14,12 +14,14 @@ public interface IResumeOrchestrator
     Task<ResumeTreeNode?> GetResumeTree(Guid id, string cookie);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(string cookie);
     Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie);
+    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, string cookie);
+    Task<bool> DeleteNode(Guid id, string cookie);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
 {
     private readonly IResumeService _service;
-    
+
     public ResumeOrchestrator(IResumeService service)
     {
         _service = service;
@@ -58,6 +60,16 @@ public class ResumeOrchestrator : IResumeOrchestrator
     }
 
     public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, string cookie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, string cookie)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<bool> DeleteNode(Guid id, string cookie)
     {
         throw new NotImplementedException();
     }

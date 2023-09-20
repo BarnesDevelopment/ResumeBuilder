@@ -259,16 +259,37 @@ namespace ResumeAPI.Controllers
             }
         }
         
-        [HttpPost("update/{id:guid}")]
-        public async Task<ActionResult<ResumeTreeNode>> UpdateNode(Guid id, [FromBody] ResumeTreeNode resume)
+        [HttpPost("update")]
+        public async Task<ActionResult<ResumeTreeNode>> UpdateNode([FromBody] ResumeTreeNode resume)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var cookie = Request.Headers.Authorization.ToString();
+                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+                return Ok(await _orchestrator.UpdateNode(resume, cookie));
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                return Problem(e.Message);
+            }
         }
 
         [HttpDelete("delete/{id:guid}")]
         public async Task<ActionResult> DeleteNode(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var cookie = Request.Headers.Authorization.ToString();
+                if (string.IsNullOrEmpty(cookie)) return Unauthorized();
+                if(await _orchestrator.DeleteNode(id, cookie)) return Accepted();
+                return NotFound();
+            }
+            catch(Exception e)
+            {
+                _logger.LogError(e.Message);
+                return Problem(e.Message);
+            }
         }
     }
 }

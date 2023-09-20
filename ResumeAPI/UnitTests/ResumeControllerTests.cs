@@ -234,4 +234,132 @@ public class ResumeControllerTests
     }
     
     #endregion
+    
+    #region UpdateNode
+
+    [Fact]
+    public async Task UpdateNode_ReturnsUpdatedResume()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.UpdateNode(resume, "some cookie")).ReturnsAsync(resume);
+        
+        var actual = (await _controller.UpdateNode(resume)).GetObject();
+        
+        actual.Should().BeEquivalentTo(resume);
+    }
+
+    [Fact]
+    public async Task UpdateNode_ReturnsUnauthorized()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
+        };
+        
+        var actual = await _controller.UpdateNode(resume);
+        
+        actual.Result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task UpdateNode_ReturnsProblem()
+    {
+        var id = Guid.NewGuid();
+        var resume = new ResumeTreeNode{ Id = id };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.UpdateNode(resume, "some cookie")).ThrowsAsync(new Exception("some error"));
+        
+        var actual = await _controller.UpdateNode(resume);
+        
+        ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
+        ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
+    }
+    
+    #endregion
+    
+    #region DeleteNode
+
+    [Fact]
+    public async Task DeleteNode_ReturnsAccepted()
+    {
+        var id = Guid.NewGuid();
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ReturnsAsync(true);
+        
+        var actual = (await _controller.DeleteNode(id));
+        
+        actual.Should().BeOfType<AcceptedResult>();
+    }
+
+    [Fact]
+    public async Task DeleteNode_ReturnsNotFound()
+    {
+        var id = Guid.NewGuid();
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ReturnsAsync(false);
+        
+        var actual = (await _controller.DeleteNode(id));
+        
+        actual.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
+    public async Task DeleteNode_ReturnsUnauthorized()
+    {
+        var id = Guid.NewGuid();
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
+        };
+        
+        var actual = await _controller.DeleteNode(id);
+        
+        actual.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task DeleteNode_ReturnsProblem()
+    {
+        var id = Guid.NewGuid();
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
+        };
+        
+        _orchestrator.Setup(x => x.DeleteNode(id, "some cookie")).ThrowsAsync(new Exception("some error"));
+        
+        var actual = await _controller.DeleteNode(id);
+        
+        ((ObjectResult)actual).Value.Should().BeOfType<ProblemDetails>();
+        ((ProblemDetails)((ObjectResult)actual).Value!).Detail.Should().Be("some error");
+    }
+    
+    #endregion
 }
