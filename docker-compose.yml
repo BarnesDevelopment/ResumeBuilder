@@ -5,7 +5,7 @@ services:
       - .env
     image: sambobbarnes/resume-api:latest
     depends_on:
-      - mysql
+      - db
     ports:
       - "8080:80"
     expose:
@@ -18,7 +18,7 @@ services:
     networks:
       - api
 
-  mysql:
+  db:
     image: mysql:8
     restart: always
     volumes:
@@ -27,6 +27,7 @@ services:
       - "3306:3306"
     expose:
       - "3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
       MYSQL_DATABASE: 'ResumeDb'
       # So you don't have to use root, but you can if you like
@@ -36,6 +37,16 @@ services:
       # Password for root access
       MYSQL_ROOT_PASSWORD: 'resumeroot211898'
     networks: 
+      - api
+        
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:mysql://db -schemas=ResumeDb -user=resumeApi -password=resumedb211898 -connectRetries=60 migrate
+    volumes:
+      - ./Db/Sql:/flyway/sql
+    depends_on:
+      - db
+    networks:
       - api
 
 volumes:
