@@ -1,6 +1,7 @@
 ﻿using iText.Html2pdf;
 using iText.Html2pdf.Resolver.Font;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Services;
@@ -9,23 +10,75 @@ namespace ResumeAPI.Orchestrator;
 
 public interface IResumeOrchestrator
 {
-    MemoryStream BuildResume(Resume resume);
-    string BuildResumeHtml(Resume resume);
     Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
     Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId);
-    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, Guid userId);
-    Task<bool> DeleteNode(Guid id, Guid userId);
+    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume);
+    Task<bool> DeleteNode(Guid id);
+    MemoryStream BuildResume(Resume resume);
+    string BuildResumeHtml(Resume resume);
 }
 
 public class ResumeOrchestrator : IResumeOrchestrator
 {
     private readonly IResumeService _service;
+    private readonly IResumeTree _tree;
 
-    public ResumeOrchestrator(IResumeService service)
+    public ResumeOrchestrator(IResumeService service, IResumeTree tree)
     {
         _service = service;
+        _tree = tree;
     }
+
+    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId)
+    {
+        return await _tree.GetTopLevelNodes(userId);
+    }
+
+    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId)
+    {
+        resume.UserId = userId;
+        await _tree.CreateNode(resume);
+
+        if (resume.Children != null && resume.Children.Any())
+        {
+            resume = await CreateResumeRecurseChildren(resume, userId);
+        }
+        
+        return resume;
+    }
+    
+    private async Task<ResumeTreeNode> CreateResumeRecurseChildren(ResumeTreeNode resume, Guid userId)
+    {
+        for(var i = 0; i < resume.Children.Count; i++) 
+        {
+            resume.Children[i].UserId = userId;
+            await _tree.CreateNode(resume.Children[i]);
+            if (resume.Children[i].Children != null && resume.Children[i].Children.Any())
+            {
+                resume.Children[i] = await CreateResumeRecurseChildren(resume.Children[i], userId);
+            }
+        }
+        return resume;
+    }
+
+    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume)
+    {
+        return await _tree.UpdateNode(resume);
+    }
+    
+    public async Task<bool> DeleteNode(Guid id)
+    {
+        return await _tree.DeleteNode(id);
+    }
+    
+    #region BuildResume
+    
     public MemoryStream BuildResume(Resume resume)
     {
         var stream = new MemoryStream();
@@ -47,31 +100,6 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var html = CreateHtml(resume).Write();
         return html;
-    }
-
-    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<bool> DeleteNode(Guid id, Guid userId)
-    {
-        throw new NotImplementedException();
     }
 
     private TagBuilder CreateHtml(Resume resume)
@@ -244,4 +272,6 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
         educationTag.InnerHtml.AppendHtml(schoolTag);
     }
+    
+    #endregion
 }

@@ -9,7 +9,7 @@ public interface IResumeTree
     Task<ResumeTreeNode> GetNode(Guid id);
     Task<List<ResumeTreeNode>> GetChildren(Guid id);
     Task<List<ResumeTreeNode>> GetTopLevelNodes(Guid userId);
-    Task<ResumeTreeNode> CreateNode(ResumeTreeNode node);
+    Task<bool> CreateNode(ResumeTreeNode node);
     Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node);
     Task<bool> DeleteNode(Guid id);
 }
@@ -63,23 +63,12 @@ public class ResumeTree : MySqlContext, IResumeTree
         return (await Db.QueryAsync<ResumeTreeNode>(query)).ToList();
     }
 
-    public async Task<ResumeTreeNode> CreateNode(ResumeTreeNode node)
+    public async Task<bool> CreateNode(ResumeTreeNode node)
     {
         var createQuery = $@"INSERT INTO ResumeTree 
                             (id, userId, parentId, content, placementorder, depth, sectiontype, active) 
                             VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active)";
-        await Db.ExecuteAsync(createQuery, node);
-        var query = $@"SELECT 
-                        id {nameof(ResumeTreeNode.Id)},
-                        userId {nameof(ResumeTreeNode.UserId)},
-                        parentId {nameof(ResumeTreeNode.ParentId)},
-                        content {nameof(ResumeTreeNode.Content)},
-                        placementorder {nameof(ResumeTreeNode.Order)},
-                        depth {nameof(ResumeTreeNode.Depth)},
-                        sectiontype {nameof(ResumeTreeNode.SectionType)},
-                        active {nameof(ResumeTreeNode.Active)}
-                        FROM ResumeTree WHERE id = @Id";
-        return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = node.Id });
+        return await Db.ExecuteAsync(createQuery, node) > 0;
     }
 
     public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node)

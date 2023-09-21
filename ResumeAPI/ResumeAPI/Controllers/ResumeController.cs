@@ -269,7 +269,7 @@ namespace ResumeAPI.Controllers
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                return Ok(await _orchestrator.UpdateNode(resume, (Guid)userId));
+                return Ok(await _orchestrator.UpdateNode(resume));
             }
             catch (Exception e)
             {
@@ -285,7 +285,7 @@ namespace ResumeAPI.Controllers
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                if(await _orchestrator.DeleteNode(id, (Guid)userId)) return Accepted();
+                if(await _orchestrator.DeleteNode(id)) return Accepted();
                 return NotFound();
             }
             catch(Exception e)

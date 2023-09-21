@@ -274,7 +274,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpdateNode(resume, userId)).ReturnsAsync(resume);
+        _orchestrator.Setup(x => x.UpdateNode(resume)).ReturnsAsync(resume);
         
         var actual = (await _controller.UpdateNode(resume)).GetObject();
         
@@ -312,7 +312,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpdateNode(resume, userId)).ThrowsAsync(new Exception("some error"));
+        _orchestrator.Setup(x => x.UpdateNode(resume)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.UpdateNode(resume);
         
@@ -336,7 +336,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ReturnsAsync(true);
+        _orchestrator.Setup(x => x.DeleteNode(id)).ReturnsAsync(true);
         
         var actual = (await _controller.DeleteNode(id));
         
@@ -355,7 +355,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ReturnsAsync(false);
+        _orchestrator.Setup(x => x.DeleteNode(id)).ReturnsAsync(false);
         
         var actual = (await _controller.DeleteNode(id));
         
@@ -391,7 +391,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.DeleteNode(id, userId)).ThrowsAsync(new Exception("some error"));
+        _orchestrator.Setup(x => x.DeleteNode(id)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.DeleteNode(id);
         
