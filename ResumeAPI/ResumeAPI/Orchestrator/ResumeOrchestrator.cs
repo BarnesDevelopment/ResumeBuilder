@@ -10,7 +10,7 @@ namespace ResumeAPI.Orchestrator;
 
 public interface IResumeOrchestrator
 {
-    Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId);
+    Task<ResumeTreeNode?> GetResumeTree(Guid id);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
     Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId);
     Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume);
@@ -30,9 +30,25 @@ public class ResumeOrchestrator : IResumeOrchestrator
         _tree = tree;
     }
 
-    public async Task<ResumeTreeNode?> GetResumeTree(Guid id, Guid userId)
+    public async Task<ResumeTreeNode?> GetResumeTree(Guid id)
     {
-        throw new NotImplementedException();
+        var root = await _tree.GetNode(id);
+        if (root == null) return null;
+        
+        root.Children = await _tree.GetChildren(root.Id);
+
+        return await GetGrandChildren(root);
+    }
+
+    private async Task<ResumeTreeNode> GetGrandChildren(ResumeTreeNode root)
+    {
+        for (var i = 0; i < root.Children.Count; i++)
+        {
+            root.Children[i].Children = await _tree.GetChildren(root.Children[i].Id);
+            root.Children[i] = await GetGrandChildren(root.Children[i]);
+        }
+
+        return root;
     }
 
     public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId)

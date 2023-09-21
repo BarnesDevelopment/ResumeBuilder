@@ -6,7 +6,7 @@ namespace ResumeAPI.Database;
 
 public interface IResumeTree
 {
-    Task<ResumeTreeNode> GetNode(Guid id);
+    Task<ResumeTreeNode?> GetNode(Guid id);
     Task<List<ResumeTreeNode>> GetChildren(Guid id);
     Task<List<ResumeTreeNode>> GetTopLevelNodes(Guid userId);
     Task<bool> CreateNode(ResumeTreeNode node);
@@ -18,7 +18,7 @@ public class ResumeTree : MySqlContext, IResumeTree
 {
     public ResumeTree(IOptions<AWSSecrets> options) : base(options) {}
 
-    public async Task<ResumeTreeNode> GetNode(Guid id)
+    public async Task<ResumeTreeNode?> GetNode(Guid id)
     {
         var query = $@"SELECT 
                         id {nameof(ResumeTreeNode.Id)},

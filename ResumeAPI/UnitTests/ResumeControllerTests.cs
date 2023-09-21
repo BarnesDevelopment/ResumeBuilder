@@ -44,7 +44,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.GetResumeTree(id,userId)).ReturnsAsync(expected);
+        _orchestrator.Setup(x => x.GetResumeTree(id)).ReturnsAsync(expected);
         
         var actual = (await _controller.GetResumeById(id)).GetObject();
         
@@ -67,7 +67,7 @@ public class ResumeControllerTests
             }
         };
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.GetResumeTree(id, userId)).ReturnsAsync((ResumeTreeNode?)null);
+        _orchestrator.Setup(x => x.GetResumeTree(id)).ReturnsAsync((ResumeTreeNode?)null);
         
         var actual = await _controller.GetResumeById(id);
         
@@ -113,7 +113,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.GetResumeTree(id, userId)).ThrowsAsync(new Exception("some error"));
+        _orchestrator.Setup(x => x.GetResumeTree(id)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.GetResumeById(id);
         

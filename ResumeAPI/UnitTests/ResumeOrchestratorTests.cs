@@ -244,4 +244,170 @@ public class ResumeOrchestratorTests
         
         actual.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public async Task GetResumeTree_ShouldReturnNode()
+    {
+        var guid1 = Guid.NewGuid();
+        var root = new ResumeTreeNode
+        {
+            Id = guid1,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            SectionType = "resume",
+            Depth = 0,
+            Order = 0,
+        };
+        
+        var expected = new ResumeTreeNode
+        {
+            Id = guid1,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            SectionType = "resume",
+            Depth = 0,
+            Order = 0,
+            Children = new List<ResumeTreeNode>()
+        };
+        
+        _tree.Setup(x => x.GetNode(guid1)).ReturnsAsync(root);
+        _tree.Setup(x => x.GetChildren(guid1)).ReturnsAsync(new List<ResumeTreeNode>());
+        
+        var actual = await _orchestrator.GetResumeTree(guid1);
+        
+        actual.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public async Task GetResumeTree_ShouldReturnTree()
+    {
+        var userId = Guid.NewGuid();
+        var guid1 = Guid.NewGuid();
+        var guid2 = Guid.NewGuid();
+        var guid3 = Guid.NewGuid();
+        var guid4 = Guid.NewGuid();
+        
+        var root = new ResumeTreeNode
+        {
+            Id = guid1,
+            Active = true,
+            UserId = userId,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            SectionType = "resume",
+            Depth = 0,
+            Order = 0,
+            Children = new List<ResumeTreeNode>()
+        };
+
+        var children1 = new List<ResumeTreeNode>
+        {
+            new()
+            {
+                Id = guid2,
+                Active = true,
+                UserId = userId,
+                ParentId = guid1,
+                Content = "resume2",
+                SectionType = ResumeSectionType.Section,
+                Depth = 1,
+                Order = 0,
+            },
+            new()
+            {
+                Id = guid3,
+                Active = true,
+                UserId = userId,
+                ParentId = guid1,
+                Content = "resume3",
+                SectionType = ResumeSectionType.Section,
+                Depth = 1,
+                Order = 1,
+            }
+        };
+
+        var children2 = new List<ResumeTreeNode>
+        {
+            new ResumeTreeNode
+            {
+                Id = guid4,
+                Active = true,
+                UserId = userId,
+                ParentId = guid3,
+                Content = "resume4",
+                SectionType = ResumeSectionType.Paragraph,
+                Depth = 2,
+                Order = 0,
+                Children = new List<ResumeTreeNode>()
+            },
+        };
+        
+        var expected = new ResumeTreeNode
+        {
+            Children = new List<ResumeTreeNode>
+            {
+                new ResumeTreeNode
+                {
+                    Id = guid2,
+                    Active = true,
+                    UserId = userId,
+                    ParentId = guid1,
+                    Content = "resume2",
+                    SectionType = ResumeSectionType.Section,
+                    Depth = 1,
+                    Order = 0,
+                    Children = new List<ResumeTreeNode>()
+                },
+                new ResumeTreeNode
+                {
+                    Children = new List<ResumeTreeNode>
+                    {
+                        new ResumeTreeNode
+                        {
+                            Id = guid4,
+                            Active = true,
+                            UserId = userId,
+                            ParentId = guid3,
+                            Content = "resume4",
+                            SectionType = ResumeSectionType.Paragraph,
+                            Depth = 2,
+                            Order = 0,
+                            Children = new List<ResumeTreeNode>()
+                        },
+                    },
+                    Id = guid3,
+                    Active = true,
+                    UserId = userId,
+                    ParentId = guid1,
+                    Content = "resume3",
+                    SectionType = ResumeSectionType.Section,
+                    Depth = 1,
+                    Order = 1,
+
+                },
+            },
+            Id = guid1,
+            Active = true,
+            UserId = userId,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            SectionType = "resume",
+            Depth = 0,
+            Order = 0,
+        };
+        
+        _tree.Setup(x => x.GetNode(guid1)).ReturnsAsync(root);
+        _tree.Setup(x => x.GetChildren(guid1)).ReturnsAsync(children1);
+        _tree.Setup(x => x.GetChildren(guid2)).ReturnsAsync(new List<ResumeTreeNode>());
+        _tree.Setup(x => x.GetChildren(guid3)).ReturnsAsync(children2);
+        _tree.Setup(x => x.GetChildren(guid4)).ReturnsAsync(new List<ResumeTreeNode>());
+        
+        var actual = await _orchestrator.GetResumeTree(guid1);
+        
+        actual.Should().BeEquivalentTo(expected);
+    }
 }

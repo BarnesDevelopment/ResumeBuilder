@@ -235,7 +235,7 @@ namespace ResumeAPI.Controllers
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                var resume = await _orchestrator.GetResumeTree(id, (Guid)userId);
+                var resume = await _orchestrator.GetResumeTree(id);
                 if (resume != null) return Ok(resume);
                 return NotFound();
             }
