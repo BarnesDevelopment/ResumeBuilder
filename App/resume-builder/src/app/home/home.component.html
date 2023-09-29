@@ -21,8 +21,21 @@
         text="Edit"
         [borderStyle]="BorderStyle.Dark"
         [buttonStyle]="ButtonStyle.Primary"
-        [href]="'/edit'"
+        href="/edit"
         [queryParams]="{ id: x.id }"
+      ></app-button>
+    </div>
+  </mat-card>
+  <mat-card class="card new">
+    <div class="title">
+      <h3>Create Resume</h3>
+    </div>
+    <div class="button">
+      <app-button
+        text="Create"
+        [borderStyle]="BorderStyle.Dark"
+        [buttonStyle]="ButtonStyle.Primary"
+        href="/new"
       ></app-button>
     </div>
   </mat-card>

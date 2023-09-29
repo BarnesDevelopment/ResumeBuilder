@@ -20,12 +20,18 @@
     height: 15rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-evenly;
     gap: 1rem;
     align-items: center;
     padding: 2rem 0 2rem 0;
 
+    .button {
+      width: 5rem;
+      margin: 1rem;
+    }
+
     &.dumb {
+      justify-content: space-between;
       background: linear-gradient(
         60deg,
         white,
