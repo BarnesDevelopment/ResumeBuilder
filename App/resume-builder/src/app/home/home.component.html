@@ -1,2 +1,4 @@
 <p>Home page</p>
-{{ environment.loggedIn }}
+<app-login-splash-screen
+  *ngIf="!environment.loggedIn"
+></app-login-splash-screen>

@@ -7,7 +7,7 @@ import { LoginSplashScreenComponent } from './login-splash-screen/login-splash-s
 
 @NgModule({
   declarations: [HeaderComponent, ButtonComponent, LoginSplashScreenComponent],
-  exports: [HeaderComponent, ButtonComponent],
+  exports: [HeaderComponent, ButtonComponent, LoginSplashScreenComponent],
   imports: [NgIf, FontAwesomeModule],
 })
 export class CommonComponentsModule {}

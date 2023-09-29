@@ -35,12 +35,12 @@ export class LoginPageComponent {
   });
 
   onSubmit() {
+    this.badLogin = false;
+    this.username.setErrors(null);
+    this.password.setErrors(null);
     if (this.username.valid && this.password.valid) {
       this.service.login(this.username.value, this.password.value).subscribe({
         next: (cookie: Cookie) => {
-          this.username.setErrors(null);
-          this.password.setErrors(null);
-          this.badLogin = false;
           this.service.addCookie(cookie);
         },
         error: () => {
