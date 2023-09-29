@@ -51,7 +51,9 @@ export class LoginPageComponent {
         complete: () => {
           console.log('complete');
           if (this.badLogin === false) {
-            this.router.navigate(['/']);
+            this.router.navigate(['/']).then(() => {
+              window.location.reload();
+            });
           }
         },
       });
