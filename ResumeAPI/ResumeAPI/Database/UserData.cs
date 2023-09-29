@@ -23,7 +23,7 @@ public interface IUserData
     Task<bool> DeleteCookies(Guid userId);
 }
 
-public class UserData : MySqlContext, IUserData
+public class UserData : PostgreSqlContext, IUserData
 {
     public UserData(IOptions<AWSSecrets> options) : base(options) {}
     

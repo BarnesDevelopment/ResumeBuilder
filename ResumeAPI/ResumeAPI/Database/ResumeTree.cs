@@ -14,7 +14,7 @@ public interface IResumeTree
     Task<bool> DeleteNode(Guid id);
 }
 
-public class ResumeTree : MySqlContext, IResumeTree
+public class ResumeTree : PostgreSqlContext, IResumeTree
 {
     public ResumeTree(IOptions<AWSSecrets> options) : base(options) {}
 

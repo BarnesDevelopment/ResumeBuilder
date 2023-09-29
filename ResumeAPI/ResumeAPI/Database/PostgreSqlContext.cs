@@ -5,11 +5,11 @@ using ResumeAPI.Models;
 
 namespace ResumeAPI.Database;
 
-public class MySqlContext
+public class PostgreSqlContext
 {
     protected readonly DbConnection Db;
 
-    public MySqlContext(IOptions<AWSSecrets> options)
+    public PostgreSqlContext(IOptions<AWSSecrets> options)
     {
         var secrets = options.Value;
         Db = new MySqlConnection(secrets.ConnectionStrings_PostgreSql);
