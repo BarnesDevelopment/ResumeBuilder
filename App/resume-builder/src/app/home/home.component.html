@@ -1,7 +1,8 @@
 <app-login-splash-screen
+  title="login splash"
   *ngIf="!environment.loggedIn"
 ></app-login-splash-screen>
-<div class="card-row dumb" *ngIf="!environment.loggedIn">
+<div class="card-row dumb" *ngIf="!environment.loggedIn" title="dumb cards">
   <mat-card class="card dumb" *ngFor="let x of [0, 0, 0, 0, 0]">
     <div class="title"></div>
     <div class="content" *ngFor="let y of [0, 0, 0]"></div>

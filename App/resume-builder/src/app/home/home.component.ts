@@ -11,7 +11,7 @@ import { Guid } from 'guid-typescript';
 export class HomeComponent {
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
-  protected readonly environment = environment;
+  environment = environment;
   resumes: ResumeHeader[] = [
     {
       title: 'Resume 1',
