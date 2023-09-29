@@ -30,7 +30,7 @@ public class UserOrchestrator : IUserOrchestrator
         if (verified == VerificationResult.Correct)
         {
             var cookie = await _db.RetrieveCookie(user.Id);
-            if (cookie != null) await _db.DeactivateCookie(cookie.KeyGuid());
+            if (cookie != null) await _db.DeactivateCookie(cookie.Key);
             cookie = await _db.CreateCookie(user.Id);
             return new LoginAttempt(cookie);
         }

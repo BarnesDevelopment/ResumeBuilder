@@ -34,9 +34,9 @@ public class UserOrchestratorTests
         var cookie = new Cookie
         {
             Active = true,
-            Key = guid2.ToString(),
+            Key = guid2,
             Expiration = DateTime.Today.AddDays(1),
-            UserId = guid.ToString()
+            UserId = guid
         };
         var expected = new LoginAttempt(cookie);
         
@@ -65,8 +65,8 @@ public class UserOrchestratorTests
         };
         var oldCookie = new Cookie
         {
-            Key = guid3.ToString(),
-            UserId = guid.ToString(),
+            Key = guid3,
+            UserId = guid,
             Expiration = DateTime.Now.AddHours(1),
             Active = true
         };
@@ -74,16 +74,16 @@ public class UserOrchestratorTests
         var cookie = new Cookie
         {
             Active = true,
-            Key = guid2.ToString(),
+            Key = guid2,
             Expiration = DateTime.Today.AddDays(1),
-            UserId = guid.ToString()
+            UserId = guid
         };
         var expected = new LoginAttempt(cookie);
         
         _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
         _service.Setup(x => x.VerifyKey(user.Id, key)).ReturnsAsync(VerificationResult.Correct);
         _db.Setup(x => x.RetrieveCookie(guid)).ReturnsAsync(oldCookie);
-        _db.Setup(x => x.DeactivateCookie(oldCookie.KeyGuid()));
+        _db.Setup(x => x.DeactivateCookie(oldCookie.Key));
         _db.Setup(x => x.CreateCookie(user.Id)).ReturnsAsync(cookie);
 
         var actual = await _orchestrator.Login(username, key);

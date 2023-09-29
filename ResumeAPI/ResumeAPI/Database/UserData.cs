@@ -174,7 +174,7 @@ public class UserData : PostgreSqlContext, IUserData
         });
 
         return (await Db.QueryAsync<Cookie>(
-            $@"select cookie `{nameof(Cookie.Key)}`, 
+            $@"select cookie {nameof(Cookie.Key)}, 
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}
@@ -191,7 +191,7 @@ public class UserData : PostgreSqlContext, IUserData
 
     public async Task<Cookie?> RetrieveCookie(Guid userId)
     {
-        return (await Db.QueryAsync<Cookie>($@"select cookie `{nameof(Cookie.Key)}`, 
+        return (await Db.QueryAsync<Cookie>($@"select cookie {nameof(Cookie.Key)}, 
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}
