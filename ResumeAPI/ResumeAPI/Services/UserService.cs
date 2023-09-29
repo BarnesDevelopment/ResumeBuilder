@@ -59,7 +59,7 @@ public class UserService : IUserService
             FirstName = userInput.FirstName,
             LastName = userInput.LastName,
             Email = userInput.Email,
-            Id = Guid.NewGuid().ToString(),
+            Id = Guid.NewGuid(),
         };
 
         return await _db.CreateUser(user);

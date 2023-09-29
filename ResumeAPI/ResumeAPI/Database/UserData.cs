@@ -39,7 +39,7 @@ public class UserData : PostgreSqlContext, IUserData
                     lastname {nameof(UserViewModel.LastName)},
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
-                    from Users
+                    from ResumeDb.Users
                     order by username")).ToList();
     }
 
@@ -51,7 +51,7 @@ public class UserData : PostgreSqlContext, IUserData
                     email {nameof(UserViewModel.Email)},
                     firstname {nameof(UserViewModel.FirstName)},
                     lastname {nameof(UserViewModel.LastName)}
-                    from Users where username = @username", new { username = username }))
+                    from ResumeDb.Users where username = @username", new { username = username }))
             .FirstOrDefault();
     }
     
@@ -65,19 +65,19 @@ public class UserData : PostgreSqlContext, IUserData
                     lastname {nameof(User.LastName)},
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
-                    from Users where id = @id", new { id = id }))
+                    from ResumeDb.Users where id = @id", new { id = id }))
             .First();
     }
 
     public async Task<Guid> GetUserByCookie(Guid cookie)
     {
-        return (await Db.QueryAsync<Guid>($@"select userid from Cookies where cookie = @cookie", new { cookie = cookie })).First();
+        return (await Db.QueryAsync<Guid>($@"select userid from ResumeDb.Cookies where cookie = @cookie", new { cookie = cookie })).First();
     }
 
     public async Task<User> CreateUser(User user)
     {
         await Db.ExecuteAsync(
-            @"insert into Users (id,username,email,firstname,lastname) values(@id,@username,@email,@firstname,@lastname)",
+            @"insert into ResumeDb.Users (id,username,email,firstname,lastname) values(@id,@username,@email,@firstname,@lastname)",
             new
             {
                 id = user.Id,
@@ -95,14 +95,14 @@ public class UserData : PostgreSqlContext, IUserData
                     lastname {nameof(User.LastName)},
                     created_date {nameof(User.CreatedDate)},
                     updated_date {nameof(User.UpdatedDate)}
-                    from Users where id = @id", new { id = user.Id }))
+                    from ResumeDb.Users where id = @id", new { id = user.Id }))
             .First();
     }
     
     public async Task<UserViewModel> UpdateUser(Guid id, UserViewModel user)
     {
         await Db.ExecuteAsync(
-            @"update Users set username = @username, email = @email, firstname = @firstname, lastname = @lastname, updated_date = now() where id = @id",
+            @"update ResumeDb.Users set username = @username, email = @email, firstname = @firstname, lastname = @lastname, updated_date = now() where id = @id",
             new
             {
                 id = id,
@@ -118,13 +118,13 @@ public class UserData : PostgreSqlContext, IUserData
                     email {nameof(UserViewModel.Email)},
                     firstname {nameof(UserViewModel.FirstName)},
                     lastname {nameof(UserViewModel.LastName)}
-                    from Users where id = @id", new { id = id }))
+                    from ResumeDb.Users where id = @id", new { id = id }))
             .First();
     }
 
     public async Task<bool> DeleteUser(Guid id)
     {
-        return await Db.ExecuteAsync("delete from Users where id = @id", new { id = id }) > 0;
+        return await Db.ExecuteAsync("delete from ResumeDb.Users where id = @id", new { id = id }) > 0;
     }
     
     #endregion
@@ -133,7 +133,7 @@ public class UserData : PostgreSqlContext, IUserData
 
     public async Task<bool> CreateKey(string hash, Guid userId)
     {
-        return await Db.ExecuteAsync("insert into PasswordHashes (id,userid,hash) values(@id,@userid,@hash)", new
+        return await Db.ExecuteAsync("insert into ResumeDb.PasswordHashes (id,userid,hash) values(@id,@userid,@hash)", new
         {
             id = Guid.NewGuid(),
             userid = userId,
@@ -144,18 +144,18 @@ public class UserData : PostgreSqlContext, IUserData
     public async Task<string?> RetrieveKey(Guid userId)
     {
         return (await Db.QueryAsync<string>(
-            "select hash from PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId})).FirstOrDefault();
+            "select hash from ResumeDb.PasswordHashes where userid = @userid and active = true order by created_date", new { userid = userId})).FirstOrDefault();
     }
 
     public async Task<bool> DeleteKeys(Guid userId)
     {
-        return await Db.ExecuteAsync("delete from PasswordHashes where userid = @userid",
+        return await Db.ExecuteAsync("delete from ResumeDb.PasswordHashes where userid = @userid",
             new { userid = userId }) > 0;
     }
 
     public async Task<bool> DeactivateKey(Guid userId)
     {
-        return await Db.ExecuteAsync("update PasswordHashes set active = false where userid = @userid",
+        return await Db.ExecuteAsync("update ResumeDb.PasswordHashes set active = false where userid = @userid",
             new { userid = userId }) > 0;
     }
 
@@ -166,7 +166,7 @@ public class UserData : PostgreSqlContext, IUserData
     public async Task<Cookie> CreateCookie(Guid userId)
     {
         var cookie = Guid.NewGuid();
-        await Db.ExecuteAsync("insert into Cookies (cookie, expiration, userid) values(@cookie, @expiration, @userid)", new
+        await Db.ExecuteAsync("insert into ResumeDb.Cookies (cookie, expiration, userid) values(@cookie, @expiration, @userid)", new
         {
             cookie = cookie,
             expiration = DateTime.Now.AddDays(1),
@@ -178,7 +178,7 @@ public class UserData : PostgreSqlContext, IUserData
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}
-                    from Cookies where cookie = @cookie", new
+                    from ResumeDb.Cookies where cookie = @cookie", new
             {
                 cookie = cookie
             })).First();
@@ -186,7 +186,7 @@ public class UserData : PostgreSqlContext, IUserData
 
     public async Task DeactivateCookie(Guid cookie)
     {
-        await Db.ExecuteAsync("update Cookies set active = false where cookie = @cookie", new { cookie = cookie });
+        await Db.ExecuteAsync("update ResumeDb.Cookies set active = false where cookie = @cookie", new { cookie = cookie });
     }
 
     public async Task<Cookie?> RetrieveCookie(Guid userId)
@@ -195,7 +195,7 @@ public class UserData : PostgreSqlContext, IUserData
                     active {nameof(Cookie.Active)}, 
                     expiration {nameof(Cookie.Expiration)}, 
                     userid {nameof(Cookie.UserId)}
-                    from Cookies where userid = @userid and active = true", new
+                    from ResumeDb.Cookies where userid = @userid and active = true", new
         {
             userid = userId
         })).FirstOrDefault();
@@ -203,7 +203,7 @@ public class UserData : PostgreSqlContext, IUserData
 
     public async Task<bool> DeleteCookies(Guid userId)
     {
-        return await Db.ExecuteAsync("delete from Cookies where userid = @userid",
+        return await Db.ExecuteAsync("delete from ResumeDb.Cookies where userid = @userid",
             new { userid = userId }) > 0;
     }
 

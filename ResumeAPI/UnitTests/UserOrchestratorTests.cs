@@ -28,7 +28,7 @@ public class UserOrchestratorTests
         var key = "pass123";
         var user = new UserViewModel
         {
-            Id = guid.ToString(),
+            Id = guid,
             Username = username
         };
         var cookie = new Cookie
@@ -41,9 +41,9 @@ public class UserOrchestratorTests
         var expected = new LoginAttempt(cookie);
         
         _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
-        _service.Setup(x => x.VerifyKey(user.IdGuid(), key)).ReturnsAsync(VerificationResult.Correct);
+        _service.Setup(x => x.VerifyKey(user.Id, key)).ReturnsAsync(VerificationResult.Correct);
         _db.Setup(x => x.RetrieveCookie(guid)).ReturnsAsync((Cookie)null);
-        _db.Setup(x => x.CreateCookie(user.IdGuid())).ReturnsAsync(cookie);
+        _db.Setup(x => x.CreateCookie(user.Id)).ReturnsAsync(cookie);
 
         var actual = await _orchestrator.Login(username, key);
 
@@ -60,7 +60,7 @@ public class UserOrchestratorTests
         var key = "pass123";
         var user = new UserViewModel
         {
-            Id = guid.ToString(),
+            Id = guid,
             Username = username
         };
         var oldCookie = new Cookie
@@ -81,10 +81,10 @@ public class UserOrchestratorTests
         var expected = new LoginAttempt(cookie);
         
         _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
-        _service.Setup(x => x.VerifyKey(user.IdGuid(), key)).ReturnsAsync(VerificationResult.Correct);
+        _service.Setup(x => x.VerifyKey(user.Id, key)).ReturnsAsync(VerificationResult.Correct);
         _db.Setup(x => x.RetrieveCookie(guid)).ReturnsAsync(oldCookie);
         _db.Setup(x => x.DeactivateCookie(oldCookie.KeyGuid()));
-        _db.Setup(x => x.CreateCookie(user.IdGuid())).ReturnsAsync(cookie);
+        _db.Setup(x => x.CreateCookie(user.Id)).ReturnsAsync(cookie);
 
         var actual = await _orchestrator.Login(username, key);
 
@@ -99,13 +99,13 @@ public class UserOrchestratorTests
         var key = "pass123";
         var user = new UserViewModel
         {
-            Id = guid.ToString(),
+            Id = guid,
             Username = username
         };
         var expected = new LoginAttempt();
         
         _service.Setup(x => x.GetUser(username)).ReturnsAsync(user);
-        _service.Setup(x => x.VerifyKey(user.IdGuid(), key)).ReturnsAsync(VerificationResult.Incorrect);
+        _service.Setup(x => x.VerifyKey(user.Id, key)).ReturnsAsync(VerificationResult.Incorrect);
 
         var actual = await _orchestrator.Login(username, key);
 
@@ -140,7 +140,7 @@ public class UserOrchestratorTests
         };
         var user = new User
         {
-            Id = guid.ToString(),
+            Id = guid,
             Username = "test",
             FirstName = "first",
             LastName = "last",

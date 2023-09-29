@@ -26,12 +26,12 @@ public class UserOrchestrator : IUserOrchestrator
     {
         var user = await _service.GetUser(username);
         if (user == null) return new LoginAttempt();
-        var verified = await _service.VerifyKey(user.IdGuid(), key);
+        var verified = await _service.VerifyKey(user.Id, key);
         if (verified == VerificationResult.Correct)
         {
-            var cookie = await _db.RetrieveCookie(user.IdGuid());
+            var cookie = await _db.RetrieveCookie(user.Id);
             if (cookie != null) await _db.DeactivateCookie(cookie.KeyGuid());
-            cookie = await _db.CreateCookie(user.IdGuid());
+            cookie = await _db.CreateCookie(user.Id);
             return new LoginAttempt(cookie);
         }
 
@@ -41,7 +41,7 @@ public class UserOrchestrator : IUserOrchestrator
     public async Task<UserViewModel> CreateAccount(UserViewModel userInput, string key)
     {
         var user = await _service.CreateUser(userInput);
-        await _service.CreateKey(user.IdGuid(), key);
+        await _service.CreateKey(user.Id, key);
         return user;
     }
 

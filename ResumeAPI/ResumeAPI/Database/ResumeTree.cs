@@ -29,7 +29,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)}
-                        FROM ResumeTree WHERE Id = @Id";
+                        FROM ResumeDb.ResumeTree WHERE Id = @Id";
         return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = id });
     }
 
@@ -44,7 +44,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)}
-                        FROM ResumeTree WHERE parentid = @Id";
+                        FROM ResumeDb.ResumeTree WHERE parentid = @Id";
         return (await Db.QueryAsync<ResumeTreeNode>(query, new { Id = id })).ToList();
     }
 
@@ -59,13 +59,13 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)}
-                        FROM ResumeTree WHERE depth = 0";
+                        FROM ResumeDb.ResumeTree WHERE depth = 0";
         return (await Db.QueryAsync<ResumeTreeNode>(query)).ToList();
     }
 
     public async Task<bool> CreateNode(ResumeTreeNode node)
     {
-        var createQuery = $@"INSERT INTO ResumeTree 
+        var createQuery = $@"INSERT INTO ResumeDb.ResumeTree 
                             (id, userId, parentId, content, placementorder, depth, sectiontype, active) 
                             VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active)";
         return await Db.ExecuteAsync(createQuery, node) > 0;
@@ -73,7 +73,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
 
     public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node)
     {
-        var updateQuery = $@"UPDATE ResumeTree SET 
+        var updateQuery = $@"UPDATE ResumeDb.ResumeTree SET 
                             userId = @UserId, 
                             parentId = @ParentId, 
                             content = @Content, 
@@ -92,13 +92,13 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)}
-                        FROM ResumeTree WHERE id = @Id";
+                        FROM ResumeDb.ResumeTree WHERE id = @Id";
         return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = node.Id });
     }
 
     public async Task<bool> DeleteNode(Guid id)
     {
-        var query = "DELETE FROM ResumeTree WHERE id = @Id";
+        var query = "DELETE FROM ResumeDb.ResumeTree WHERE id = @Id";
         return (await Db.ExecuteAsync(query, new { Id = id })) > 0;
     }
 }

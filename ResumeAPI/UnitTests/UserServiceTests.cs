@@ -64,7 +64,7 @@ public class UserServiceTests
             FirstName = "testname",
             LastName = "testlast",
             Email = "test@test.com",
-            Id = guid.ToString(),
+            Id = guid,
             CreatedDate = DateTime.Now,
             UpdatedDate = DateTime.Now
         };
@@ -82,7 +82,7 @@ public class UserServiceTests
         var guid = Guid.NewGuid();
         var userInput = new UserViewModel
         {
-            Id = guid.ToString(),
+            Id = guid,
             Username = "test",
             FirstName = "testname",
             LastName = "testlast",

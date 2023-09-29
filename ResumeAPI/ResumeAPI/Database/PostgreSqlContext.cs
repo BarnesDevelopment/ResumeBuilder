@@ -1,6 +1,7 @@
 using System.Data.Common;
 using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
+using Npgsql;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Database;
@@ -12,7 +13,7 @@ public class PostgreSqlContext
     public PostgreSqlContext(IOptions<AWSSecrets> options)
     {
         var secrets = options.Value;
-        Db = new MySqlConnection(secrets.ConnectionStrings_PostgreSql);
+        Db = new NpgsqlConnection(secrets.ConnectionStrings_PostgreSql);
     }
 
    

@@ -67,6 +67,7 @@ public class Startup
         services.AddTransient<IUserData, UserData>();
         services.AddTransient<IResumeTree, ResumeTree>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
+        services.AddTransient<ICookieValidator, CookieValidator>();
 
         services.AddHttpClient();
         

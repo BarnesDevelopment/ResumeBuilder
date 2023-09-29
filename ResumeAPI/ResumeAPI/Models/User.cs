@@ -22,18 +22,8 @@ public class UserViewModel : UserInfo
         
     }
     
-    protected Guid _id;
+    public Guid Id { get; set; }
 
-    public Guid IdGuid()
-    {
-        return _id;
-    }
-
-    public string Id
-    {
-        get => _id.ToString();
-        set => _id = Guid.Parse(value);
-    }
 }
 
 public class UserInfo
