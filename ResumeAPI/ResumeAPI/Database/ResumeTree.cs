@@ -55,7 +55,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         userId {nameof(ResumeTreeNode.UserId)},
                         parentId {nameof(ResumeTreeNode.ParentId)},
                         content {nameof(ResumeTreeNode.Content)},
-                        placementorder {nameof(ResumeTreeNode.Order)},
+                        placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)}
