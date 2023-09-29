@@ -4,6 +4,7 @@ import { BorderStyle, ButtonStyle } from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { NavigationEnd, Router } from '@angular/router';
 import { LoginService } from '../../login/services/login.service';
+import { environment } from '../../../environment/environment';
 
 @Component({
   selector: 'app-header',
@@ -42,9 +43,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         })
         .subscribe((x) => {
           this.user = x;
+          environment.loggedIn = true;
         });
     } else {
       this.user = null;
+      environment.loggedIn = false;
     }
   }
 
@@ -66,5 +69,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.login.logout();
     this.showUserPanel = false;
     this.router.navigate(['/']);
+    environment.loggedIn = false;
   }
 }

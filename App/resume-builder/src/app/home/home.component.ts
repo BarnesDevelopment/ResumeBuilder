@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ButtonStyle } from '../common/button/button.component';
-
+import { environment } from '../../environment/environment';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -8,4 +8,5 @@ import { ButtonStyle } from '../common/button/button.component';
 })
 export class HomeComponent {
   protected readonly ButtonStyle = ButtonStyle;
+  protected readonly environment = environment;
 }

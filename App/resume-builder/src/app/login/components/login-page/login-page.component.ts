@@ -42,7 +42,6 @@ export class LoginPageComponent {
           this.password.setErrors(null);
           this.badLogin = false;
           this.service.addCookie(cookie);
-          this.router.navigate(['/']);
         },
         error: () => {
           this.username.setErrors(['badLogin']);
@@ -51,6 +50,9 @@ export class LoginPageComponent {
         },
         complete: () => {
           console.log('complete');
+          if (this.badLogin === false) {
+            this.router.navigate(['/']);
+          }
         },
       });
     }
