@@ -17,17 +17,17 @@ describe('HomeComponent', () => {
   it('should show resume cards', async () => {
     await render([
       {
-        title: 'Resume 1',
+        content: 'Resume 1',
         comments: 'This is my first resume',
         id: Guid.create(),
       },
       {
-        title: 'Resume 2',
+        content: 'Resume 2',
         comments: 'This is my second resume',
         id: Guid.create(),
       },
       {
-        title: 'Resume 3',
+        content: 'Resume 3',
         comments: 'This is my third resume',
         id: Guid.create(),
       },
@@ -44,9 +44,9 @@ describe('HomeComponent', () => {
     await render(
       [
         {
-          title: 'Resume 1',
-          comments: 'This is my first resume',
+          content: 'Resume 1',
           id: Guid.create(),
+          comments: 'This is my first resume',
         },
       ],
       false,

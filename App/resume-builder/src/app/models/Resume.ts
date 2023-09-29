@@ -1,7 +1,7 @@
 import { Guid } from 'guid-typescript';
 
 export interface ResumeHeader {
-  title: string;
+  content: string;
   comments: string;
   id: Guid;
 }

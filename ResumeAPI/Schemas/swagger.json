@@ -645,11 +645,11 @@
         "properties": {
           "key": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
           },
           "userId": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
           },
           "expiration": {
             "type": "string",
@@ -868,6 +868,10 @@
             },
             "nullable": true
           },
+          "comments": {
+            "type": "string",
+            "nullable": true
+          },
           "id": {
             "type": "string",
             "format": "uuid"
@@ -928,7 +932,7 @@
           },
           "id": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
           },
           "createdDate": {
             "type": "string",
@@ -994,7 +998,7 @@
           },
           "id": {
             "type": "string",
-            "nullable": true
+            "format": "uuid"
           }
         },
         "additionalProperties": false

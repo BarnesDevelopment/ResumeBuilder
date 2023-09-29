@@ -1,0 +1,1 @@
+ALTER TABLE "ResumeDb".resumedb.resumetree ADD COLUMN "comments" text NULL;

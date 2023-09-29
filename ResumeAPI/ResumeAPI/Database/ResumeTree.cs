@@ -58,7 +58,8 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
-                        active {nameof(ResumeTreeNode.Active)}
+                        active {nameof(ResumeTreeNode.Active)},
+                        comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE depth = 0";
         return (await Db.QueryAsync<ResumeTreeNode>(query)).ToList();
     }
@@ -66,8 +67,8 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
     public async Task<bool> CreateNode(ResumeTreeNode node)
     {
         var createQuery = $@"INSERT INTO ResumeDb.ResumeTree 
-                            (id, userId, parentId, content, placementorder, depth, sectiontype, active) 
-                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active)";
+                            (id, userId, parentId, content, placementorder, depth, sectiontype, active, comments) 
+                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active, @Comments)";
         return await Db.ExecuteAsync(createQuery, node) > 0;
     }
 

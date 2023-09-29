@@ -12,7 +12,7 @@
 <div class="card-row" *ngIf="environment.loggedIn">
   <mat-card class="card" *ngFor="let x of resumes">
     <div class="title">
-      <h3>{{ x.title }}</h3>
+      <h3>{{ x.content }}</h3>
     </div>
     <div class="content">
       <p>{{ x.comments }}</p>
@@ -36,7 +36,7 @@
         text="Create"
         [borderStyle]="BorderStyle.Dark"
         [buttonStyle]="ButtonStyle.Primary"
-        href="/new"
+        href="/create"
       ></app-button>
     </div>
   </mat-card>
