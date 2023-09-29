@@ -7,7 +7,7 @@
   margin: 1rem;
 }
 
-.dumb-cards {
+.card-row {
   display: flex;
   flex-direction: row;
   z-index: 2000;
@@ -25,46 +25,48 @@
     align-items: center;
     padding: 2rem 0 2rem 0;
 
-    background: linear-gradient(
-      60deg,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white,
-      #cbcbcb,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white,
-      white
-    );
-    background-size: 200% 200%;
-    animation: SlidingGradient 2s linear infinite;
+    &.dumb {
+      background: linear-gradient(
+        60deg,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white,
+        #cbcbcb,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white,
+        white
+      );
+      background-size: 200% 200%;
+      animation: SlidingGradient 2s linear infinite;
 
-    .title {
-      width: 60%;
-      height: 2rem;
-    }
-    .content {
-      width: 80%;
-      height: 1rem;
-    }
-    .button {
-      width: 30%;
-      height: 2rem;
-    }
-    .title,
-    .content,
-    .button {
-      border-radius: 0.5rem;
-      background-color: #8f8f8f;
+      .title {
+        width: 60%;
+        height: 2rem;
+      }
+      .content {
+        width: 80%;
+        height: 1rem;
+      }
+      .button {
+        width: 30%;
+        height: 2rem;
+      }
+      .title,
+      .content,
+      .button {
+        border-radius: 0.5rem;
+        background-color: #8f8f8f;
+      }
     }
   }
 }

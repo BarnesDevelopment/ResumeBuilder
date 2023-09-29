@@ -1,10 +1,28 @@
 <app-login-splash-screen
   *ngIf="!environment.loggedIn"
 ></app-login-splash-screen>
-<div class="dumb-cards" *ngIf="!environment.loggedIn">
-  <mat-card class="card" *ngFor="let x of [0, 0, 0, 0, 0]">
+<div class="card-row dumb" *ngIf="!environment.loggedIn">
+  <mat-card class="card dumb" *ngFor="let x of [0, 0, 0, 0, 0]">
     <div class="title"></div>
     <div class="content" *ngFor="let y of [0, 0, 0]"></div>
     <div class="button"></div>
+  </mat-card>
+</div>
+<div class="card-row" *ngIf="environment.loggedIn">
+  <mat-card class="card" *ngFor="let x of resumes">
+    <div class="title">
+      <h3>{{ x.title }}</h3>
+    </div>
+    <div class="content">
+      <p>{{ x.comments }}</p>
+    </div>
+    <div class="button">
+      <app-button
+        text="Edit"
+        [borderStyle]="BorderStyle.Dark"
+        [buttonStyle]="ButtonStyle.Primary"
+        [href]="'/edit?id=' + x.id"
+      ></app-button>
+    </div>
   </mat-card>
 </div>
