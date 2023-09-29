@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CustomErrorHttpInterceptor } from '../interceptors/http-interceptor.interceptor';
+import { MatCardModule } from '@angular/material/card';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, PageNotFoundComponent],
@@ -23,6 +24,7 @@ import { CustomErrorHttpInterceptor } from '../interceptors/http-interceptor.int
     BrowserAnimationsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    MatCardModule,
   ],
   providers: [
     // {
