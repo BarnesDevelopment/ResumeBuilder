@@ -11,11 +11,14 @@ export class ButtonComponent {
   @Input() text: string = '';
   @Input() buttonStyle: ButtonStyle = ButtonStyle.Primary;
   @Input() borderStyle: BorderStyle = BorderStyle.Dark;
+  @Input() queryParams: any = {};
 
   constructor(private router: Router) {}
 
   GoTo(): void {
-    this.router.navigate([this.href]);
+    this.router.navigate([this.href], {
+      queryParams: this.queryParams,
+    });
   }
 }
 

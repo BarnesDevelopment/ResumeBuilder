@@ -21,7 +21,8 @@
         text="Edit"
         [borderStyle]="BorderStyle.Dark"
         [buttonStyle]="ButtonStyle.Primary"
-        [href]="'/edit?id=' + x.id"
+        [href]="'/edit'"
+        [queryParams]="{ id: x.id }"
       ></app-button>
     </div>
   </mat-card>

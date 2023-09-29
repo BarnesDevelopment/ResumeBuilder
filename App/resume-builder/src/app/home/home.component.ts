@@ -10,6 +10,7 @@ import { Guid } from 'guid-typescript';
 })
 export class HomeComponent {
   protected readonly ButtonStyle = ButtonStyle;
+  protected readonly BorderStyle = BorderStyle;
   protected readonly environment = environment;
   resumes: ResumeHeader[] = [
     {
@@ -28,5 +29,4 @@ export class HomeComponent {
       id: Guid.create(),
     },
   ];
-  protected readonly BorderStyle = BorderStyle;
 }
