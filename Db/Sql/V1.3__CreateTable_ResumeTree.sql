@@ -1,8 +1,8 @@
 CREATE TABLE ResumeDb.ResumeTree (
-     id                  varchar(36)             not null primary key,
-     active              tinyint(1)   default 1  not null,
-     userid              varchar(36)             not null,
-     parentid            varchar(36)                 null,
+     id                  uuid             not null primary key,
+     active              bool   default true  not null,
+     userid              uuid             not null,
+     parentid            uuid                 null,
      placementorder      int                     not null,
      content             varchar(5000)           not null,
      sectiontype         varchar(255)            not null,

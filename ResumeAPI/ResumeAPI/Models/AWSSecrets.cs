@@ -3,5 +3,5 @@ namespace ResumeAPI.Models;
 
 public class AWSSecrets
 {
-    public string ConnectionStrings_MySql { get; set; }
+    public string ConnectionStrings_PostgreSql { get; set; }
 }

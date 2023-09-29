@@ -12,7 +12,7 @@ public class MySqlContext
     public MySqlContext(IOptions<AWSSecrets> options)
     {
         var secrets = options.Value;
-        Db = new MySqlConnection(secrets.ConnectionStrings_MySql);
+        Db = new MySqlConnection(secrets.ConnectionStrings_PostgreSql);
     }
 
    

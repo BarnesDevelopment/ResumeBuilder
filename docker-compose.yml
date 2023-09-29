@@ -17,31 +17,28 @@ services:
     
     networks:
       - api
-
+        
   db:
-    image: mysql:8
+    image: postgres:16.0-alpine
     restart: always
-    volumes:
-      - db-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    expose:
-      - "3306"
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     environment:
-      MYSQL_DATABASE: 'ResumeDb'
-      # So you don't have to use root, but you can if you like
-      MYSQL_USER: 'resumeApi'
-      # You can use whatever password you like
-      MYSQL_PASSWORD: 'resumedb211898'
-      # Password for root access
-      MYSQL_ROOT_PASSWORD: 'resumeroot211898'
+      POSTGRES_PASSWORD: resumedb211898
+      POSTGRES_USER: resumeApi
+      POSTGRES_DB: ResumeDb
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U resumeApi -d ResumeDb" ]
+      interval: 5s
+      timeout: 2s
     networks: 
       - api
         
   flyway:
     image: flyway/flyway
-    command: -url=jdbc:mysql://db -schemas=ResumeDb -user=resumeApi -password=resumedb211898 -connectRetries=60 migrate
+    command: -url=jdbc:postgresql://db:5432/ResumeDb -user=resumeApi -password=resumedb211898 -connectRetries=60 migrate
     volumes:
       - ./Db/Sql:/flyway/sql
     depends_on:

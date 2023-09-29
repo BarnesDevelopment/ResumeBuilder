@@ -73,7 +73,7 @@ public class Startup
         var awsSecrets = configRoot.Get<AWSSecrets>();
 
         services.AddHealthChecks()
-            .AddMySql(awsSecrets.ConnectionStrings_MySql);
+            .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
         
     #if DEBUG
         services.AddSassCompiler();
