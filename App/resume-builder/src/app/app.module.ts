@@ -8,9 +8,10 @@ import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CommonComponentsModule } from './common/common-components.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {ResumeModule} from "./resume/resume.module";
 
 @NgModule({
   declarations: [AppComponent, HomeComponent, PageNotFoundComponent],
@@ -24,6 +25,8 @@ import { MatCardModule } from '@angular/material/card';
     ReactiveFormsModule,
     HttpClientModule,
     MatCardModule,
+    FormsModule,
+    ResumeModule,
   ],
   providers: [
     // {

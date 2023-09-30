@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTreeNode, SectionType } from '../../../models/Resume';
@@ -9,23 +9,19 @@ import { Guid } from 'guid-typescript';
   templateUrl: './create-resume.component.html',
   styleUrls: ['./create-resume.component.scss'],
 })
-export class CreateResumeComponent implements OnInit {
-  form: FormGroup;
+export class CreateResumeComponent {
+  form: FormGroup = new FormGroup(
+    {
+      title: new FormControl('', [
+        Validators.required,
+        Validators.maxLength(150),
+        Validators.minLength(3),
+      ]),
+      comments: new FormControl('', [Validators.maxLength(500)]),
+    }
+  );
 
   constructor(private service: ResumeService) {}
-  ngOnInit() {
-    this.form = new FormGroup(
-      {
-        title: new FormControl('', [
-          Validators.required,
-          Validators.maxLength(150),
-          Validators.minLength(3),
-        ]),
-        comments: new FormControl('', [Validators.maxLength(500)]),
-      },
-      [],
-    );
-  }
 
   onSubmit() {
     console.log(this.form.value);
@@ -41,5 +37,9 @@ export class CreateResumeComponent implements OnInit {
       active: true,
       children: [],
     };
+
+    this.service.createResume(resume).subscribe((res) => {
+      console.log(res);
+    });
   }
 }
