@@ -27,7 +27,7 @@ public class UserData : PostgreSqlContext, IUserData
 {
     public UserData(IOptions<AWSSecrets> options) : base(options) {}
     
-     #region Users
+    #region Users
     
     public async Task<List<UserViewModel>> GetUsers()
     {
@@ -71,7 +71,8 @@ public class UserData : PostgreSqlContext, IUserData
 
     public async Task<Guid> GetUserByCookie(Guid cookie)
     {
-        return (await Db.QueryAsync<Guid>($@"select userid from ResumeDb.Cookies where cookie = @cookie", new { cookie = cookie })).First();
+        var user = (await Db.QueryAsync<Guid>($@"select userid from ResumeDb.Cookies where cookie = @cookie", new { cookie = cookie })).FirstOrDefault();
+        return user;
     }
 
     public async Task<User> CreateUser(User user)
