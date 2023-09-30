@@ -64,9 +64,9 @@ public class ResumeOrchestratorTests
 
         };
         
-        _tree.Setup(x => x.UpdateNode(node)).ReturnsAsync(node);
+        _tree.Setup(x => x.UpsertNode(node)).ReturnsAsync(node);
         
-        var actual = await _orchestrator.UpdateNode(node);
+        var actual = await _orchestrator.UpsertNode(node);
         
         actual.Should().BeEquivalentTo(node);
     }

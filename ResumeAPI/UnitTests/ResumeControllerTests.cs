@@ -274,9 +274,9 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpdateNode(resume)).ReturnsAsync(resume);
+        _orchestrator.Setup(x => x.UpsertNode(resume)).ReturnsAsync(resume);
         
-        var actual = (await _controller.UpdateNode(resume)).GetObject();
+        var actual = (await _controller.UpsertNode(resume)).GetObject();
         
         actual.Should().BeEquivalentTo(resume);
     }
@@ -294,7 +294,7 @@ public class ResumeControllerTests
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
         
-        var actual = await _controller.UpdateNode(resume);
+        var actual = await _controller.UpsertNode(resume);
         
         actual.Result.Should().BeOfType<UnauthorizedResult>();
     }
@@ -312,9 +312,9 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpdateNode(resume)).ThrowsAsync(new Exception("some error"));
+        _orchestrator.Setup(x => x.UpsertNode(resume)).ThrowsAsync(new Exception("some error"));
         
-        var actual = await _controller.UpdateNode(resume);
+        var actual = await _controller.UpsertNode(resume);
         
         ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
         ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");

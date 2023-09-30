@@ -262,14 +262,14 @@ namespace ResumeAPI.Controllers
             }
         }
         
-        [HttpPost("update")]
-        public async Task<ActionResult<ResumeTreeNode>> UpdateNode([FromBody] ResumeTreeNode resume)
+        [HttpPost("upsert")]
+        public async Task<ActionResult<ResumeTreeNode>> UpsertNode([FromBody] ResumeTreeNode resume)
         {
             try
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                return Ok(await _orchestrator.UpdateNode(resume));
+                return Ok(await _orchestrator.UpsertNode(resume));
             }
             catch (Exception e)
             {

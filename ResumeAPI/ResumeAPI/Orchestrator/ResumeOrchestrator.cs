@@ -13,7 +13,7 @@ public interface IResumeOrchestrator
     Task<ResumeTreeNode?> GetResumeTree(Guid id);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
     Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId);
-    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume);
+    Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume);
     Task<bool> DeleteNode(Guid id);
     MemoryStream BuildResume(Resume resume);
     string BuildResumeHtml(Resume resume);
@@ -83,9 +83,9 @@ public class ResumeOrchestrator : IResumeOrchestrator
         return resume;
     }
 
-    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode resume)
+    public async Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume)
     {
-        return await _tree.UpdateNode(resume);
+        return await _tree.UpsertNode(resume);
     }
     
     public async Task<bool> DeleteNode(Guid id)

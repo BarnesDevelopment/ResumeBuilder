@@ -10,7 +10,7 @@ public interface IResumeTree
     Task<List<ResumeTreeNode>> GetChildren(Guid id);
     Task<List<ResumeTreeNode>> GetTopLevelNodes(Guid userId);
     Task<bool> CreateNode(ResumeTreeNode node);
-    Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node);
+    Task<ResumeTreeNode> UpsertNode(ResumeTreeNode node);
     Task<bool> DeleteNode(Guid id);
 }
 
@@ -74,27 +74,31 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
         return await Db.ExecuteAsync(createQuery, node) > 0;
     }
 
-    public async Task<ResumeTreeNode> UpdateNode(ResumeTreeNode node)
+    public async Task<ResumeTreeNode> UpsertNode(ResumeTreeNode node)
     {
-        var updateQuery = $@"UPDATE ResumeDb.ResumeTree SET 
+        var updateQuery = $@"INSERT INTO ResumeDb.ResumeTree
+                            (id, userId, parentId, content, placementorder, depth, sectiontype, active, comments)
+                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active, @Comments)
+                            ON CONFLICT (id) DO UPDATE SET 
                             userId = @UserId, 
                             parentId = @ParentId, 
                             content = @Content, 
-                            placementorder = @Order, 
+                            placementorder = @Order,
                             depth = @Depth, 
                             sectiontype = @SectionType, 
-                            active = @Active 
-                            WHERE id = @Id";
+                            active = @Active,
+                            comments = @Comments";
         await Db.ExecuteAsync(updateQuery, node);
         var query = $@"SELECT 
                         id {nameof(ResumeTreeNode.Id)},
                         userId {nameof(ResumeTreeNode.UserId)},
                         parentId {nameof(ResumeTreeNode.ParentId)},
                         content {nameof(ResumeTreeNode.Content)},
-                        placementorder {nameof(ResumeTreeNode.Order)},
+                        placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
-                        active {nameof(ResumeTreeNode.Active)}
+                        active {nameof(ResumeTreeNode.Active)},
+                        comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE id = @Id";
         return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = node.Id });
     }
