@@ -61,6 +61,89 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Get All Headers",
+					"id": "26acd83e-ccd0-4c4b-a3aa-0d2dd32db398",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "3eb11648-f2b7-4502-8935-0e5dee11b1e0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/get-all",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"get-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"id": "c251cf8f-9fb7-4032-9e10-d42fb06af050",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								},
+								{
+									"key": "value",
+									"value": "3eb11648-f2b7-4502-8935-0e5dee11b1e0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Comments\":\"Some comment\",\r\n    \"Content\":\"Resume Uno\",\r\n    \"Id\":\"3eb11648-f2b7-4502-8935-0e5deebbb1e0\",\r\n    \"Depth\": 0,\r\n    \"SectionType\": \"Resume\",\r\n    \"Order\": 0,\r\n    \"Children\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/create",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"create"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"id": "5ed53313-2bcd-443b-bb3a-c72911417f1a"
@@ -100,9 +183,15 @@
 							},
 							"request": {
 								"method": "GET",
-								"header": [],
+								"header": [
+									{
+										"key": "cookie",
+										"value": "",
+										"type": "text"
+									}
+								],
 								"url": {
-									"raw": "{{ResumeApiHost}}/users/user?username=test22",
+									"raw": "{{ResumeApiHost}}/users/user?userId=test22",
 									"host": [
 										"{{ResumeApiHost}}"
 									],
@@ -112,7 +201,7 @@
 									],
 									"query": [
 										{
-											"key": "username",
+											"key": "userId",
 											"value": "test22"
 										}
 									]
@@ -247,7 +336,7 @@
 								"header": [
 									{
 										"key": "username",
-										"value": "test-user",
+										"value": "test-user-name",
 										"type": "text"
 									},
 									{
