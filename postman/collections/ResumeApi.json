@@ -69,21 +69,6 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "apikey",
-							"apikey": [
-								{
-									"key": "key",
-									"value": "Authorization",
-									"type": "string"
-								},
-								{
-									"key": "value",
-									"value": "3eb11648-f2b7-4502-8935-0e5dee11b1e0",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -100,27 +85,41 @@
 					"response": []
 				},
 				{
+					"name": "Get",
+					"id": "3a634274-89e2-4012-83ed-7024e00a7ede",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/get/:id",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"get",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create",
 					"id": "c251cf8f-9fb7-4032-9e10-d42fb06af050",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "apikey",
-							"apikey": [
-								{
-									"key": "key",
-									"value": "Authorization",
-									"type": "string"
-								},
-								{
-									"key": "value",
-									"value": "3eb11648-f2b7-4502-8935-0e5dee11b1e0",
-									"type": "string"
-								}
-							]
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -140,6 +139,44 @@
 							"path": [
 								"resume",
 								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"id": "90444697-93ee-4bad-b0b3-ce81561434c4",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Comments\":\"Some comment\",\r\n    \"Content\":\"Resume Uno\",\r\n    \"Id\":\"3eb11648-f2b7-4502-8935-0e5deebbb1e0\",\r\n    \"Depth\": 0,\r\n    \"SectionType\": \"Resume\",\r\n    \"Order\": 0,\r\n    \"Children\": []\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ResumeApiHost}}/resume/delete/:id",
+							"host": [
+								"{{ResumeApiHost}}"
+							],
+							"path": [
+								"resume",
+								"delete",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -384,6 +421,43 @@
 				}
 			},
 			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{ResumeCookie}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Authorization",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "50a149f4-50ed-4cb4-a588-3b5d13e9f367",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7296ddc1-413b-487d-bec3-dc065061ad4d",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
