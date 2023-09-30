@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTreeNode, SectionType } from '../../../models/Resume';
 import { Guid } from 'guid-typescript';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-resume',
@@ -21,25 +22,29 @@ export class CreateResumeComponent {
     }
   );
 
-  constructor(private service: ResumeService) {}
+  constructor(private service: ResumeService, private router: Router, private route: ActivatedRoute) {}
 
   onSubmit() {
     console.log(this.form.value);
-    const resume: ResumeTreeNode = {
-      content: this.form.controls['title'].value,
-      comments: this.form.controls['comments'].value,
-      depth: 0,
-      id: Guid.create(),
-      order: 0,
-      sectionType: SectionType.Resume,
-      parentId: null,
-      userId: null,
-      active: true,
-      children: [],
-    };
+    this.route.queryParams.subscribe(params => {
 
-    this.service.createResume(resume).subscribe((res) => {
-      console.log(res);
+      const resume: ResumeTreeNode = {
+        content: this.form.controls['title'].value,
+        comments: this.form.controls['comments'].value,
+        depth: 0,
+        id: Guid.create(),
+        order: params['next'],
+        sectionType: SectionType.Resume,
+        parentId: null,
+        userId: Guid.createEmpty(),
+        active: true,
+        children: [],
+      };
+
+      this.service.createResume(resume).subscribe((res) => {
+        this.router.navigate(['/edit', res.id]);
+      });
     });
+
   }
 }

@@ -22,8 +22,7 @@
         text="Edit"
         [borderStyle]="BorderStyle.Dark"
         [buttonStyle]="ButtonStyle.Primary"
-        href="/edit"
-        [queryParams]="{ id: x.id }"
+        href="/edit/{{ x.id }}"
       ></app-button>
     </div>
   </mat-card>
@@ -37,6 +36,7 @@
         [borderStyle]="BorderStyle.Dark"
         [buttonStyle]="ButtonStyle.Primary"
         href="/create"
+        [queryParams]="{ next }"
       ></app-button>
     </div>
   </mat-card>

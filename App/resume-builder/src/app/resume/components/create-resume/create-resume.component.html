@@ -1,11 +1,11 @@
 <div class="base">
   <form [formGroup]="form" (submit)="onSubmit()">
     <mat-form-field appearance="outline">
-      <mat-label for="title">Title:</mat-label>
+      <mat-label>Title:</mat-label>
       <input matNativeControl id="title" type="text" formControlName="title">
     </mat-form-field>
     <mat-form-field appearance="outline">
-      <mat-label for="comments">Comments:</mat-label>
+      <mat-label>Comments:</mat-label>
       <input matNativeControl id="comments" type="text" formControlName="comments">
     </mat-form-field>
     <button class="submit-button" mat-flat-button type="submit">Submit</button>
