@@ -1,1 +1,6 @@
-<p>edit-resume works!</p>
+<div class="spinner" *ngIf="loading">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!loading">
+  <h2>{{ resume.content }}</h2>
+</div>

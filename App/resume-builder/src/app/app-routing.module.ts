@@ -4,6 +4,7 @@ import { LoginPageComponent } from './login/components/login-page/login-page.com
 import { HomeComponent } from './home/home.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { CreateResumeComponent } from './resume/components/create-resume/create-resume.component';
+import { EditResumeComponent } from './resume/components/edit-resume/edit-resume.component';
 
 const routes: Routes = [
   {
@@ -18,6 +19,10 @@ const routes: Routes = [
   {
     path: 'create',
     component: CreateResumeComponent,
+  },
+  {
+    path: 'edit/:id',
+    component: EditResumeComponent,
   },
   { path: '**', component: PageNotFoundComponent },
 ];

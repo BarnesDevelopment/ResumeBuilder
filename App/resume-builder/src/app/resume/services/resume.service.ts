@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {newResumeTreeNodeJson, ResumeHeader, ResumeTreeNode} from '../../models/Resume';
+import {
+  newResumeTreeNodeJson,
+  ResumeHeader,
+  ResumeTreeNode,
+} from '../../models/Resume';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environment';
 import { LoginService } from '../../login/services/login.service';
+import { Guid } from 'guid-typescript';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +38,17 @@ export class ResumeService {
     return this.http.post<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/create`,
       newResumeTreeNodeJson(resume),
+      {
+        headers,
+      },
+    );
+  }
+
+  public getResume(id: string): Observable<ResumeTreeNode> {
+    const cookie = this.loginService.getCookie();
+    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
+    return this.http.get<ResumeTreeNode>(
+      `${this.env.apiBasePath}/resume/get/${id}`,
       {
         headers,
       },

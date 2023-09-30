@@ -25,10 +25,11 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         userId {nameof(ResumeTreeNode.UserId)},
                         parentId {nameof(ResumeTreeNode.ParentId)},
                         content {nameof(ResumeTreeNode.Content)},
-                        placementorder {nameof(ResumeTreeNode.Order)},
+                        placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
-                        active {nameof(ResumeTreeNode.Active)}
+                        active {nameof(ResumeTreeNode.Active)},
+                        comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE Id = @Id";
         return await Db.QuerySingleAsync<ResumeTreeNode>(query, new { Id = id });
     }
@@ -40,10 +41,11 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         userId {nameof(ResumeTreeNode.UserId)},
                         parentId {nameof(ResumeTreeNode.ParentId)},
                         content {nameof(ResumeTreeNode.Content)},
-                        placementorder {nameof(ResumeTreeNode.Order)},
+                        placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
-                        active {nameof(ResumeTreeNode.Active)}
+                        active {nameof(ResumeTreeNode.Active)},
+                        comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE parentid = @Id";
         return (await Db.QueryAsync<ResumeTreeNode>(query, new { Id = id })).ToList();
     }
