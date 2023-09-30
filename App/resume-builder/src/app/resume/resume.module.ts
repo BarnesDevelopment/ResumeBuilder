@@ -4,10 +4,12 @@ import { CreateResumeComponent } from './components/create-resume/create-resume.
 import {ReactiveFormsModule} from "@angular/forms";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
+import { EditResumeComponent } from './components/edit-resume/edit-resume.component';
 
 @NgModule({
   declarations: [
-    CreateResumeComponent
+    CreateResumeComponent,
+    EditResumeComponent
   ],
   imports: [CommonModule, ReactiveFormsModule, MatInputModule, MatButtonModule],
 })
