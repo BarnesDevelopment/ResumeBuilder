@@ -885,7 +885,8 @@
           },
           "parentId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "content": {
             "type": "string",

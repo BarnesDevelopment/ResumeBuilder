@@ -39,4 +39,4 @@ generate-swagger:
 	cd out && \
 	dotnet swagger tofile --output ../../Schemas/swagger.json ResumeAPI.dll v1 && \
 	cd .. && \
-	rmdir out /s /q
+	rm -rf out
