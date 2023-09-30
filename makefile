@@ -1,4 +1,4 @@
-SHELL=CMD
+SHELL=bash
 
 docker-build:
 ifdef v
