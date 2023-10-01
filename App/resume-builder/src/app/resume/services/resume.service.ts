@@ -54,4 +54,16 @@ export class ResumeService {
       },
     );
   }
+
+  public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
+    const cookie = this.loginService.getCookie();
+    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
+    return this.http.put<ResumeTreeNode>(
+      `${this.env.apiBasePath}/resume/upsert`,
+      newResumeTreeNodeJson(resume),
+      {
+        headers,
+      },
+    );
+  }
 }
