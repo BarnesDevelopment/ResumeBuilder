@@ -19,15 +19,17 @@ export interface ResumeTreeNode {
   order: number;
 }
 
-
-export interface ResumeTreeNodeJson extends Omit<ResumeTreeNode, 'id'|'userId'|'parentId'|'children'> {
+export interface ResumeTreeNodeJson
+  extends Omit<ResumeTreeNode, 'id' | 'userId' | 'parentId' | 'children'> {
   id: string;
   userId: string;
   parentId: string;
   children: ResumeTreeNodeJson[];
 }
 
-export function newResumeTreeNodeJson(node: ResumeTreeNode): ResumeTreeNodeJson {
+export function newResumeTreeNodeJson(
+  node: ResumeTreeNode,
+): ResumeTreeNodeJson {
   return {
     children: node.children.map(newResumeTreeNodeJson),
     comments: node.comments,
@@ -38,7 +40,22 @@ export function newResumeTreeNodeJson(node: ResumeTreeNode): ResumeTreeNodeJson 
     content: node.content,
     sectionType: node.sectionType,
     depth: node.depth,
-    order: node.order
+    order: node.order,
+  };
+}
+
+export function newResumeSection(parent: ResumeTreeNode): ResumeTreeNode {
+  return {
+    children: [],
+    comments: '',
+    id: Guid.create(),
+    active: true,
+    userId: parent.userId,
+    parentId: parent.id,
+    content: '',
+    sectionType: SectionType.Section,
+    depth: parent.depth + 1,
+    order: parent.children.length,
   };
 }
 
