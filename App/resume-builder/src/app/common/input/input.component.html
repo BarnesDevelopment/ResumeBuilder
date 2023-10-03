@@ -1,0 +1,12 @@
+<div class="text">
+  <label for="{{ this.title }}">{{ this.title }}:</label>
+  <input
+    type="{{ this.type }}"
+    title="{{ this.title }}"
+    [(ngModel)]="value"
+    [disabled]="disabled"
+    (input)="onChange(value)"
+    (blur)="onTouched()"
+    id="{{ this.title }}"
+  />
+</div>

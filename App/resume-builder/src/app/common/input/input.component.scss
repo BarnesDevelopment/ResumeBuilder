@@ -1,0 +1,21 @@
+.text {
+  font-size: 1rem;
+  width: 20rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  align-items: center;
+  margin: 0.5rem 0 0.5rem 0;
+  label {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+  input {
+    width: 10rem;
+    height: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    font-size: 1rem;
+  }
+}
