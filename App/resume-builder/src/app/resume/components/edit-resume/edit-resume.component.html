@@ -2,9 +2,23 @@
   <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="!loading">
-  <form [formGroup]="form" (submit)="onSubmit()">
+  <form [formGroup]="form">
     <app-input formControlName="title" title="Title"></app-input>
     <app-input formControlName="comments" title="Comments"></app-input>
-    <button type="submit">Save</button>
+    <div class="section" *ngFor="let section of resume.children">
+      <app-input
+        formControlName="section{{ section.order }}title"
+        title="Section Title"
+      ></app-input>
+    </div>
+    <div class="button">
+      <app-button
+        ignoreClick
+        [buttonStyle]="ButtonStyle.Primary"
+        [borderStyle]="BorderStyle.Dark"
+        text="Add Section"
+        (click)="addSection()"
+      ></app-button>
+    </div>
   </form>
 </div>

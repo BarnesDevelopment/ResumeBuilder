@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-button',
@@ -12,13 +13,24 @@ export class ButtonComponent {
   @Input() buttonStyle: ButtonStyle = ButtonStyle.Primary;
   @Input() borderStyle: BorderStyle = BorderStyle.Dark;
   @Input() queryParams: any = {};
+  private _ignoreClick: boolean;
+  @Input()
+  get ignoreClick() {
+    return this._ignoreClick;
+  }
+  set ignoreClick(value: any) {
+    this._ignoreClick = coerceBooleanProperty(value);
+  }
+  @Input() onClick: any = () => {};
 
   constructor(private router: Router) {}
 
   GoTo(): void {
-    this.router.navigate([this.href], {
-      queryParams: this.queryParams,
-    });
+    if (!this._ignoreClick) {
+      this.router.navigate([this.href], {
+        queryParams: this.queryParams,
+      });
+    }
   }
 }
 

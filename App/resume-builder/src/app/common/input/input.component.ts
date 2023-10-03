@@ -1,9 +1,5 @@
-import { Component, forwardRef, Input, Optional, Self } from '@angular/core';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-  NgControl,
-} from '@angular/forms';
+import { Component, Input, Optional, Self } from '@angular/core';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
