@@ -8,17 +8,15 @@ else
 	docker build -t sambobbarnes/resume-api .
 endif
 	
-docker-push:
-	docker push -a sambobbarnes/resume-api
-	
 docker-build-push:
 ifdef v
 	docker build -t sambobbarnes/resume-api:$(v) .
 	docker build -t sambobbarnes/resume-api:latest .
+	docker push sambobbarnes/resume-api:$(v)
 else
 	docker build -t sambobbarnes/resume-api:latest .
 endif
-	docker push -a sambobbarnes/resume-api
+	docker push sambobbarnes/resume-api:latest
 	
 docker-test:
 	docker build -t sambobbarnes/resume-api:latest .
