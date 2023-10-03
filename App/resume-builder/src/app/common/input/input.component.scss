@@ -17,5 +17,16 @@
     border-radius: 5px;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
     font-size: 1rem;
+
+    &.invalid {
+      border: 1px solid red;
+      background-color: #ffd7d7;
+    }
   }
+}
+.error {
+  color: red;
+  font-size: 0.75rem;
+  width: 11rem;
+  margin-left: 9rem;
 }

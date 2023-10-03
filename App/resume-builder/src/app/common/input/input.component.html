@@ -1,6 +1,7 @@
 <div class="text">
   <label for="{{ this.title }}">{{ this.title }}:</label>
   <input
+    [className]="invalid ? 'invalid' : ''"
     type="{{ this.type }}"
     title="{{ this.title }}"
     [(ngModel)]="value"
@@ -9,4 +10,7 @@
     (blur)="onTouched()"
     id="{{ this.title }}"
   />
+</div>
+<div class="error" *ngIf="invalid">
+  <span>{{ errorMessage ?? "This field is required!" }}</span>
 </div>

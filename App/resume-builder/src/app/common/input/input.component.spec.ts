@@ -1,15 +1,13 @@
 import { screen } from '@testing-library/angular';
-
 import { InputComponent } from './input.component';
 import { renderRootComponent } from '../RenderRootComponent';
-import {
-  FormsModule,
-  NG_VALUE_ACCESSOR,
-  ReactiveFormsModule,
-} from '@angular/forms';
-import { forwardRef } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 describe('InputComponent', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should show label', async () => {
     await render('Test');
     expect(screen.getByText('Test:')).toBeTruthy();
@@ -26,37 +24,52 @@ describe('InputComponent', () => {
     const input = screen.getByTitle('Test');
     expect(input.getAttribute('type')).toBe('number');
   });
+
+  it('should show error message when invalid', async () => {
+    jest
+      .spyOn(InputComponent.prototype, 'invalid', 'get')
+      .mockReturnValue(true);
+    await render('Test');
+    expect(screen.getByText('This field is required!')).toBeTruthy();
+  });
+
+  it('should show custom error message', async () => {
+    jest
+      .spyOn(InputComponent.prototype, 'invalid', 'get')
+      .mockReturnValue(true);
+    await renderType('Test', 'text', 'Custom error message');
+    expect(screen.getByText('Custom error message')).toBeTruthy();
+  });
+
+  it('should not show error message when valid', async () => {
+    jest
+      .spyOn(InputComponent.prototype, 'invalid', 'get')
+      .mockReturnValue(false);
+    await render('Test');
+    expect(screen.queryByText('This field is required!')).toBeFalsy();
+  });
+
+  const render = async (title: string) => {
+    return await renderRootComponent(InputComponent, {
+      componentProperties: {
+        title,
+      },
+      imports: [FormsModule, ReactiveFormsModule],
+    });
+  };
+
+  const renderType = async (
+    title: string,
+    type: string,
+    errorMessage: string = null,
+  ) => {
+    return await renderRootComponent(InputComponent, {
+      componentProperties: {
+        title,
+        type,
+        errorMessage,
+      },
+      imports: [FormsModule, ReactiveFormsModule],
+    });
+  };
 });
-
-const render = async (title: string) => {
-  return await renderRootComponent(InputComponent, {
-    componentProperties: {
-      title,
-    },
-    imports: [FormsModule, ReactiveFormsModule],
-    providers: [
-      {
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => InputComponent),
-        multi: true,
-      },
-    ],
-  });
-};
-
-const renderType = async (title: string, type: string) => {
-  return await renderRootComponent(InputComponent, {
-    componentProperties: {
-      title,
-      type,
-    },
-    imports: [FormsModule, ReactiveFormsModule],
-    providers: [
-      {
-        provide: NG_VALUE_ACCESSOR,
-        useExisting: forwardRef(() => InputComponent),
-        multi: true,
-      },
-    ],
-  });
-};

@@ -1,28 +1,42 @@
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input, Optional, Self } from '@angular/core';
 import {
   ControlValueAccessor,
-  FormGroup,
   NG_VALUE_ACCESSOR,
+  NgControl,
 } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
-      multi: true,
-    },
-  ],
 })
 export class InputComponent implements ControlValueAccessor {
   @Input() type: string = 'text';
   @Input() title: string;
+  @Input() errorMessage: string;
 
   value: string;
   disabled = false;
+
+  constructor(@Self() @Optional() private control: NgControl) {
+    if (control) {
+      control.valueAccessor = this;
+    }
+  }
+
+  public get invalid(): boolean {
+    return this.control ? this.control.invalid : false;
+  }
+
+  public get showError(): boolean {
+    if (!this.control) {
+      return false;
+    }
+
+    const { dirty, touched } = this.control;
+
+    return this.invalid ? dirty || touched : false;
+  }
   onChange: any = (value: any) => {};
   onTouched: any = () => {};
 
