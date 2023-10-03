@@ -12,8 +12,7 @@ public interface IResumeOrchestrator
 {
     Task<ResumeTreeNode?> GetResumeTree(Guid id);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
-    Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId);
-    Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume);
+    Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume, Guid userId);
     Task<bool> DeleteNode(Guid id);
     MemoryStream BuildResume(Resume resume);
     string BuildResumeHtml(Resume resume);
@@ -56,10 +55,10 @@ public class ResumeOrchestrator : IResumeOrchestrator
         return await _tree.GetTopLevelNodes(userId);
     }
 
-    public async Task<ResumeTreeNode> CreateResume(ResumeTreeNode resume, Guid userId)
+    public async Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume, Guid userId)
     {
         resume.UserId = userId;
-        await _tree.CreateNode(resume);
+        await _tree.UpsertNode(resume);
 
         if (resume.Children != null && resume.Children.Any())
         {
@@ -74,18 +73,13 @@ public class ResumeOrchestrator : IResumeOrchestrator
         for(var i = 0; i < resume.Children.Count; i++) 
         {
             resume.Children[i].UserId = userId;
-            await _tree.CreateNode(resume.Children[i]);
+            await _tree.UpsertNode(resume.Children[i]);
             if (resume.Children[i].Children != null && resume.Children[i].Children.Any())
             {
                 resume.Children[i] = await CreateResumeRecurseChildren(resume.Children[i], userId);
             }
         }
         return resume;
-    }
-
-    public async Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume)
-    {
-        return await _tree.UpsertNode(resume);
     }
     
     public async Task<bool> DeleteNode(Guid id)

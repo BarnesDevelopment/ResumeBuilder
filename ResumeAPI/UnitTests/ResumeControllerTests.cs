@@ -196,69 +196,6 @@ public class ResumeControllerTests
     
     #endregion
     
-    #region CreateResume
-
-    [Fact]
-    public async Task CreateResume_ReturnsCreatedResume()
-    {
-        var id = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-        var resume = new ResumeTreeNode{ Id = id };
-
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
-        };
-        
-        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.CreateResume(resume, userId)).ReturnsAsync(resume);
-        
-        var actual = (await _controller.CreateResume(resume)).GetObject();
-        
-        actual.Should().BeEquivalentTo(resume);
-    }
-
-    [Fact]
-    public async Task CreateResume_ReturnsUnauthorized()
-    {
-        var id = Guid.NewGuid();
-        var resume = new ResumeTreeNode{ Id = id };
-
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "" } } } }
-        };
-        
-        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync((Guid?)null);
-        
-        var actual = await _controller.CreateResume(resume);
-        
-        actual.Result.Should().BeOfType<UnauthorizedResult>();
-    }
-
-    [Fact]
-    public async Task CreateResume_ReturnsProblem()
-    {
-        var id = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-        var resume = new ResumeTreeNode{ Id = id };
-
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { Request = { Headers = { {"Authorization", "some cookie" } } } }
-        };
-        
-        _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.CreateResume(resume, userId)).ThrowsAsync(new Exception("some error"));
-        
-        var actual = await _controller.CreateResume(resume);
-        
-        ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
-        ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
-    }
-    
-    #endregion
-    
     #region UpdateNode
 
     [Fact]
@@ -274,7 +211,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpsertNode(resume)).ReturnsAsync(resume);
+        _orchestrator.Setup(x => x.UpsertNode(resume, userId)).ReturnsAsync(resume);
         
         var actual = (await _controller.UpsertNode(resume)).GetObject();
         
@@ -312,7 +249,7 @@ public class ResumeControllerTests
         };
         
         _cookieValidator.Setup(x => x.Validate("some cookie")).ReturnsAsync(userId);
-        _orchestrator.Setup(x => x.UpsertNode(resume)).ThrowsAsync(new Exception("some error"));
+        _orchestrator.Setup(x => x.UpsertNode(resume, userId)).ThrowsAsync(new Exception("some error"));
         
         var actual = await _controller.UpsertNode(resume);
         

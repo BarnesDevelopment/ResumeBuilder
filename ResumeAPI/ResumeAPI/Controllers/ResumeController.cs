@@ -246,22 +246,6 @@ namespace ResumeAPI.Controllers
             }
         }
         
-        [HttpPost("create")]
-        public async Task<ActionResult<ResumeTreeNode>> CreateResume([FromBody] ResumeTreeNode resume)
-        {
-            try
-            {  
-                var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
-                if (userId == null) return Unauthorized();
-                return Ok(await _orchestrator.CreateResume(resume, (Guid)userId));
-            }
-            catch(Exception e)
-            {
-                _logger.LogError(e.Message);
-                return Problem(e.Message);
-            }
-        }
-        
         [HttpPost("upsert")]
         public async Task<ActionResult<ResumeTreeNode>> UpsertNode([FromBody] ResumeTreeNode resume)
         {
@@ -269,7 +253,7 @@ namespace ResumeAPI.Controllers
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                return Ok(await _orchestrator.UpsertNode(resume));
+                return Ok(await _orchestrator.UpsertNode(resume, (Guid)userId));
             }
             catch (Exception e)
             {
