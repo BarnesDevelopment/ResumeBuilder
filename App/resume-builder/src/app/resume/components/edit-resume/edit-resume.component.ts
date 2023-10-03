@@ -31,6 +31,9 @@ export class EditResumeComponent implements OnInit {
         title: new FormControl(this.resume.content, [Validators.required]),
         comments: new FormControl(this.resume.comments),
       });
+      this.resume.children.forEach((node) => {
+        this.createSectionFormControls(node);
+      });
       this.loading = false;
       console.log(this.resume, this.form);
     });
@@ -38,6 +41,21 @@ export class EditResumeComponent implements OnInit {
 
   save(): void {
     this.service.updateResume(this.resume).subscribe((res) => console.log(res));
+  }
+
+  createSectionFormControls(node: ResumeTreeNode): void {
+    this.form.addControl(
+      `section${node.order}title`,
+      new FormControl(this.resume.children[node.order].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[`section${node.order}title`].valueChanges.subscribe(
+      (res) => {
+        this.resume.children[node.order].content = res;
+      },
+    );
   }
 
   addSection(): void {
