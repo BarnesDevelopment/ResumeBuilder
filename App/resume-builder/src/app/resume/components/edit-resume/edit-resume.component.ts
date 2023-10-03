@@ -36,26 +36,36 @@ export class EditResumeComponent implements OnInit {
     });
   }
 
+  save(): void {
+    this.service.updateResume(this.resume).subscribe((res) => console.log(res));
+  }
+
   addSection(): void {
-    this.form.addControl(
-      `section${this.resume.children.length}title`,
-      new FormControl('', [Validators.required]),
-    );
+    const index = this.resume.children.length;
 
     this.resume.children.push({
       id: Guid.create(),
       content: 'Section Title',
-      comments: null,
+      comments: '',
       children: [],
       active: true,
       userId: this.resume.userId,
       sectionType: SectionType.Section,
       parentId: this.resume.id,
-      order: this.resume.children.length,
+      order: index,
       depth: 1,
     });
 
-    console.log(this.resume, this.form);
+    this.form.addControl(
+      `section${index}title`,
+      new FormControl(this.resume.children[index].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[`section${index}title`].valueChanges.subscribe((res) => {
+      this.resume.children[index].content = res;
+    });
   }
 
   protected readonly ButtonStyle = ButtonStyle;

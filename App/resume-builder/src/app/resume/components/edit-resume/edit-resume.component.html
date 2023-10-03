@@ -14,10 +14,19 @@
     <div class="button">
       <app-button
         ignoreClick
-        [buttonStyle]="ButtonStyle.Primary"
+        [buttonStyle]="ButtonStyle.Secondary"
         [borderStyle]="BorderStyle.Dark"
         text="Add Section"
         (click)="addSection()"
+      ></app-button>
+    </div>
+    <div class="button save">
+      <app-button
+        ignoreClick
+        [buttonStyle]="ButtonStyle.Primary"
+        [borderStyle]="BorderStyle.Dark"
+        text="Save"
+        (click)="save()"
       ></app-button>
     </div>
   </form>

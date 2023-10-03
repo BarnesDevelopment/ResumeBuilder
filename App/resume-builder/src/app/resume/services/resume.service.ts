@@ -32,18 +32,6 @@ export class ResumeService {
     );
   }
 
-  public createResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
-    const cookie = this.loginService.getCookie();
-    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
-    return this.http.post<ResumeTreeNode>(
-      `${this.env.apiBasePath}/resume/create`,
-      newResumeTreeNodeJson(resume),
-      {
-        headers,
-      },
-    );
-  }
-
   public getResume(id: string): Observable<ResumeTreeNode> {
     const cookie = this.loginService.getCookie();
     const headers = new HttpHeaders().set('Authorization', cookie.cookie);
@@ -58,7 +46,7 @@ export class ResumeService {
   public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
     const cookie = this.loginService.getCookie();
     const headers = new HttpHeaders().set('Authorization', cookie.cookie);
-    return this.http.put<ResumeTreeNode>(
+    return this.http.post<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/upsert`,
       newResumeTreeNodeJson(resume),
       {

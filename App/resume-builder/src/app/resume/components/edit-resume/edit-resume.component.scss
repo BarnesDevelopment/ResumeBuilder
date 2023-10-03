@@ -11,4 +11,9 @@
 .button {
   width: 10rem;
   margin: 1rem 0 0 9rem;
+
+  &.save {
+    margin: 3rem 0 0 3rem;
+    width: 5rem;
+  }
 }

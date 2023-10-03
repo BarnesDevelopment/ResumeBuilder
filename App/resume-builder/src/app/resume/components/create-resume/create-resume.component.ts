@@ -42,7 +42,7 @@ export class CreateResumeComponent {
         children: [],
       };
 
-      this.service.createResume(resume).subscribe((res) => {
+      this.service.updateResume(resume).subscribe((res) => {
         this.router.navigate(['/edit', res.id]);
       });
     });
