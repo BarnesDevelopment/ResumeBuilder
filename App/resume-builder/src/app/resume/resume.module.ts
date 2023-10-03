@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { EditResumeComponent } from './components/edit-resume/edit-resume.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {CommonComponentsModule} from "../common/common-components.module";
 
 @NgModule({
   declarations: [CreateResumeComponent, EditResumeComponent],
@@ -15,6 +16,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
+    CommonComponentsModule,
   ],
 })
 export class ResumeModule {}

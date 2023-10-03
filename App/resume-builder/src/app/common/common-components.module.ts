@@ -4,10 +4,28 @@ import { NgIf } from '@angular/common';
 import { ButtonComponent } from './button/button.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { LoginSplashScreenComponent } from './login-splash-screen/login-splash-screen.component';
+import { InputComponent } from './input/input.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [HeaderComponent, ButtonComponent, LoginSplashScreenComponent],
-  exports: [HeaderComponent, ButtonComponent, LoginSplashScreenComponent],
-  imports: [NgIf, FontAwesomeModule],
+  declarations: [
+    HeaderComponent,
+    ButtonComponent,
+    LoginSplashScreenComponent,
+    InputComponent,
+  ],
+  exports: [
+    HeaderComponent,
+    ButtonComponent,
+    LoginSplashScreenComponent,
+    InputComponent,
+  ],
+  imports: [
+    NgIf,
+    FontAwesomeModule,
+    FormsModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
 export class CommonComponentsModule {}

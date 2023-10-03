@@ -2,14 +2,9 @@
   <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="!loading">
-  <form [formGroup]="form">
-    <div class="text">
-      <label for="title">Title:</label>
-      <input type="text" id="title" formControlName="title" />
-    </div>
-    <div class="text">
-      <label for="comments">Comments:</label>
-      <input type="text" id="comments" formControlName="comments" />
-    </div>
+  <form [formGroup]="form" (submit)="onSubmit()">
+    <app-input formControlName="title" title="Title"></app-input>
+    <app-input formControlName="comments" title="Comments"></app-input>
+    <button type="submit">Save</button>
   </form>
 </div>

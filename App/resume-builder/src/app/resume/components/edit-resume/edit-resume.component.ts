@@ -29,4 +29,8 @@ export class EditResumeComponent implements OnInit {
       });
     });
   }
+
+  onSubmit(): void {
+    console.log(this.form.value);
+  }
 }
