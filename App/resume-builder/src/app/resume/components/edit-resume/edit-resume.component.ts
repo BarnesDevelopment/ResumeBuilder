@@ -18,6 +18,8 @@ export class EditResumeComponent implements OnInit {
   resume: ResumeTreeNode;
   loading: boolean = true;
   form: FormGroup;
+  phonePattern =
+    '^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$';
 
   constructor(
     private router: Router,
@@ -30,13 +32,41 @@ export class EditResumeComponent implements OnInit {
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
         comments: new FormControl(this.resume.comments),
+        name: new FormControl(this.title().content, [Validators.required]),
+        email: new FormControl(this.title().children[0].content, [
+          Validators.required,
+          Validators.email,
+        ]),
+        phone: new FormControl(this.title().children[1].content, [
+          Validators.required,
+          Validators.pattern(this.phonePattern),
+        ]),
       });
+      if (this.title().children.length > 2) {
+        this.form.addControl(
+          'website',
+          new FormControl(this.title().children[2].content),
+        );
+      }
+
       this.resume.children.forEach((node) => {
         this.createSectionFormControls(node);
       });
       this.loading = false;
       console.log(this.resume, this.form);
     });
+  }
+
+  title(): ResumeTreeNode {
+    return this.resume.children.find(
+      (node) => node.sectionType === SectionType.Title,
+    );
+  }
+
+  sections(): ResumeTreeNode[] {
+    return this.resume.children.filter(
+      (node) => node.sectionType === SectionType.Section,
+    );
   }
 
   save(): void {
