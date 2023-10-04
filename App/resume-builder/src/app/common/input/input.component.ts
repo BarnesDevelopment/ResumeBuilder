@@ -22,7 +22,7 @@ export class InputComponent implements ControlValueAccessor {
   }
 
   public get invalid(): boolean {
-    return this.control ? this.control.invalid : false;
+    return this.control ? this.control.invalid && this.control.touched : false;
   }
 
   public get showError(): boolean {

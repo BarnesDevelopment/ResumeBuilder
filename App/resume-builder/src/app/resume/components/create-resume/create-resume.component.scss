@@ -7,20 +7,7 @@
   align-items: center;
   margin-top: 2rem;
 
-  form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
   .submit-button {
-    font-family: "Roboto", "Courier New", courier, sans-serif;
-    color: $light;
-    background-color: $primary;
-  }
-
-  .error {
-    margin-bottom: 1rem;
+    margin-top: 2rem;
   }
 }

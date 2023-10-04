@@ -1,13 +1,13 @@
-<div class="base">
-  <form [formGroup]="form" (submit)="onSubmit()">
-    <mat-form-field appearance="outline">
-      <mat-label>Title:</mat-label>
-      <input matNativeControl id="title" type="text" formControlName="title">
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Comments:</mat-label>
-      <input matNativeControl id="comments" type="text" formControlName="comments">
-    </mat-form-field>
-    <button class="submit-button" mat-flat-button type="submit">Submit</button>
-  </form>
+<div class="base" [formGroup]="form">
+  <app-input autofocus formControlName="title" title="Title"></app-input>
+  <app-input formControlName="comments" title="Comments"></app-input>
+  <div class="submit-button">
+    <app-button
+      [buttonStyle]="ButtonStyle.Primary"
+      [borderStyle]="BorderStyle.Dark"
+      ignoreClick
+      (click)="onSubmit()"
+      text="Submit"
+    ></app-button>
+  </div>
 </div>
