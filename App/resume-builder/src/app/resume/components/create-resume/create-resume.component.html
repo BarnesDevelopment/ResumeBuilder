@@ -1,13 +1,13 @@
 <div class="base" [formGroup]="form">
-  <app-input autofocus formControlName="title" title="Title"></app-input>
-  <app-input formControlName="comments" title="Comments"></app-input>
+  <app-input autofocus formControlName="title">Title</app-input>
+  <app-input formControlName="comments">Comments</app-input>
   <div class="submit-button">
     <app-button
       [buttonStyle]="ButtonStyle.Primary"
       [borderStyle]="BorderStyle.Dark"
       ignoreClick
       (click)="onSubmit()"
-      text="Submit"
-    ></app-button>
+      >Submit</app-button
+    >
   </div>
 </div>

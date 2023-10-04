@@ -3,31 +3,30 @@
 </div>
 <div *ngIf="!loading">
   <form [formGroup]="form">
-    <app-input formControlName="title" title="Title"></app-input>
-    <app-input formControlName="comments" title="Comments"></app-input>
+    <app-input formControlName="title">Title</app-input>
+    <app-input formControlName="comments">Comments</app-input>
     <div class="section division" *ngFor="let section of resume.children">
-      <app-input
-        formControlName="section{{ section.order }}title"
-        title="Section Title"
-      ></app-input>
+      <app-input formControlName="section{{ section.order }}title"
+        >Section Title</app-input
+      >
     </div>
     <div class="button">
       <app-button
         ignoreClick
         [buttonStyle]="ButtonStyle.Secondary"
         [borderStyle]="BorderStyle.Dark"
-        text="Add Section"
         (click)="addSection()"
-      ></app-button>
+        >Add Section</app-button
+      >
     </div>
     <div class="button save">
       <app-button
         ignoreClick
         [buttonStyle]="ButtonStyle.Primary"
         [borderStyle]="BorderStyle.Dark"
-        text="Save"
         (click)="save()"
-      ></app-button>
+        >Save</app-button
+      >
     </div>
   </form>
 </div>

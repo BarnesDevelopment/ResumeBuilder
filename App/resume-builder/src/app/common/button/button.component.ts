@@ -9,7 +9,6 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 })
 export class ButtonComponent {
   @Input() href: string = '';
-  @Input() text: string = '';
   @Input() buttonStyle: ButtonStyle = ButtonStyle.Primary;
   @Input() borderStyle: BorderStyle = BorderStyle.Dark;
   @Input() queryParams: any = {};

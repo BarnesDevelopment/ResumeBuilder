@@ -1,4 +1,13 @@
-import { Component, Input, Optional, Self } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  ContentChild,
+  ElementRef,
+  Input,
+  Optional,
+  Self,
+  ViewChild,
+} from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 
 @Component({
@@ -8,7 +17,6 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 })
 export class InputComponent implements ControlValueAccessor {
   @Input() type: string = 'text';
-  @Input() title: string;
   @Input() errorMessage: string;
   @Input() formControlName: string;
 

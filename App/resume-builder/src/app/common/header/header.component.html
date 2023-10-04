@@ -5,11 +5,17 @@
   </div>
   <div class="user-info edge-div">
     <div *ngIf="user != undefined" class="user" (click)="ToggleUserPanel()">
-      <span>{{this.user!.fullName}}</span>
+      <span>{{ this.user!.fullName }}</span>
       <fa-icon [icon]="faCaretDown"></fa-icon>
     </div>
     <div *ngIf="user == undefined" class="login">
-      <app-button href="/login" text="Login" [buttonStyle]="ButtonStyle.Transparent" [borderStyle]="BorderStyle.Light" title="login"></app-button>
+      <app-button
+        href="/login"
+        [buttonStyle]="ButtonStyle.Transparent"
+        [borderStyle]="BorderStyle.Light"
+        title="login"
+        >Login</app-button
+      >
     </div>
   </div>
 </div>

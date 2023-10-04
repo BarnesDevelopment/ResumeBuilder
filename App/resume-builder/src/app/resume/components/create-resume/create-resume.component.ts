@@ -4,6 +4,10 @@ import { ResumeService } from '../../services/resume.service';
 import { ResumeTreeNode, SectionType } from '../../../models/Resume';
 import { Guid } from 'guid-typescript';
 import { ActivatedRoute, Router } from '@angular/router';
+import {
+  BorderStyle,
+  ButtonStyle,
+} from '../../../common/button/button.component';
 
 @Component({
   selector: 'app-create-resume',
@@ -11,6 +15,9 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./create-resume.component.scss'],
 })
 export class CreateResumeComponent {
+  phonePattern =
+    '^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$';
+
   form: FormGroup = new FormGroup({
     title: new FormControl('', [
       Validators.required,
@@ -18,6 +25,12 @@ export class CreateResumeComponent {
       Validators.minLength(3),
     ]),
     comments: new FormControl('', [Validators.maxLength(500)]),
+    name: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    phone: new FormControl('', [
+      Validators.required,
+      Validators.pattern(this.phonePattern),
+    ]),
   });
 
   constructor(
@@ -47,4 +60,7 @@ export class CreateResumeComponent {
       });
     });
   }
+
+  protected readonly ButtonStyle = ButtonStyle;
+  protected readonly BorderStyle = BorderStyle;
 }
