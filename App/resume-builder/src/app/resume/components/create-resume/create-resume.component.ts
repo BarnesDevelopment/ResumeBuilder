@@ -31,6 +31,7 @@ export class CreateResumeComponent {
       Validators.required,
       Validators.pattern(this.phonePattern),
     ]),
+    website: new FormControl(''),
   });
 
   constructor(
@@ -40,20 +41,74 @@ export class CreateResumeComponent {
   ) {}
 
   onSubmit() {
-    console.log(this.form.value);
+    const topLevelId = Guid.create();
+    const titleId = Guid.create();
     this.route.queryParams.subscribe((params) => {
       const resume: ResumeTreeNode = {
         content: this.form.controls['title'].value,
         comments: this.form.controls['comments'].value,
         depth: 0,
-        id: Guid.create(),
+        id: topLevelId,
         order: params['next'],
         sectionType: SectionType.Resume,
         parentId: null,
         userId: Guid.createEmpty(),
         active: true,
-        children: [],
+        children: [
+          {
+            content: this.form.controls['name'].value,
+            comments: '',
+            depth: 1,
+            id: titleId,
+            order: 0,
+            sectionType: SectionType.Title,
+            parentId: topLevelId,
+            userId: Guid.createEmpty(),
+            active: true,
+            children: [
+              {
+                content: this.form.controls['email'].value,
+                comments: '',
+                depth: 2,
+                id: Guid.create(),
+                order: 0,
+                sectionType: SectionType.ListItem,
+                parentId: titleId,
+                userId: Guid.createEmpty(),
+                active: true,
+                children: [],
+              },
+              {
+                content: this.form.controls['phone'].value,
+                comments: '',
+                depth: 2,
+                id: Guid.create(),
+                order: 1,
+                sectionType: SectionType.ListItem,
+                parentId: titleId,
+                userId: Guid.createEmpty(),
+                active: true,
+                children: [],
+              },
+            ],
+          },
+        ],
       };
+
+      if (this.form.controls['website'].value !== '') {
+        resume.children[0].children.push({
+          content: this.form.controls['website'].value,
+          comments: '',
+          depth: 2,
+          id: Guid.create(),
+          order: 2,
+          sectionType: SectionType.ListItem,
+          parentId: titleId,
+          userId: Guid.createEmpty(),
+          active: true,
+          children: [],
+        });
+      }
 
       this.service.updateResume(resume).subscribe((res) => {
         this.router.navigate(['/edit', res.id]);

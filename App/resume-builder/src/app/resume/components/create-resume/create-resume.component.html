@@ -1,6 +1,14 @@
 <div class="base" [formGroup]="form">
   <app-input autofocus formControlName="title">Title</app-input>
   <app-input formControlName="comments">Comments</app-input>
+  <app-input formControlName="name">Name</app-input>
+  <app-input formControlName="email" errorMessage="Incorrect pattern"
+    >Email</app-input
+  >
+  <app-input formControlName="phone" errorMessage="Incorrect pattern"
+    >Phone</app-input
+  >
+  <app-input formControlName="website">Website</app-input>
   <div class="submit-button">
     <app-button
       [buttonStyle]="ButtonStyle.Primary"
