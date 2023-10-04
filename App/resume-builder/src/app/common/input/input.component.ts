@@ -10,6 +10,7 @@ export class InputComponent implements ControlValueAccessor {
   @Input() type: string = 'text';
   @Input() title: string;
   @Input() errorMessage: string;
+  @Input() formControlName: string;
 
   value: string;
   disabled = false;

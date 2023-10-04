@@ -5,7 +5,7 @@
   <form [formGroup]="form">
     <app-input formControlName="title" title="Title"></app-input>
     <app-input formControlName="comments" title="Comments"></app-input>
-    <div class="section" *ngFor="let section of resume.children">
+    <div class="section division" *ngFor="let section of resume.children">
       <app-input
         formControlName="section{{ section.order }}title"
         title="Section Title"
