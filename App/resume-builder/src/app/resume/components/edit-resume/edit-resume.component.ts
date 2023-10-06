@@ -184,6 +184,8 @@ export class EditResumeComponent implements OnInit {
   }
 
   //region: Section Add Forms
+
+  //region List
   sectionAddListForm(section: ResumeTreeNode) {
     const index = section.children.length;
     const listId = Guid.create();
@@ -279,6 +281,7 @@ export class EditResumeComponent implements OnInit {
 
     this.service.deleteNode(nodeToDrop).subscribe();
   }
+  //endregion
   sectionAddParagraphForm(section: ResumeTreeNode) {
     const index = section.children.length;
     section.children.push({
