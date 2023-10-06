@@ -56,7 +56,6 @@ export class EditResumeComponent implements OnInit {
       this.resume.children.forEach((node) => {
         this.createSectionFormControls(node);
       });
-      console.log(this.resume);
       this.loading = false;
     });
   }
@@ -162,7 +161,9 @@ export class EditResumeComponent implements OnInit {
   sectionTypeChanged(section: ResumeTreeNode) {
     section.children.forEach((node) => {
       this.service.deleteNode(node).subscribe();
+      this.form.removeControl(`section${section.order}listItem${node.order}`);
     });
+    section.children = [];
 
     switch (this.form.controls[`section${section.order}type`].value) {
       default:
