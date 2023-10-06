@@ -40,6 +40,44 @@
       <app-input formControlName="section{{ section.order }}title"
         >Section Title</app-input
       >
+      <div class="select">
+        <label for="section{{ section.order }}type">Section Type:</label>
+        <select
+          formControlName="section{{ section.order }}type"
+          [className]="
+            form.controls['section' + section.order + 'type'].invalid &&
+            form.controls['section' + section.order + 'type'].touched
+              ? 'invalid'
+              : ''
+          "
+        >
+          <option></option>
+          <option [value]="SectionDisplayType.List">
+            {{ SectionDisplayType.List }}
+          </option>
+          <option [value]="SectionDisplayType.Paragraph">
+            {{ SectionDisplayType.Paragraph }}
+          </option>
+          <option [value]="SectionDisplayType.Education">
+            {{ SectionDisplayType.Education }}
+          </option>
+          <option [value]="SectionDisplayType.WorkExperience">
+            {{ SectionDisplayType.WorkExperience }}
+          </option>
+          <option [value]="SectionDisplayType.Skills">
+            {{ SectionDisplayType.Skills }}
+          </option>
+        </select>
+      </div>
+      <div
+        class="error"
+        *ngIf="
+          form.controls['section' + section.order + 'type'].invalid &&
+          form.controls['section' + section.order + 'type'].touched
+        "
+      >
+        <span>Type is required.</span>
+      </div>
     </div>
     <div class="button">
       <app-button

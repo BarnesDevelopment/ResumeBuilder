@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ResumeTreeNode, SectionType } from '../../../models/Resume';
+import {
+  ResumeTreeNode,
+  SectionDisplayType,
+  SectionType,
+} from '../../../models/Resume';
 import { Router } from '@angular/router';
 import { ResumeService } from '../../services/resume.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
@@ -53,7 +57,6 @@ export class EditResumeComponent implements OnInit {
         this.createSectionFormControls(node);
       });
       this.loading = false;
-      console.log(this.resume, this.form);
     });
   }
 
@@ -70,7 +73,7 @@ export class EditResumeComponent implements OnInit {
   }
 
   save(): void {
-    this.service.updateResume(this.resume).subscribe((res) => console.log(res));
+    this.service.updateResume(this.resume).subscribe();
   }
 
   createSectionFormControls(node: ResumeTreeNode): void {
@@ -79,6 +82,11 @@ export class EditResumeComponent implements OnInit {
       new FormControl(this.resume.children[node.order].content, [
         Validators.required,
       ]),
+    );
+
+    this.form.addControl(
+      `section${node.order}type`,
+      new FormControl('', [Validators.required]),
     );
 
     this.form.controls[`section${node.order}title`].valueChanges.subscribe(
@@ -122,18 +130,32 @@ export class EditResumeComponent implements OnInit {
 
   addSection(): void {
     const index = this.resume.children.length;
+    const sectionId = Guid.create();
 
     this.resume.children.push({
-      id: Guid.create(),
+      id: sectionId,
       content: 'Section Title',
       comments: '',
-      children: [],
       active: true,
       userId: this.resume.userId,
       sectionType: SectionType.Section,
       parentId: this.resume.id,
       order: index,
       depth: 1,
+      children: [
+        {
+          id: Guid.create(),
+          content: 'Section Title',
+          comments: '',
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.Separator,
+          parentId: sectionId,
+          order: 0,
+          depth: 2,
+          children: [],
+        },
+      ],
     });
 
     this.form.addControl(
@@ -143,11 +165,18 @@ export class EditResumeComponent implements OnInit {
       ]),
     );
 
+    this.form.addControl(
+      `section${index}type`,
+      new FormControl('', [Validators.required]),
+    );
+
     this.form.controls[`section${index}title`].valueChanges.subscribe((res) => {
       this.resume.children[index].content = res;
+      this.resume.children[index].children[0].content = res;
     });
   }
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
+  protected readonly SectionDisplayType = SectionDisplayType;
 }

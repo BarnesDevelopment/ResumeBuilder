@@ -70,3 +70,11 @@ export enum SectionType {
   ListItem = 'ListItem',
   SectionItem = 'SectionItem',
 }
+
+export enum SectionDisplayType {
+  List = 'List',
+  Paragraph = 'Paragraph',
+  WorkExperience = 'WorkExperience',
+  Education = 'Education',
+  Skills = 'Skills',
+}
