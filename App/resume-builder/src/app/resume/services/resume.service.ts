@@ -54,4 +54,15 @@ export class ResumeService {
       },
     );
   }
+
+  public deleteNode(resume: ResumeTreeNode): Observable<boolean> {
+    const cookie = this.loginService.getCookie();
+    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
+    return this.http.delete<boolean>(
+      `${this.env.apiBasePath}/resume/delete/${resume.id}`,
+      {
+        headers,
+      },
+    );
+  }
 }

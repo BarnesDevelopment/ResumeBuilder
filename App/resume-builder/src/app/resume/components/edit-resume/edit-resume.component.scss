@@ -23,3 +23,18 @@
   padding-left: 3rem;
   border-top: 2px solid $dark;
 }
+
+.website-row {
+  margin-top: -0.5rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  app-button {
+    margin: 0 0 0 1rem;
+  }
+}
+
+.add-website-button {
+  width: 11rem;
+  margin-left: 9rem;
+}

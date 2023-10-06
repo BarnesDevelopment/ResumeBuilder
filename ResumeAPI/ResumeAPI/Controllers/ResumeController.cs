@@ -269,8 +269,7 @@ namespace ResumeAPI.Controllers
             {
                 var userId = await _validator.Validate(Request.Headers.Authorization.ToString());
                 if (userId == null) return Unauthorized();
-                if(await _orchestrator.DeleteNode(id)) return Accepted();
-                return NotFound();
+                return Accepted(await _orchestrator.DeleteNode(id));
             }
             catch(Exception e)
             {

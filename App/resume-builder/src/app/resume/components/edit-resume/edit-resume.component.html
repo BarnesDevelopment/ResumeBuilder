@@ -13,9 +13,27 @@
       <app-input formControlName="phone" errorMessage="Incorrect pattern"
         >Phone</app-input
       >
-      <app-input *ngIf="title().children.length > 2" formControlName="website"
-        >Website</app-input
-      >
+      <div class="website-row" *ngIf="title().children.length > 2">
+        <app-input formControlName="website">Website</app-input>
+
+        <app-button
+          [borderStyle]="BorderStyle.Dark"
+          [buttonStyle]="ButtonStyle.Primary"
+          ignoreClick
+          (click)="removeWebsite()"
+          >&nbsp;&mdash;&nbsp;</app-button
+        >
+      </div>
+      <div class="add-website-button">
+        <app-button
+          *ngIf="title().children.length == 2"
+          [borderStyle]="BorderStyle.Dark"
+          [buttonStyle]="ButtonStyle.Secondary"
+          ignoreClick
+          (click)="addWebsite()"
+          >Add Website</app-button
+        >
+      </div>
     </div>
 
     <div class="section division" *ngFor="let section of sections()">

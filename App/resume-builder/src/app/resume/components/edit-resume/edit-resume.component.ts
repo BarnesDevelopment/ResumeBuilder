@@ -88,6 +88,38 @@ export class EditResumeComponent implements OnInit {
     );
   }
 
+  addWebsite(): void {
+    const index = this.title().children.length;
+    this.title().children.push({
+      id: Guid.create(),
+      content: '',
+      comments: '',
+      children: [],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.ListItem,
+      parentId: this.title().id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      'website',
+      new FormControl(this.title().children[index].content),
+    );
+
+    this.form.controls['website'].valueChanges.subscribe((res) => {
+      this.title().children[index].content = res;
+    });
+  }
+
+  removeWebsite(): void {
+    const nodeToDrop = this.title().children.pop();
+    this.form.removeControl('website');
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+  }
+
   addSection(): void {
     const index = this.resume.children.length;
 

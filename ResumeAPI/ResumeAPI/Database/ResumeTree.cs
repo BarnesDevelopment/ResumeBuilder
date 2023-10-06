@@ -46,7 +46,8 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         sectiontype {nameof(ResumeTreeNode.SectionType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
-                        FROM ResumeDb.ResumeTree WHERE parentid = @Id";
+                        FROM ResumeDb.ResumeTree WHERE parentid = @Id
+                        order by placementorder";
         return (await Db.QueryAsync<ResumeTreeNode>(query, new { Id = id })).ToList();
     }
 
