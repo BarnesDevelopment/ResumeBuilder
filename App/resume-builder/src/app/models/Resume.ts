@@ -76,5 +76,4 @@ export enum SectionDisplayType {
   Paragraph = 'Paragraph',
   WorkExperience = 'WorkExperience',
   Education = 'Education',
-  Skills = 'Skills',
 }

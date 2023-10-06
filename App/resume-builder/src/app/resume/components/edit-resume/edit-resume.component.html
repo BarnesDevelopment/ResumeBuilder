@@ -13,7 +13,7 @@
       <app-input formControlName="phone" errorMessage="Incorrect pattern"
         >Phone</app-input
       >
-      <div class="website-row" *ngIf="title().children.length > 2">
+      <div class="add-remove-row" *ngIf="title().children.length > 2">
         <app-input formControlName="website">Website</app-input>
 
         <app-button
@@ -43,6 +43,7 @@
       <div class="select">
         <label for="section{{ section.order }}type">Section Type:</label>
         <select
+          id="section{{ section.order }}type"
           formControlName="section{{ section.order }}type"
           [className]="
             form.controls['section' + section.order + 'type'].invalid &&
@@ -50,6 +51,7 @@
               ? 'invalid'
               : ''
           "
+          (change)="sectionTypeChanged(section)"
         >
           <option></option>
           <option [value]="SectionDisplayType.List">
@@ -64,9 +66,6 @@
           <option [value]="SectionDisplayType.WorkExperience">
             {{ SectionDisplayType.WorkExperience }}
           </option>
-          <option [value]="SectionDisplayType.Skills">
-            {{ SectionDisplayType.Skills }}
-          </option>
         </select>
       </div>
       <div
@@ -78,7 +77,70 @@
       >
         <span>Type is required.</span>
       </div>
+      <div
+        class="division"
+        *ngIf="
+          form.controls['section' + section.order + 'type'].value ==
+          SectionDisplayType.List
+        "
+      >
+        <div
+          class="add-remove-row"
+          *ngFor="let item of section.children[0].children"
+        >
+          <app-input
+            formControlName="section{{ section.order }}listItem{{ item.order }}"
+            >List Item</app-input
+          >
+          <app-button
+            *ngIf="
+              item.order == section.children[0].children.length - 1 &&
+              item.order > 0
+            "
+            [borderStyle]="BorderStyle.Dark"
+            [buttonStyle]="ButtonStyle.Primary"
+            ignoreClick
+            (click)="removeListItem(section.order, section.children[0])"
+            >&nbsp;&mdash;&nbsp;</app-button
+          >
+          <app-button
+            [borderStyle]="BorderStyle.Dark"
+            [buttonStyle]="ButtonStyle.Primary"
+            ignoreClick
+            (click)="addListItem(section.order, section.children[0])"
+            >&nbsp;+&nbsp;</app-button
+          >
+        </div>
+      </div>
+      <div
+        class="division"
+        *ngIf="
+          form.controls['section' + section.order + 'type'].value ==
+          SectionDisplayType.Paragraph
+        "
+      >
+        Paragraph
+      </div>
+      <div
+        class="division"
+        *ngIf="
+          form.controls['section' + section.order + 'type'].value ==
+          SectionDisplayType.Education
+        "
+      >
+        Education
+      </div>
+      <div
+        class="division"
+        *ngIf="
+          form.controls['section' + section.order + 'type'].value ==
+          SectionDisplayType.WorkExperience
+        "
+      >
+        WorkExperience
+      </div>
     </div>
+
     <div class="button">
       <app-button
         ignoreClick

@@ -56,6 +56,7 @@ export class EditResumeComponent implements OnInit {
       this.resume.children.forEach((node) => {
         this.createSectionFormControls(node);
       });
+      console.log(this.resume);
       this.loading = false;
     });
   }
@@ -66,16 +67,18 @@ export class EditResumeComponent implements OnInit {
     );
   }
 
+  save(): void {
+    this.service.updateResume(this.resume).subscribe();
+  }
+
+  //region Section
   sections(): ResumeTreeNode[] {
     return this.resume.children.filter(
       (node) => node.sectionType === SectionType.Section,
     );
   }
 
-  save(): void {
-    this.service.updateResume(this.resume).subscribe();
-  }
-
+  //region Modify
   createSectionFormControls(node: ResumeTreeNode): void {
     this.form.addControl(
       `section${node.order}title`,
@@ -94,38 +97,16 @@ export class EditResumeComponent implements OnInit {
         this.resume.children[node.order].content = res;
       },
     );
-  }
 
-  addWebsite(): void {
-    const index = this.title().children.length;
-    this.title().children.push({
-      id: Guid.create(),
-      content: '',
-      comments: '',
-      children: [],
-      active: true,
-      userId: this.resume.userId,
-      sectionType: SectionType.ListItem,
-      parentId: this.title().id,
-      order: index,
-      depth: 2,
+    node.children.forEach((child) => {
+      switch (child.sectionType) {
+        default:
+          break;
+        case SectionType.List:
+          this.initializeList(node.order, child);
+          break;
+      }
     });
-
-    this.form.addControl(
-      'website',
-      new FormControl(this.title().children[index].content),
-    );
-
-    this.form.controls['website'].valueChanges.subscribe((res) => {
-      this.title().children[index].content = res;
-    });
-  }
-
-  removeWebsite(): void {
-    const nodeToDrop = this.title().children.pop();
-    this.form.removeControl('website');
-
-    this.service.deleteNode(nodeToDrop).subscribe();
   }
 
   addSection(): void {
@@ -175,6 +156,193 @@ export class EditResumeComponent implements OnInit {
       this.resume.children[index].children[0].content = res;
     });
   }
+  //endregion
+
+  //region SectionType
+  sectionTypeChanged(section: ResumeTreeNode) {
+    section.children.forEach((node) => {
+      this.service.deleteNode(node).subscribe();
+    });
+
+    switch (this.form.controls[`section${section.order}type`].value) {
+      default:
+        break;
+      case SectionDisplayType.List:
+        this.sectionAddListForm(section);
+        break;
+      case SectionDisplayType.Paragraph:
+        this.sectionAddParagraphForm(section);
+        break;
+      case SectionDisplayType.Education:
+        this.sectionAddEducationForm(section);
+        break;
+      case SectionDisplayType.WorkExperience:
+        this.sectionAddWorkExperienceForm(section);
+        break;
+    }
+  }
+
+  //region: Section Add Forms
+  sectionAddListForm(section: ResumeTreeNode) {
+    const index = section.children.length;
+    const listId = Guid.create();
+    section.children.push({
+      id: listId,
+      content: '',
+      comments: '',
+      children: [
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: listId,
+          order: 0,
+          depth: 3,
+        },
+      ],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.List,
+      parentId: section.id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      `section${section.order}listItem0`,
+      new FormControl(section.children[index].children[0].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      `section${section.order}listItem0`
+    ].valueChanges.subscribe((res) => {
+      section.children[index].children[0].content = res;
+    });
+  }
+
+  initializeList(sectionOrder: number, list: ResumeTreeNode) {
+    this.form.controls[`section${sectionOrder}type`].setValue(
+      SectionDisplayType.List,
+    );
+    list.children.forEach((node) => {
+      this.form.addControl(
+        `section${sectionOrder}listItem${node.order}`,
+        new FormControl(node.content, [Validators.required]),
+      );
+
+      this.form.controls[
+        `section${sectionOrder}listItem${node.order}`
+      ].valueChanges.subscribe((res) => {
+        node.content = res;
+      });
+    });
+  }
+
+  addListItem(sectionOrder: number, list: ResumeTreeNode) {
+    const index = list.children.length;
+    list.children.push({
+      id: Guid.create(),
+      content: '',
+      comments: '',
+      children: [],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.ListItem,
+      parentId: list.id,
+      order: index,
+      depth: 3,
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}listItem${index}`,
+      new FormControl(list.children[index].content, [Validators.required]),
+    );
+
+    this.form.controls[
+      `section${sectionOrder}listItem${index}`
+    ].valueChanges.subscribe((res) => {
+      list.children[index].content = res;
+    });
+  }
+  removeListItem(sectionOrder: number, list: ResumeTreeNode) {
+    const nodeToDrop = list.children.pop();
+    this.form.removeControl(
+      `section${sectionOrder}listItem${list.children.length}`,
+    );
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+  }
+  sectionAddParagraphForm(section: ResumeTreeNode) {
+    const index = section.children.length;
+    section.children.push({
+      id: Guid.create(),
+      content: '',
+      comments: '',
+      children: [],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.ListItem,
+      parentId: section.id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      `section${section.order}paragraph${index}`,
+      new FormControl(section.children[index].content, [Validators.required]),
+    );
+
+    this.form.controls[
+      `section${section.order}paragraph${index}`
+    ].valueChanges.subscribe((res) => {
+      section.children[index].content = res;
+    });
+  }
+  sectionAddEducationForm(section: ResumeTreeNode) {}
+  sectionAddWorkExperienceForm(section: ResumeTreeNode) {}
+  //endregion
+  //endregion
+  //endregion
+
+  //region Website
+  addWebsite(): void {
+    const index = this.title().children.length;
+    this.title().children.push({
+      id: Guid.create(),
+      content: '',
+      comments: '',
+      children: [],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.ListItem,
+      parentId: this.title().id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      'website',
+      new FormControl(this.title().children[index].content),
+    );
+
+    this.form.controls['website'].valueChanges.subscribe((res) => {
+      this.title().children[index].content = res;
+    });
+  }
+
+  removeWebsite(): void {
+    const nodeToDrop = this.title().children.pop();
+    this.form.removeControl('website');
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+  }
+  //endregion
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
