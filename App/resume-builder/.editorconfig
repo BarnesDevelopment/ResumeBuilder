@@ -16,3 +16,4 @@ trim_trailing_whitespace = false
 
 [*.html]
 max_line_length = 255
+quote_type = double
