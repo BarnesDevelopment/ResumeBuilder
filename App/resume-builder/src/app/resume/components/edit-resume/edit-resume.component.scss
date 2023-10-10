@@ -69,8 +69,25 @@
 .education {
   display: flex;
   flex-direction: column;
-
   .school {
+    padding: 1rem 0 1rem 0;
+    border-bottom: 1px dashed $dark;
+    .row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      app-button {
+        margin: 0 0 0 1rem;
+      }
+    }
+  }
+}
+
+.work {
+  display: flex;
+  flex-direction: column;
+  .job {
     padding: 1rem 0 1rem 0;
     border-bottom: 1px dashed $dark;
     .row {

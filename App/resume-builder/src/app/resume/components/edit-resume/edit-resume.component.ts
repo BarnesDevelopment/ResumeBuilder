@@ -108,6 +108,9 @@ export class EditResumeComponent implements OnInit {
         case SectionType.Education:
           this.initializeEducation(node.order, child);
           break;
+        case SectionType.WorkExperience:
+          this.initializeWorkExperience(node.order, child);
+          break;
         default:
           break;
       }
@@ -685,7 +688,324 @@ export class EditResumeComponent implements OnInit {
   }
   //endregion
   //region WorkExperience
-  sectionAddWorkExperienceForm(section: ResumeTreeNode) {}
+  sectionAddWorkExperienceForm(section: ResumeTreeNode) {
+    const index = section.children.length;
+    const workExperienceId = Guid.create();
+    section.children.push({
+      id: workExperienceId,
+      content: '',
+      comments: '',
+      children: [
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 0,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 1,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 2,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 3,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 4,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: workExperienceId,
+          order: 5,
+          depth: 3,
+        },
+      ],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.WorkExperience,
+      parentId: section.id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      `section${section.order}work${index}title`,
+      new FormControl(section.children[index].children[0].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'title'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[0].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}work${index}employer`,
+      new FormControl(section.children[index].children[1].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'employer'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[1].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}work${index}city`,
+      new FormControl(section.children[index].children[2].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'city'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[2].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}work${index}state`,
+      new FormControl(section.children[index].children[3].content, [
+        Validators.required,
+        Validators.pattern('^[A-Z]{2}$'),
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'state'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[3].content = res;
+    });
+
+    const startPattern: RegExp = /(0[1-9]|1[1,2])([\/\-])(19|20)\d{2}/;
+
+    this.form.addControl(
+      `section${section.order}work${index}start`,
+      new FormControl(section.children[index].children[4].content, [
+        Validators.required,
+        Validators.pattern(startPattern),
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'start'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[4].content = res;
+    });
+
+    const endPattern: RegExp = /((0[1-9]|1[1,2])([\/\-])(19|20)\d{2}|Present)/;
+
+    this.form.addControl(
+      `section${section.order}work${index}end`,
+      new FormControl(section.children[index].children[5].content, [
+        Validators.required,
+        Validators.pattern(endPattern),
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'work' + index + 'end'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[5].content = res;
+    });
+  }
+  removeWorkExperience(section: ResumeTreeNode) {
+    const nodeToDrop = section.children.pop();
+
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}title`,
+    );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}employer`,
+    );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}city`,
+    );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}state`,
+    );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}start`,
+    );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}end`,
+    );
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+  }
+  initializeWorkExperience(
+    sectionOrder: number,
+    workExperience: ResumeTreeNode,
+  ) {
+    this.form.controls[`section${sectionOrder}type`].setValue(
+      SectionDisplayType.WorkExperience,
+    );
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}title`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[0].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'title'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[0].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}employer`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[1].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'employer'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[1].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}city`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[2].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'city'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[2].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}state`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[3].content,
+        [Validators.required, Validators.pattern('^[A-Z]{2}$')],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'state'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[3].content = res;
+    });
+
+    const startPattern: RegExp = /(0[1-9]|1[1,2])([\/\-])(19|20)\d{2}/;
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}start`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[4].content,
+        [Validators.required, Validators.pattern(startPattern)],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'start'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[4].content = res;
+    });
+
+    const endPattern: RegExp = /((0[1-9]|1[1,2])([\/\-])(19|20)\d{2}|Present)/;
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}end`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          workExperience.order
+        ].children[5].content,
+        [Validators.required, Validators.pattern(endPattern)],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + workExperience.order + 'end'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        workExperience.order
+      ].children[5].content = res;
+    });
+  }
   //endregion
   //endregion
   //endregion
