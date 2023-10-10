@@ -99,10 +99,13 @@ export class EditResumeComponent implements OnInit {
 
     node.children.forEach((child) => {
       switch (child.sectionType) {
-        default:
-          break;
         case SectionType.List:
           this.initializeList(node.order, child);
+          break;
+        case SectionType.Paragraph:
+          this.initializeParagraph(node.order, child);
+          break;
+        default:
           break;
       }
     });
@@ -166,8 +169,6 @@ export class EditResumeComponent implements OnInit {
     section.children = [];
 
     switch (this.form.controls[`section${section.order}type`].value) {
-      default:
-        break;
       case SectionDisplayType.List:
         this.sectionAddListForm(section);
         break;
@@ -179,6 +180,8 @@ export class EditResumeComponent implements OnInit {
         break;
       case SectionDisplayType.WorkExperience:
         this.sectionAddWorkExperienceForm(section);
+        break;
+      default:
         break;
     }
   }
@@ -282,6 +285,7 @@ export class EditResumeComponent implements OnInit {
     this.service.deleteNode(nodeToDrop).subscribe();
   }
   //endregion
+  //region Paragraph
   sectionAddParagraphForm(section: ResumeTreeNode) {
     const index = section.children.length;
     section.children.push({
@@ -291,25 +295,46 @@ export class EditResumeComponent implements OnInit {
       children: [],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.ListItem,
+      sectionType: SectionType.Paragraph,
       parentId: section.id,
       order: index,
       depth: 2,
     });
 
     this.form.addControl(
-      `section${section.order}paragraph${index}`,
+      `section${section.order}paragraph`,
       new FormControl(section.children[index].content, [Validators.required]),
     );
 
     this.form.controls[
-      `section${section.order}paragraph${index}`
+      `section${section.order}paragraph`
     ].valueChanges.subscribe((res) => {
       section.children[index].content = res;
     });
   }
+  initializeParagraph(sectionOrder: number, paragraph: ResumeTreeNode) {
+    this.form.controls[`section${sectionOrder}type`].setValue(
+      SectionDisplayType.Paragraph,
+    );
+
+    this.form.addControl(
+      `section${sectionOrder}paragraph`,
+      new FormControl(paragraph.content, [Validators.required]),
+    );
+
+    this.form.controls[
+      `section${sectionOrder}paragraph`
+    ].valueChanges.subscribe((res) => {
+      paragraph.content = res;
+    });
+  }
+  //endregion
+  //region Education
   sectionAddEducationForm(section: ResumeTreeNode) {}
+  //endregion
+  //region WorkExperience
   sectionAddWorkExperienceForm(section: ResumeTreeNode) {}
+  //endregion
   //endregion
   //endregion
   //endregion

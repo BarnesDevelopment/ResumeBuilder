@@ -13,7 +13,7 @@
   margin: 1rem 0 0 9rem;
 
   &.save {
-    margin: 3rem 0 0 3rem;
+    margin: 3rem 0 3rem 3rem;
     width: 5rem;
   }
 }
@@ -37,6 +37,33 @@
 .add-website-button {
   width: 11rem;
   margin-left: 9rem;
+}
+
+.textarea {
+  font-size: 1rem;
+  width: 40rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 0.5rem 0 0.5rem 0;
+  label {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+  }
+  textarea {
+    width: 31rem;
+    height: 5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+    font-size: 1rem;
+
+    &.invalid {
+      border: 1px solid red;
+      background-color: #ffd7d7;
+    }
+  }
 }
 
 .select {

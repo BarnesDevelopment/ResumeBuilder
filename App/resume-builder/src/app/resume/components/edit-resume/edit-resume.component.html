@@ -120,7 +120,14 @@
           SectionDisplayType.Paragraph
         "
       >
-        Paragraph
+        <div class="textarea">
+          <label for="section{{ section.order }}paragraph">Paragraph:</label>
+          <textarea
+            id="section{{ section.order }}paragraph"
+            formControlName="section{{ section.order }}paragraph"
+            placeholder="Paragraph text"
+          ></textarea>
+        </div>
       </div>
       <div
         class="division"
