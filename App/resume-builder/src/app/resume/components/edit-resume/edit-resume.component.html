@@ -151,7 +151,11 @@
               <app-input formControlName="section{{ section.order }}education{{ education.order }}school">School</app-input>
             </div>
             <div>
-              <app-input formControlName="section{{ section.order }}education{{ education.order }}year">Graduation Year</app-input>
+              <app-input
+                formControlName="section{{ section.order }}education{{ education.order }}year"
+                errorMessage="A valid year must be entered"
+                >Graduation Year</app-input
+              >
             </div>
           </div>
           <div class="row">
@@ -159,7 +163,11 @@
               <app-input formControlName="section{{ section.order }}education{{ education.order }}city">City</app-input>
             </div>
             <div>
-              <app-input formControlName="section{{ section.order }}education{{ education.order }}state">State</app-input>
+              <app-input
+                formControlName="section{{ section.order }}education{{ education.order }}state"
+                errorMessage="A valid two character state code must be entered"
+                >State</app-input
+              >
             </div>
           </div>
         </div>
@@ -176,11 +184,23 @@
           </div>
           <div class="row">
             <app-input formControlName="section{{ section.order }}work{{ job.order }}city">City</app-input>
-            <app-input formControlName="section{{ section.order }}work{{ job.order }}state">State</app-input>
+            <app-input
+              formControlName="section{{ section.order }}work{{ job.order }}state"
+              errorMessage="A valid two character state code must be entered"
+              >State</app-input
+            >
           </div>
           <div class="row">
-            <app-input formControlName="section{{ section.order }}work{{ job.order }}start">Start Date</app-input>
-            <app-input formControlName="section{{ section.order }}work{{ job.order }}end">End Date</app-input>
+            <app-input
+              formControlName="section{{ section.order }}work{{ job.order }}start"
+              errorMessage="A valid mm-yyyy must be entered."
+              >Start Date</app-input
+            >
+            <app-input
+              formControlName="section{{ section.order }}work{{ job.order }}end"
+              errorMessage="A valid mm-yyyy or 'Present' must be entered."
+              >End Date</app-input
+            >
           </div>
           <div class="row">
             <app-button
