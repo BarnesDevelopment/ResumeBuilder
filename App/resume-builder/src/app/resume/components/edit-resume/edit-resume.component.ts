@@ -31,7 +31,7 @@ export class EditResumeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.service.getResume(this.router.url.split('/')[2]).subscribe((res) => {
+    this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
@@ -53,7 +53,7 @@ export class EditResumeComponent implements OnInit {
         );
       }
 
-      this.resume.children.forEach((node) => {
+      this.resume.children.forEach(node => {
         this.createSectionFormControls(node);
       });
       this.loading = false;
@@ -62,7 +62,7 @@ export class EditResumeComponent implements OnInit {
 
   title(): ResumeTreeNode {
     return this.resume.children.find(
-      (node) => node.sectionType === SectionType.Title,
+      node => node.sectionType === SectionType.Title,
     );
   }
 
@@ -73,7 +73,7 @@ export class EditResumeComponent implements OnInit {
   //region Section
   sections(): ResumeTreeNode[] {
     return this.resume.children.filter(
-      (node) => node.sectionType === SectionType.Section,
+      node => node.sectionType === SectionType.Section,
     );
   }
 
@@ -92,18 +92,21 @@ export class EditResumeComponent implements OnInit {
     );
 
     this.form.controls[`section${node.order}title`].valueChanges.subscribe(
-      (res) => {
+      res => {
         this.resume.children[node.order].content = res;
       },
     );
 
-    node.children.forEach((child) => {
+    node.children.forEach(child => {
       switch (child.sectionType) {
         case SectionType.List:
           this.initializeList(node.order, child);
           break;
         case SectionType.Paragraph:
           this.initializeParagraph(node.order, child);
+          break;
+        case SectionType.Education:
+          this.initializeEducation(node.order, child);
           break;
         default:
           break;
@@ -153,7 +156,7 @@ export class EditResumeComponent implements OnInit {
       new FormControl('', [Validators.required]),
     );
 
-    this.form.controls[`section${index}title`].valueChanges.subscribe((res) => {
+    this.form.controls[`section${index}title`].valueChanges.subscribe(res => {
       this.resume.children[index].content = res;
       this.resume.children[index].children[0].content = res;
     });
@@ -162,7 +165,7 @@ export class EditResumeComponent implements OnInit {
 
   //region SectionType
   sectionTypeChanged(section: ResumeTreeNode) {
-    section.children.forEach((node) => {
+    section.children.forEach(node => {
       this.service.deleteNode(node).subscribe();
       this.form.removeControl(`section${section.order}listItem${node.order}`);
     });
@@ -227,7 +230,7 @@ export class EditResumeComponent implements OnInit {
 
     this.form.controls[
       `section${section.order}listItem0`
-    ].valueChanges.subscribe((res) => {
+    ].valueChanges.subscribe(res => {
       section.children[index].children[0].content = res;
     });
   }
@@ -236,7 +239,7 @@ export class EditResumeComponent implements OnInit {
     this.form.controls[`section${sectionOrder}type`].setValue(
       SectionDisplayType.List,
     );
-    list.children.forEach((node) => {
+    list.children.forEach(node => {
       this.form.addControl(
         `section${sectionOrder}listItem${node.order}`,
         new FormControl(node.content, [Validators.required]),
@@ -244,7 +247,7 @@ export class EditResumeComponent implements OnInit {
 
       this.form.controls[
         `section${sectionOrder}listItem${node.order}`
-      ].valueChanges.subscribe((res) => {
+      ].valueChanges.subscribe(res => {
         node.content = res;
       });
     });
@@ -272,7 +275,7 @@ export class EditResumeComponent implements OnInit {
 
     this.form.controls[
       `section${sectionOrder}listItem${index}`
-    ].valueChanges.subscribe((res) => {
+    ].valueChanges.subscribe(res => {
       list.children[index].content = res;
     });
   }
@@ -308,7 +311,7 @@ export class EditResumeComponent implements OnInit {
 
     this.form.controls[
       `section${section.order}paragraph`
-    ].valueChanges.subscribe((res) => {
+    ].valueChanges.subscribe(res => {
       section.children[index].content = res;
     });
   }
@@ -324,13 +327,362 @@ export class EditResumeComponent implements OnInit {
 
     this.form.controls[
       `section${sectionOrder}paragraph`
-    ].valueChanges.subscribe((res) => {
+    ].valueChanges.subscribe(res => {
       paragraph.content = res;
     });
   }
   //endregion
   //region Education
-  sectionAddEducationForm(section: ResumeTreeNode) {}
+  sectionAddEducationForm(section: ResumeTreeNode) {
+    const index = section.children.length;
+    const educationId = Guid.create();
+    section.children.push({
+      id: educationId,
+      content: '',
+      comments: '',
+      children: [
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 0,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 1,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 2,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 3,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 4,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 5,
+          depth: 3,
+        },
+        {
+          id: Guid.create(),
+          content: '',
+          comments: '',
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          sectionType: SectionType.ListItem,
+          parentId: educationId,
+          order: 6,
+          depth: 3,
+        },
+      ],
+      active: true,
+      userId: this.resume.userId,
+      sectionType: SectionType.Education,
+      parentId: section.id,
+      order: index,
+      depth: 2,
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}degree`,
+      new FormControl(section.children[index].children[0].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'degree'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[0].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}major`,
+      new FormControl(section.children[index].children[1].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'major'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[1].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}minor`,
+      new FormControl(section.children[index].children[2].content, []),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'minor'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[2].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}school`,
+      new FormControl(section.children[index].children[3].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'school'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[3].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}year`,
+      new FormControl(section.children[index].children[4].content, [
+        Validators.required,
+        Validators.pattern('^[0-9]{4}$'),
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'year'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[4].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}city`,
+      new FormControl(section.children[index].children[5].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'city'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[5].content = res;
+    });
+
+    this.form.addControl(
+      `section${section.order}education${index}state`,
+      new FormControl(section.children[index].children[6].content, [
+        Validators.required,
+        Validators.pattern('^[A-Z]{2}$'),
+      ]),
+    );
+
+    this.form.controls[
+      'section' + section.order + 'education' + index + 'state'
+    ].valueChanges.subscribe(res => {
+      section.children[index].children[6].content = res;
+    });
+  }
+  removeEducation(section: ResumeTreeNode) {
+    const nodeToDrop = section.children.pop();
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}degree`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}major`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}minor`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}school`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}year`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}city`,
+    );
+    this.form.removeControl(
+      `section${section.order}education${section.children.length}state`,
+    );
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+  }
+
+  initializeEducation(sectionOrder: number, education: ResumeTreeNode) {
+    this.form.controls[`section${sectionOrder}type`].setValue(
+      SectionDisplayType.Education,
+    );
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}degree`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[0].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'degree'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[0].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}major`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[1].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'major'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[1].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}minor`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[2].content,
+        [],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'minor'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[2].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}school`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[3].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'school'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[3].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}year`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[4].content,
+        [Validators.required, Validators.pattern('^[0-9]{4}$')],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'year'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[4].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}city`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[5].content,
+        [Validators.required],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'city'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[5].content = res;
+    });
+
+    this.form.addControl(
+      `section${sectionOrder}education${education.order}state`,
+      new FormControl(
+        this.resume.children[sectionOrder].children[
+          education.order
+        ].children[6].content,
+        [Validators.required, Validators.pattern('^[A-Z]{2}$')],
+      ),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'education' + education.order + 'state'
+    ].valueChanges.subscribe(res => {
+      this.resume.children[sectionOrder].children[
+        education.order
+      ].children[6].content = res;
+    });
+  }
   //endregion
   //region WorkExperience
   sectionAddWorkExperienceForm(section: ResumeTreeNode) {}
@@ -360,7 +712,7 @@ export class EditResumeComponent implements OnInit {
       new FormControl(this.title().children[index].content),
     );
 
-    this.form.controls['website'].valueChanges.subscribe((res) => {
+    this.form.controls['website'].valueChanges.subscribe(res => {
       this.title().children[index].content = res;
     });
   }

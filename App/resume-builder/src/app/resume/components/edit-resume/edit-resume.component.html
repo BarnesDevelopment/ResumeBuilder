@@ -1,4 +1,6 @@
-<div class="spinner" *ngIf="loading">
+<div
+  class="spinner"
+  *ngIf="loading">
   <mat-spinner></mat-spinner>
 </div>
 <div *ngIf="!loading">
@@ -7,13 +9,19 @@
     <app-input formControlName="comments">Comments</app-input>
     <div class="title division">
       <app-input formControlName="name">Name</app-input>
-      <app-input formControlName="email" errorMessage="Incorrect pattern"
+      <app-input
+        formControlName="email"
+        errorMessage="Incorrect pattern"
         >Email</app-input
       >
-      <app-input formControlName="phone" errorMessage="Incorrect pattern"
+      <app-input
+        formControlName="phone"
+        errorMessage="Incorrect pattern"
         >Phone</app-input
       >
-      <div class="add-remove-row" *ngIf="title().children.length > 2">
+      <div
+        class="add-remove-row"
+        *ngIf="title().children.length > 2">
         <app-input formControlName="website">Website</app-input>
 
         <app-button
@@ -36,23 +44,17 @@
       </div>
     </div>
 
-    <div class="section division" *ngFor="let section of sections()">
-      <app-input formControlName="section{{ section.order }}title"
-        >Section Title</app-input
-      >
+    <div
+      class="section division"
+      *ngFor="let section of sections()">
+      <app-input formControlName="section{{ section.order }}title">Section Title</app-input>
       <div class="select">
         <label for="section{{ section.order }}type">Section Type:</label>
         <select
           id="section{{ section.order }}type"
           formControlName="section{{ section.order }}type"
-          [className]="
-            form.controls['section' + section.order + 'type'].invalid &&
-            form.controls['section' + section.order + 'type'].touched
-              ? 'invalid'
-              : ''
-          "
-          (change)="sectionTypeChanged(section)"
-        >
+          [className]="form.controls['section' + section.order + 'type'].invalid && form.controls['section' + section.order + 'type'].touched ? 'invalid' : ''"
+          (change)="sectionTypeChanged(section)">
           <option></option>
           <option [value]="SectionDisplayType.List">
             {{ SectionDisplayType.List }}
@@ -70,34 +72,19 @@
       </div>
       <div
         class="error"
-        *ngIf="
-          form.controls['section' + section.order + 'type'].invalid &&
-          form.controls['section' + section.order + 'type'].touched
-        "
-      >
+        *ngIf="form.controls['section' + section.order + 'type'].invalid && form.controls['section' + section.order + 'type'].touched">
         <span>Type is required.</span>
       </div>
       <div
         class="division"
-        *ngIf="
-          form.controls['section' + section.order + 'type'].value ==
-          SectionDisplayType.List
-        "
-        style="padding-top: 0.5rem"
-      >
+        *ngIf="form.controls['section' + section.order + 'type'].value == SectionDisplayType.List"
+        style="padding-top: 0.5rem">
         <div
           class="add-remove-row"
-          *ngFor="let item of section.children[0].children"
-        >
-          <app-input
-            formControlName="section{{ section.order }}listItem{{ item.order }}"
-            >List Item</app-input
-          >
+          *ngFor="let item of section.children[0].children">
+          <app-input formControlName="section{{ section.order }}listItem{{ item.order }}">List Item</app-input>
           <app-button
-            *ngIf="
-              item.order == section.children[0].children.length - 1 &&
-              item.order > 0
-            "
+            *ngIf="item.order == section.children[0].children.length - 1 && item.order > 0"
             [borderStyle]="BorderStyle.Dark"
             [buttonStyle]="ButtonStyle.Primary"
             ignoreClick
@@ -115,36 +102,71 @@
       </div>
       <div
         class="division"
-        *ngIf="
-          form.controls['section' + section.order + 'type'].value ==
-          SectionDisplayType.Paragraph
-        "
-      >
+        *ngIf="form.controls['section' + section.order + 'type'].value == SectionDisplayType.Paragraph">
         <div class="textarea">
           <label for="section{{ section.order }}paragraph">Paragraph:</label>
           <textarea
             id="section{{ section.order }}paragraph"
             formControlName="section{{ section.order }}paragraph"
-            placeholder="Paragraph text"
-          ></textarea>
+            placeholder="Paragraph text"></textarea>
+        </div>
+      </div>
+      <div
+        class="education division"
+        *ngIf="form.controls['section' + section.order + 'type'].value == SectionDisplayType.Education">
+        <div
+          *ngFor="let education of section.children"
+          class="school">
+          <div class="row">
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}degree">Degree</app-input>
+            </div>
+            <app-button
+              *ngIf="education.order > 0 && education.order == section.children.length - 1"
+              ignoreClick
+              (click)="removeEducation(section)"
+              [borderStyle]="BorderStyle.Dark"
+              [buttonStyle]="ButtonStyle.Primary"
+              >&nbsp;&mdash;&nbsp;</app-button
+            >
+            <app-button
+              *ngIf="education.order == section.children.length - 1"
+              ignoreClick
+              (click)="sectionAddEducationForm(section)"
+              [borderStyle]="BorderStyle.Dark"
+              [buttonStyle]="ButtonStyle.Primary"
+              >&nbsp;+&nbsp;</app-button
+            >
+          </div>
+          <div class="row">
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}major">Major</app-input>
+            </div>
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}minor">Minor</app-input>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}school">School</app-input>
+            </div>
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}year">Graduation Year</app-input>
+            </div>
+          </div>
+          <div class="row">
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}city">City</app-input>
+            </div>
+            <div>
+              <app-input formControlName="section{{ section.order }}education{{ education.order }}state">State</app-input>
+            </div>
+          </div>
         </div>
       </div>
       <div
         class="division"
-        *ngIf="
-          form.controls['section' + section.order + 'type'].value ==
-          SectionDisplayType.Education
-        "
-      >
-        Education
-      </div>
-      <div
-        class="division"
-        *ngIf="
-          form.controls['section' + section.order + 'type'].value ==
-          SectionDisplayType.WorkExperience
-        "
-      >
+        *ngIf="form.controls['section' + section.order + 'type'].value == SectionDisplayType.WorkExperience">
         WorkExperience
       </div>
     </div>
