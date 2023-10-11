@@ -30,7 +30,7 @@ namespace ResumeAPI.Controllers
 
         #region Testing
         
-        [HttpGet("build-test")]
+        [HttpGet("build-test/{id:guid}")]
         public IActionResult BuildPdfTest()
         {
             var resume = new Resume
