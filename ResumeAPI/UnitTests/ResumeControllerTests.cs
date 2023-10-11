@@ -278,6 +278,7 @@ public class ResumeControllerTests
         var actual = (await _controller.DeleteNode(id));
         
         actual.Should().BeOfType<AcceptedResult>();
+        ((AcceptedResult)actual).Value.Should().Be(true);
     }
 
     [Fact]
@@ -296,7 +297,8 @@ public class ResumeControllerTests
         
         var actual = (await _controller.DeleteNode(id));
         
-        actual.Should().BeOfType<NotFoundResult>();
+        actual.Should().BeOfType<AcceptedResult>();
+        ((AcceptedResult)actual).Value.Should().Be(false);
     }
 
     [Fact]
