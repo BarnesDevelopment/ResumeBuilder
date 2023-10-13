@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ResumeService } from '../../services/resume.service';
-import { ResumeTreeNode, SectionType } from '../../../models/Resume';
+import { ResumeTreeNode, NodeType } from '../../../models/Resume';
 import { Guid } from 'guid-typescript';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -43,14 +43,14 @@ export class CreateResumeComponent {
   onSubmit() {
     const topLevelId = Guid.create();
     const titleId = Guid.create();
-    this.route.queryParams.subscribe((params) => {
+    this.route.queryParams.subscribe(params => {
       const resume: ResumeTreeNode = {
         content: this.form.controls['title'].value,
         comments: this.form.controls['comments'].value,
         depth: 0,
         id: topLevelId,
         order: params['next'],
-        sectionType: SectionType.Resume,
+        nodeType: NodeType.Resume,
         parentId: null,
         userId: Guid.createEmpty(),
         active: true,
@@ -61,7 +61,7 @@ export class CreateResumeComponent {
             depth: 1,
             id: titleId,
             order: 0,
-            sectionType: SectionType.Title,
+            nodeType: NodeType.Title,
             parentId: topLevelId,
             userId: Guid.createEmpty(),
             active: true,
@@ -72,7 +72,7 @@ export class CreateResumeComponent {
                 depth: 2,
                 id: Guid.create(),
                 order: 0,
-                sectionType: SectionType.ListItem,
+                nodeType: NodeType.ListItem,
                 parentId: titleId,
                 userId: Guid.createEmpty(),
                 active: true,
@@ -84,7 +84,7 @@ export class CreateResumeComponent {
                 depth: 2,
                 id: Guid.create(),
                 order: 1,
-                sectionType: SectionType.ListItem,
+                nodeType: NodeType.ListItem,
                 parentId: titleId,
                 userId: Guid.createEmpty(),
                 active: true,
@@ -102,7 +102,7 @@ export class CreateResumeComponent {
           depth: 2,
           id: Guid.create(),
           order: 2,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: titleId,
           userId: Guid.createEmpty(),
           active: true,
@@ -110,7 +110,7 @@ export class CreateResumeComponent {
         });
       }
 
-      this.service.updateResume(resume).subscribe((res) => {
+      this.service.updateResume(resume).subscribe(res => {
         this.router.navigate(['/edit', res.id]);
       });
     });

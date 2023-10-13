@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {
   ResumeTreeNode,
   SectionDisplayType,
-  SectionType,
+  NodeType,
 } from '../../../models/Resume';
 import { Router } from '@angular/router';
 import { ResumeService } from '../../services/resume.service';
@@ -61,9 +61,7 @@ export class EditResumeComponent implements OnInit {
   }
 
   title(): ResumeTreeNode {
-    return this.resume.children.find(
-      node => node.sectionType === SectionType.Title,
-    );
+    return this.resume.children.find(node => node.nodeType === NodeType.Title);
   }
 
   save(): void {
@@ -73,7 +71,7 @@ export class EditResumeComponent implements OnInit {
   //region Section
   sections(): ResumeTreeNode[] {
     return this.resume.children.filter(
-      node => node.sectionType === SectionType.Section,
+      node => node.nodeType === NodeType.Section,
     );
   }
 
@@ -98,17 +96,17 @@ export class EditResumeComponent implements OnInit {
     );
 
     node.children.forEach(child => {
-      switch (child.sectionType) {
-        case SectionType.List:
+      switch (child.nodeType) {
+        case NodeType.List:
           this.initializeList(node.order, child);
           break;
-        case SectionType.Paragraph:
+        case NodeType.Paragraph:
           this.initializeParagraph(node.order, child);
           break;
-        case SectionType.Education:
+        case NodeType.Education:
           this.initializeEducation(node.order, child);
           break;
-        case SectionType.WorkExperience:
+        case NodeType.WorkExperience:
           this.initializeWorkExperience(node.order, child);
           break;
         default:
@@ -127,7 +125,7 @@ export class EditResumeComponent implements OnInit {
       comments: '',
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.Section,
+      nodeType: NodeType.Section,
       parentId: this.resume.id,
       order: index,
       depth: 1,
@@ -138,7 +136,7 @@ export class EditResumeComponent implements OnInit {
           comments: '',
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.Separator,
+          nodeType: NodeType.Separator,
           parentId: sectionId,
           order: 0,
           depth: 2,
@@ -210,7 +208,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: listId,
           order: 0,
           depth: 3,
@@ -218,7 +216,7 @@ export class EditResumeComponent implements OnInit {
       ],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.List,
+      nodeType: NodeType.List,
       parentId: section.id,
       order: index,
       depth: 2,
@@ -265,7 +263,7 @@ export class EditResumeComponent implements OnInit {
       children: [],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.ListItem,
+      nodeType: NodeType.ListItem,
       parentId: list.id,
       order: index,
       depth: 3,
@@ -301,7 +299,7 @@ export class EditResumeComponent implements OnInit {
       children: [],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.Paragraph,
+      nodeType: NodeType.Paragraph,
       parentId: section.id,
       order: index,
       depth: 2,
@@ -351,7 +349,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 0,
           depth: 3,
@@ -363,7 +361,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 1,
           depth: 3,
@@ -375,7 +373,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 2,
           depth: 3,
@@ -387,7 +385,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 3,
           depth: 3,
@@ -399,7 +397,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 4,
           depth: 3,
@@ -411,7 +409,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 5,
           depth: 3,
@@ -423,7 +421,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: educationId,
           order: 6,
           depth: 3,
@@ -431,7 +429,7 @@ export class EditResumeComponent implements OnInit {
       ],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.Education,
+      nodeType: NodeType.Education,
       parentId: section.id,
       order: index,
       depth: 2,
@@ -703,7 +701,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 0,
           depth: 3,
@@ -715,7 +713,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 1,
           depth: 3,
@@ -727,7 +725,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 2,
           depth: 3,
@@ -739,7 +737,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 3,
           depth: 3,
@@ -751,7 +749,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 4,
           depth: 3,
@@ -763,7 +761,7 @@ export class EditResumeComponent implements OnInit {
           children: [],
           active: true,
           userId: this.resume.userId,
-          sectionType: SectionType.ListItem,
+          nodeType: NodeType.ListItem,
           parentId: workExperienceId,
           order: 5,
           depth: 3,
@@ -771,7 +769,7 @@ export class EditResumeComponent implements OnInit {
       ],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.WorkExperience,
+      nodeType: NodeType.WorkExperience,
       parentId: section.id,
       order: index,
       depth: 2,
@@ -1021,7 +1019,7 @@ export class EditResumeComponent implements OnInit {
       children: [],
       active: true,
       userId: this.resume.userId,
-      sectionType: SectionType.ListItem,
+      nodeType: NodeType.ListItem,
       parentId: this.title().id,
       order: index,
       depth: 2,

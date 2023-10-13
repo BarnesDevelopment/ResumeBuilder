@@ -27,7 +27,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         content {nameof(ResumeTreeNode.Content)},
                         placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
-                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        sectiontype {nameof(ResumeTreeNode.NodeType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE Id = @Id";
@@ -43,7 +43,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         content {nameof(ResumeTreeNode.Content)},
                         placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
-                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        sectiontype {nameof(ResumeTreeNode.NodeType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE parentid = @Id
@@ -60,7 +60,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         content {nameof(ResumeTreeNode.Content)},
                         placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
-                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        sectiontype {nameof(ResumeTreeNode.NodeType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE depth = 0";
@@ -97,7 +97,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         content {nameof(ResumeTreeNode.Content)},
                         placementorder as {nameof(ResumeTreeNode.Order)},
                         depth {nameof(ResumeTreeNode.Depth)},
-                        sectiontype {nameof(ResumeTreeNode.SectionType)},
+                        sectiontype {nameof(ResumeTreeNode.NodeType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
                         FROM ResumeDb.ResumeTree WHERE id = @Id";

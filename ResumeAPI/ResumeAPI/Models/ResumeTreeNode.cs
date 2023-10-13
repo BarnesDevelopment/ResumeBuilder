@@ -9,7 +9,7 @@ public class ResumeTreeNode
     public Guid UserId { get; set; }
     public Guid? ParentId { get; set; }
     public string Content { get; set; }
-    public string SectionType { get; set; }
+    public string NodeType { get; set; }
     public int Depth { get; set; }
     public int Order { get; set; }
 }

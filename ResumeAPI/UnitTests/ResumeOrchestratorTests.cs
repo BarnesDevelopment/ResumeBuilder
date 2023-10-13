@@ -33,7 +33,7 @@ public class ResumeOrchestratorTests
                 UserId = userId,
                 ParentId = Guid.Empty,
                 Content = "resume1",
-                SectionType = "resume",
+                NodeType = "resume",
                 Depth = 0,
                 Order = 0,
 
@@ -58,7 +58,7 @@ public class ResumeOrchestratorTests
             UserId = userId,
             ParentId = Guid.Empty,
             Content = "resume1",
-            SectionType = "resume",
+            NodeType = "resume",
             Depth = 0,
             Order = 0,
 
@@ -106,7 +106,7 @@ public class ResumeOrchestratorTests
             UserId = Guid.Empty,
             ParentId = Guid.Empty,
             Content = "resume1",
-            SectionType = "resume",
+            NodeType = "resume",
             Depth = 0,
             Order = 0,
         };
@@ -118,7 +118,7 @@ public class ResumeOrchestratorTests
             UserId = Guid.Empty,
             ParentId = Guid.Empty,
             Content = "resume1",
-            SectionType = "resume",
+            NodeType = "resume",
             Depth = 0,
             Order = 0,
             Children = new List<ResumeTreeNode>()
@@ -148,7 +148,7 @@ public class ResumeOrchestratorTests
             UserId = userId,
             ParentId = Guid.Empty,
             Content = "resume1",
-            SectionType = "resume",
+            NodeType = "resume",
             Depth = 0,
             Order = 0,
             Children = new List<ResumeTreeNode>()
@@ -163,7 +163,7 @@ public class ResumeOrchestratorTests
                 UserId = userId,
                 ParentId = guid1,
                 Content = "resume2",
-                SectionType = ResumeSectionType.Section,
+                NodeType = ResumeNodeType.Section,
                 Depth = 1,
                 Order = 0,
             },
@@ -174,7 +174,7 @@ public class ResumeOrchestratorTests
                 UserId = userId,
                 ParentId = guid1,
                 Content = "resume3",
-                SectionType = ResumeSectionType.Section,
+                NodeType = ResumeNodeType.Section,
                 Depth = 1,
                 Order = 1,
             }
@@ -189,7 +189,7 @@ public class ResumeOrchestratorTests
                 UserId = userId,
                 ParentId = guid3,
                 Content = "resume4",
-                SectionType = ResumeSectionType.Paragraph,
+                NodeType = ResumeNodeType.Paragraph,
                 Depth = 2,
                 Order = 0,
                 Children = new List<ResumeTreeNode>()
@@ -207,7 +207,7 @@ public class ResumeOrchestratorTests
                     UserId = userId,
                     ParentId = guid1,
                     Content = "resume2",
-                    SectionType = ResumeSectionType.Section,
+                    NodeType = ResumeNodeType.Section,
                     Depth = 1,
                     Order = 0,
                     Children = new List<ResumeTreeNode>()
@@ -223,7 +223,7 @@ public class ResumeOrchestratorTests
                             UserId = userId,
                             ParentId = guid3,
                             Content = "resume4",
-                            SectionType = ResumeSectionType.Paragraph,
+                            NodeType = ResumeNodeType.Paragraph,
                             Depth = 2,
                             Order = 0,
                             Children = new List<ResumeTreeNode>()
@@ -234,7 +234,7 @@ public class ResumeOrchestratorTests
                     UserId = userId,
                     ParentId = guid1,
                     Content = "resume3",
-                    SectionType = ResumeSectionType.Section,
+                    NodeType = ResumeNodeType.Section,
                     Depth = 1,
                     Order = 1,
 
@@ -245,7 +245,7 @@ public class ResumeOrchestratorTests
             UserId = userId,
             ParentId = Guid.Empty,
             Content = "resume1",
-            SectionType = "resume",
+            NodeType = "resume",
             Depth = 0,
             Order = 0,
         };

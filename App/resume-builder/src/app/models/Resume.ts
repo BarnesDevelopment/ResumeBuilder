@@ -14,7 +14,7 @@ export interface ResumeTreeNode {
   userId: Guid;
   parentId: Guid | null;
   content: string;
-  sectionType: SectionType;
+  nodeType: NodeType;
   depth: number;
   order: number;
 }
@@ -38,7 +38,7 @@ export function newResumeTreeNodeJson(
     userId: node.userId.toString(),
     parentId: node.parentId?.toString() ?? null,
     content: node.content,
-    sectionType: node.sectionType,
+    nodeType: node.nodeType,
     depth: node.depth,
     order: node.order,
   };
@@ -53,22 +53,20 @@ export function newResumeSection(parent: ResumeTreeNode): ResumeTreeNode {
     userId: parent.userId,
     parentId: parent.id,
     content: '',
-    sectionType: SectionType.Section,
+    nodeType: NodeType.Section,
     depth: parent.depth + 1,
     order: parent.children.length,
   };
 }
 
-export enum SectionType {
+export enum NodeType {
   Resume = 'Resume',
   Section = 'Section',
   Separator = 'Separator',
   Paragraph = 'Paragraph',
   Title = 'Title',
-  Line = 'Line',
   List = 'List',
   ListItem = 'ListItem',
-  SectionItem = 'SectionItem',
   Education = 'Education',
   WorkExperience = 'WorkExperience',
 }
