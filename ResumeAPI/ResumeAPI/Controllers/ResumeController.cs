@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using ResumeAPI.Builders;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
@@ -31,6 +32,14 @@ namespace ResumeAPI.Controllers
         #region Testing
         
         [HttpGet("build-test/{id:guid}")]
+        public IActionResult BuildPdfTest(Guid id)
+        {
+            var resume = _orchestrator.GetResumeTree(id).Result;
+            return Content(resume!.Build(), "text/html");
+        }
+        
+        
+        [HttpGet("build-test")]
         public IActionResult BuildPdfTest()
         {
             var resume = new Resume

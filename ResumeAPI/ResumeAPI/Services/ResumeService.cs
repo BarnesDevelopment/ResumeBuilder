@@ -45,7 +45,7 @@ public class ResumeService : IResumeService
     public TagBuilder BuildSummary(ResumeHeader header)
     {
         var summary = new TagBuilder("div");
-        summary.AddCssClass("summary");
+        summary.AddCssClass("paragraph");
         var separator = AddSeparator("Summary");
         summary.InnerHtml.AppendHtml(separator);
         var text = new TagBuilder("p");
@@ -65,7 +65,6 @@ public class ResumeService : IResumeService
 
     public TagBuilder AddSeparator(string title)
     {
-        var sector = maxWidth / 5;
         var hr = new TagBuilder("div");
         hr.InnerHtml.AppendHtml(new TagBuilder("div"));
         hr.AddCssClass("separator");
