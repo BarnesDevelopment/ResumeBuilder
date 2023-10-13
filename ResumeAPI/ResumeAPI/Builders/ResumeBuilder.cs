@@ -7,8 +7,6 @@ namespace ResumeAPI.Builders;
 
 public static class ResumeBuilder
 {
-  
-  private static readonly int maxWidth = 572;
   public static string Build(this ResumeTreeNode tree)
   {
     var html = new TagBuilder("html");

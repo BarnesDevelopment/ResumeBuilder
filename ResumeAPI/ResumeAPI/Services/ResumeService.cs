@@ -16,8 +16,6 @@ public interface IResumeService
 
 public class ResumeService : IResumeService
 {
-    private static readonly int maxWidth = 572;
-
     public TagBuilder BuildBody(List<TagBuilder> pages)
     {
         var body = new TagBuilder("body");
