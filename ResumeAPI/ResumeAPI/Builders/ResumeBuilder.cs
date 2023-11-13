@@ -69,14 +69,37 @@ public static class ResumeBuilder
   {
     var section = TagHelper.CreatTag("div", "section");
     section.InnerHtml.AppendHtml(AddSeparator(node.Content));
-    switch (node.Children[0].NodeType)
+    var child = node.Children[0];
+    switch (child.NodeType)
     {
       case ResumeNodeType.Paragraph:
         section.AddCssClass("paragraph");
-        section.InnerHtml.AppendHtml(TagHelper.CreatTag("p", "", node.Children[0].Content));
+        section.InnerHtml.AppendHtml(TagHelper.CreatTag("p", "", child.Content));
+        break;
+      case ResumeNodeType.List:
+        section.AddCssClass("list");
+        section.InnerHtml.AppendHtml(BuildList(child.Children));
         break;
     }
     return section;
+  }
+  
+  private static TagBuilder BuildList(List<ResumeTreeNode> nodes)
+  {
+    
+    var row = TagHelper.CreatTag("div", "row");
+    row.InnerHtml.AppendHtml(TagHelper.CreatTag("div","spacer"));
+    var cell = TagHelper.CreatTag("div", "cell");
+    var ul = TagHelper.CreatTag("ul", "");
+    foreach (var node in nodes)
+    {
+      ul.InnerHtml.AppendHtml(TagHelper.CreatTag("li", "", node.Content));
+    }
+    row.InnerHtml.AppendHtml(cell);
+    cell.InnerHtml.AppendHtml(ul);
+    var container = TagHelper.CreatTag("div", "container");
+    container.InnerHtml.AppendHtml(row);
+    return container;
   }
   
   private static TagBuilder AddSeparator(string title)
