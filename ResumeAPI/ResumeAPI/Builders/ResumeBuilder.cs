@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 
@@ -80,8 +79,47 @@ public static class ResumeBuilder
         section.AddCssClass("list");
         section.InnerHtml.AppendHtml(BuildList(child.Children));
         break;
+      case ResumeNodeType.WorkExperience:
+        BuildWorkExperience(section, node.Children);
+        break;
     }
     return section;
+  }
+
+  private static void BuildWorkExperience(TagBuilder section, List<ResumeTreeNode> nodes)
+  {
+    foreach (var node in nodes)
+    {
+      var job = TagHelper.CreatTag("div", "job");
+      var header = TagHelper.CreatTag("div", "job-header");
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "title", node.Children[0].Content));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "vertical-separator", "|"));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "employer", node.Children[1].Content));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", node.Children[2].Content));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "comma", ","));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", node.Children[3].Content));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "vertical-separator", "|"));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "start", node.Children[4].Content));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
+      header.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "end", node.Children[5].Content));
+      job.InnerHtml.AppendHtml(header);
+
+      if (node.Children.Count == 7)
+      {
+        var responsibilities = TagHelper.CreatTag("div", "responsibilities");
+        var ul = TagHelper.CreatTag("ul", "list");
+        foreach (var responsibility in node.Children[6].Children)
+        {
+          ul.InnerHtml.AppendHtml(TagHelper.CreatTag("li", "", responsibility.Content));
+        }
+
+        responsibilities.InnerHtml.AppendHtml(ul);
+        job.InnerHtml.AppendHtml(responsibilities);
+      }
+
+      section.InnerHtml.AppendHtml(job);
+    }
   }
   
   private static TagBuilder BuildList(List<ResumeTreeNode> nodes)
