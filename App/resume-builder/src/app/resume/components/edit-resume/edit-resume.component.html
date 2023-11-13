@@ -202,7 +202,44 @@
               >End Date</app-input
             >
           </div>
-          <div class="row">
+          <div
+            class="row"
+            *ngIf="job.children.length < 7">
+            <app-button
+              ignoreClick
+              (click)="sectionAddResponsibilities(job)"
+              [borderStyle]="BorderStyle.Dark"
+              [buttonStyle]="ButtonStyle.Secondary"
+              >+ Add Responsibilities</app-button
+            >
+          </div>
+          <div
+            class="row responsibilities"
+            *ngIf="job.children.length == 7">
+            <span>Responsibilities:</span>
+            <div
+              class="row"
+              *ngFor="let responsibility of job.children[6].children">
+              <app-input noTitle></app-input>
+              <app-button
+                *ngIf="responsibility.order == job.children[6].children.length - 1"
+                ignoreClick
+                (click)="sectionAddWorkExperienceForm(section)"
+                [borderStyle]="BorderStyle.Dark"
+                [buttonStyle]="ButtonStyle.Primary"
+                >&nbsp;+&nbsp;</app-button
+              >
+              <app-button
+                *ngIf="responsibility.order > 0 && responsibility.order == job.children[6].children.length - 1"
+                ignoreClick
+                (click)="removeWorkExperience(section)"
+                [borderStyle]="BorderStyle.Dark"
+                [buttonStyle]="ButtonStyle.Primary"
+                >&nbsp;&mdash;&nbsp;</app-button
+              >
+            </div>
+          </div>
+          <div class="row add-remove-row">
             <app-button
               *ngIf="job.order == section.children.length - 1"
               ignoreClick

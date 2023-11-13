@@ -33,6 +33,7 @@ export class EditResumeComponent implements OnInit {
   ngOnInit(): void {
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
+      console.log(this.resume);
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
         comments: new FormControl(this.resume.comments),
@@ -1004,6 +1005,8 @@ export class EditResumeComponent implements OnInit {
       ].children[5].content = res;
     });
   }
+
+  sectionAddResponsibilities(job: ResumeTreeNode) {}
   //endregion
   //endregion
   //endregion

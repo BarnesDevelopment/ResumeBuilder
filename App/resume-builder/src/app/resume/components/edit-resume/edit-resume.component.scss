@@ -1,4 +1,4 @@
-@import '../../../../variables';
+@import "../../../../variables";
 
 .spinner {
   display: flex;
@@ -94,6 +94,14 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+
+      &.responsibilities {
+        justify-content: left;
+      }
+
+      &.add-remove-row {
+        margin-top: 0.5rem;
+      }
 
       app-button {
         margin: 0 0 0 1rem;
