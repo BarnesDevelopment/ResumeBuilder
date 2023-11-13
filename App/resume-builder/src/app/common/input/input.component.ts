@@ -1,14 +1,6 @@
-import {
-  AfterContentInit,
-  Component,
-  ContentChild,
-  ElementRef,
-  Input,
-  Optional,
-  Self,
-  ViewChild,
-} from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-input',
@@ -19,6 +11,14 @@ export class InputComponent implements ControlValueAccessor {
   @Input() type: string = 'text';
   @Input() errorMessage: string;
   @Input() formControlName: string;
+  private _noTitle: boolean;
+  @Input()
+  get noTitle() {
+    return this._noTitle;
+  }
+  set noTitle(value: any) {
+    this._noTitle = coerceBooleanProperty(value);
+  }
 
   value: string;
   disabled = false;

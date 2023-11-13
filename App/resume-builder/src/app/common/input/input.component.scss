@@ -6,6 +6,9 @@
   justify-content: flex-end;
   align-items: center;
   margin: 0.5rem 0 0.5rem 0;
+  &.noTitle {
+    width: 12rem;
+  }
   label {
     font-size: 1rem;
     margin-right: 0.5rem;
@@ -17,7 +20,6 @@
     border-radius: 5px;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
     font-size: 1rem;
-
     &.invalid {
       border: 1px solid red;
       background-color: #ffd7d7;
