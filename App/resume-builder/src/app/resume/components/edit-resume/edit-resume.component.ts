@@ -1004,9 +1004,56 @@ export class EditResumeComponent implements OnInit {
         workExperience.order
       ].children[5].content = res;
     });
+
+    if (workExperience.children.length > 6) {
+      this.initializeResponsibilities(sectionOrder, workExperience);
+    }
   }
 
-  sectionAddResponsibilities(job: ResumeTreeNode) {}
+  sectionAddResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
+    const id = Guid.create();
+    const index = job.children.length;
+    job.children.push({
+      children: [
+        {
+          children: [],
+          active: true,
+          userId: this.resume.userId,
+          nodeType: NodeType.ListItem,
+          parentId: id,
+          order: 0,
+          depth: 4,
+          content: '',
+          id: Guid.create(),
+          comments: '',
+        },
+      ],
+      active: true,
+      userId: this.resume.userId,
+      nodeType: NodeType.Responsibilities,
+      parentId: job.id,
+      order: index,
+      depth: 3,
+      content: '',
+      id: id,
+      comments: '',
+    });
+    this.form.addControl(
+      `section${sectionOrder}work${index}responsibility0`,
+      new FormControl(job.children[index].children[0].content, [
+        Validators.required,
+      ]),
+    );
+  }
+
+  initializeResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
+    job.children[6].children.forEach(node => {
+      this.form.addControl(
+        `section${sectionOrder}work${job.order}responsibility${node.order}`,
+        new FormControl(node.content, [Validators.required]),
+      );
+    });
+  }
   //endregion
   //endregion
   //endregion

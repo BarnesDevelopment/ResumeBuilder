@@ -69,6 +69,7 @@ export enum NodeType {
   ListItem = 'ListItem',
   Education = 'Education',
   WorkExperience = 'WorkExperience',
+  Responsibilities = 'Responsibilities',
 }
 
 export enum SectionDisplayType {

@@ -71,7 +71,7 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
     {
         var createQuery = $@"INSERT INTO ResumeDb.ResumeTree 
                             (id, userId, parentId, content, placementorder, depth, sectiontype, active, comments) 
-                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active, @Comments)";
+                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @NodeType, @Active, @Comments)";
         return await Db.ExecuteAsync(createQuery, node) > 0;
     }
 
@@ -79,14 +79,14 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
     {
         var updateQuery = $@"INSERT INTO ResumeDb.ResumeTree
                             (id, userId, parentId, content, placementorder, depth, sectiontype, active, comments)
-                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @SectionType, @Active, @Comments)
+                            VALUES (@Id, @UserId, @ParentId, @Content, @Order, @Depth, @NodeType, @Active, @Comments)
                             ON CONFLICT (id) DO UPDATE SET 
                             userId = @UserId, 
                             parentId = @ParentId, 
                             content = @Content, 
                             placementorder = @Order,
                             depth = @Depth, 
-                            sectiontype = @SectionType, 
+                            sectiontype = @NodeType, 
                             active = @Active,
                             comments = @Comments";
         await Db.ExecuteAsync(updateQuery, node);
