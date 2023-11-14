@@ -96,7 +96,10 @@
       align-items: center;
 
       &.responsibilities {
+        margin-top: 1rem;
+        margin-left: 5rem;
         justify-content: left;
+        align-items: flex-start;
       }
 
       &.add-remove-row {

@@ -216,29 +216,31 @@
           <div
             class="row responsibilities"
             *ngIf="job.children.length == 7">
-            <span>Responsibilities:</span>
-            <div
-              class="row"
-              *ngFor="let responsibility of job.children[6].children">
-              <app-input
-                noTitle
-                formControlName="section{{ section.order }}work{{ job.order }}responsibility{{ responsibility.order }}"></app-input>
-              <app-button
-                *ngIf="responsibility.order == job.children[6].children.length - 1"
-                ignoreClick
-                (click)="addResponsibilities(section.order, job)"
-                [borderStyle]="BorderStyle.Dark"
-                [buttonStyle]="ButtonStyle.Primary"
-                >&nbsp;+&nbsp;</app-button
-              >
-              <app-button
-                *ngIf="responsibility.order >= 0 && responsibility.order == job.children[6].children.length - 1"
-                ignoreClick
-                (click)="removeResponsibilities(section.order, job)"
-                [borderStyle]="BorderStyle.Dark"
-                [buttonStyle]="ButtonStyle.Primary"
-                >&nbsp;&mdash;&nbsp;</app-button
-              >
+            <span style="margin-top: 1rem">Responsibilities:</span>
+            <div class="column">
+              <div
+                class="row"
+                *ngFor="let responsibility of job.children[6].children">
+                <app-input
+                  noTitle
+                  formControlName="section{{ section.order }}work{{ job.order }}responsibility{{ responsibility.order }}"></app-input>
+                <app-button
+                  *ngIf="responsibility.order == job.children[6].children.length - 1"
+                  ignoreClick
+                  (click)="addResponsibilities(section.order, job)"
+                  [borderStyle]="BorderStyle.Dark"
+                  [buttonStyle]="ButtonStyle.Primary"
+                  >&nbsp;+&nbsp;</app-button
+                >
+                <app-button
+                  *ngIf="responsibility.order >= 0 && responsibility.order == job.children[6].children.length - 1"
+                  ignoreClick
+                  (click)="removeResponsibilities(section.order, job)"
+                  [borderStyle]="BorderStyle.Dark"
+                  [buttonStyle]="ButtonStyle.Primary"
+                  >&nbsp;&mdash;&nbsp;</app-button
+                >
+              </div>
             </div>
           </div>
           <div class="row add-remove-row">
