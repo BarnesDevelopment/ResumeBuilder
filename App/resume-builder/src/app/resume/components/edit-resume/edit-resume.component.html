@@ -207,7 +207,7 @@
             *ngIf="job.children.length < 7">
             <app-button
               ignoreClick
-              (click)="sectionAddResponsibilities(section.order, job)"
+              (click)="createResponsibilities(section.order, job)"
               [borderStyle]="BorderStyle.Dark"
               [buttonStyle]="ButtonStyle.Secondary"
               >+ Add Responsibilities</app-button
@@ -226,15 +226,15 @@
               <app-button
                 *ngIf="responsibility.order == job.children[6].children.length - 1"
                 ignoreClick
-                (click)="sectionAddWorkExperienceForm(section)"
+                (click)="addResponsibilities(section.order, job)"
                 [borderStyle]="BorderStyle.Dark"
                 [buttonStyle]="ButtonStyle.Primary"
                 >&nbsp;+&nbsp;</app-button
               >
               <app-button
-                *ngIf="responsibility.order > 0 && responsibility.order == job.children[6].children.length - 1"
+                *ngIf="responsibility.order >= 0 && responsibility.order == job.children[6].children.length - 1"
                 ignoreClick
-                (click)="removeWorkExperience(section)"
+                (click)="removeResponsibilities(section.order, job)"
                 [borderStyle]="BorderStyle.Dark"
                 [buttonStyle]="ButtonStyle.Primary"
                 >&nbsp;&mdash;&nbsp;</app-button

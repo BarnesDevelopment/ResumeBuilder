@@ -1010,9 +1010,8 @@ export class EditResumeComponent implements OnInit {
     }
   }
 
-  sectionAddResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
+  createResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
     const id = Guid.create();
-    const index = job.children.length;
     job.children.push({
       children: [
         {
@@ -1032,18 +1031,78 @@ export class EditResumeComponent implements OnInit {
       userId: this.resume.userId,
       nodeType: NodeType.Responsibilities,
       parentId: job.id,
-      order: index,
+      order: 6,
       depth: 3,
       content: '',
       id: id,
       comments: '',
     });
+
+    console.log(
+      `creating section${sectionOrder}work${job.order}responsibility0`,
+    );
+
     this.form.addControl(
-      `section${sectionOrder}work${index}responsibility0`,
-      new FormControl(job.children[index].children[0].content, [
+      `section${sectionOrder}work${job.order}responsibility0`,
+      new FormControl(job.children[6].children[0].content, [
         Validators.required,
       ]),
     );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + job.order + 'responsibility0'
+    ].valueChanges.subscribe(res => {
+      job.children[6].children[0].content = res;
+    });
+  }
+
+  addResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
+    console.log(job);
+    const id = job.children[6].id;
+    const index = job.children[6].children.length;
+    job.children[6].children.push({
+      children: [],
+      active: true,
+      userId: this.resume.userId,
+      nodeType: NodeType.ListItem,
+      parentId: id,
+      order: index,
+      depth: 4,
+      content: '',
+      id: Guid.create(),
+      comments: '',
+    });
+
+    console.log(
+      `creating section${sectionOrder}work${job.order}responsibility${index}`,
+    );
+
+    this.form.addControl(
+      `section${sectionOrder}work${job.order}responsibility${index}`,
+      new FormControl(job.children[6].children[index].content, [
+        Validators.required,
+      ]),
+    );
+
+    this.form.controls[
+      'section' + sectionOrder + 'work' + job.order + 'responsibility' + index
+    ].valueChanges.subscribe(res => {
+      job.children[6].children[index].content = res;
+    });
+  }
+
+  removeResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
+    const nodeToDrop = job.children[6].children.pop();
+    this.form.removeControl(
+      `section${sectionOrder}work${job.order}responsibility${job.children.length}`,
+    );
+
+    this.service.deleteNode(nodeToDrop).subscribe();
+
+    if (job.children[6].children.length == 0) {
+      this.service.deleteNode(job.children[6]).subscribe();
+      job.children.pop();
+    }
   }
 
   initializeResponsibilities(sectionOrder: number, job: ResumeTreeNode) {
@@ -1052,6 +1111,16 @@ export class EditResumeComponent implements OnInit {
         `section${sectionOrder}work${job.order}responsibility${node.order}`,
         new FormControl(node.content, [Validators.required]),
       );
+      this.form.controls[
+        'section' +
+          sectionOrder +
+          'work' +
+          job.order +
+          'responsibility' +
+          node.order
+      ].valueChanges.subscribe(res => {
+        job.children[node.order].children[0].content = res;
+      });
     });
   }
   //endregion
