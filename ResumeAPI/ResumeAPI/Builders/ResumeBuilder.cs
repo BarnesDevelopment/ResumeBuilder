@@ -82,8 +82,40 @@ public static class ResumeBuilder
       case ResumeNodeType.WorkExperience:
         BuildWorkExperience(section, node.Children);
         break;
+      case ResumeNodeType.Education:
+        section.AddCssClass("education");
+        BuildEducation(section,node.Children);
+        break;
     }
     return section;
+  }
+
+  private static void BuildEducation(TagBuilder section, List<ResumeTreeNode> nodes)
+  {
+    foreach (var node in nodes)
+    {
+      var school = TagHelper.CreatTag("div", "school");
+      var degree = TagHelper.CreatTag("div", "degree");
+      degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "type", node.Children[0].Content));
+      degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "colon", ": "));
+      degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "major", node.Children[1].Content));
+      degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "", ", "));
+      degree.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "minor", node.Children[2].Content));
+    
+      var schoolName = TagHelper.CreatTag("div", "school-name");
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "name", node.Children[3].Content));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "vertical-separator", "|"));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", node.Children[4].Content));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "", ", "));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", node.Children[5].Content));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "vertical-separator", "|"));
+      schoolName.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "grad-year", node.Children[6].Content));
+    
+      school.InnerHtml.AppendHtml(degree);
+      school.InnerHtml.AppendHtml(schoolName);
+    
+      section.InnerHtml.AppendHtml(school);
+    }
   }
 
   private static void BuildWorkExperience(TagBuilder section, List<ResumeTreeNode> nodes)
