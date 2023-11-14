@@ -1,3 +1,5 @@
+using iText.Html2pdf;
+using iText.Html2pdf.Resolver.Font;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Builders;
 using ResumeAPI.Helpers;
@@ -19,6 +21,25 @@ namespace ResumeAPI.Controllers
             _logger = logger;
             _orchestrator = orchestrator;
             _validator = validator;
+        }
+        
+        [HttpGet("build/{id:guid}")]
+        public IActionResult BuildPdfFromGuid(Guid id)
+        {
+          
+          var stream = new MemoryStream();
+        
+          var resume = _orchestrator.GetResumeTree(id).Result;
+          var html = resume!.Build();
+
+          var properties = new ConverterProperties();
+          var fontProvider = new DefaultFontProvider(false,false,false);
+          fontProvider.AddDirectory("./Fonts/Roboto");
+          properties.SetFontProvider(fontProvider);
+        
+          HtmlConverter.ConvertToPdf(html,stream,properties);
+
+          return File(stream.GetBuffer(), "application/octet-stream", resume!.Content + ".pdf");
         }
 
         [HttpPost("build")]
