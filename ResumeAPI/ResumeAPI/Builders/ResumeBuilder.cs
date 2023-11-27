@@ -67,6 +67,7 @@ public static class ResumeBuilder
   private static TagBuilder BuildSection(ResumeTreeNode node)
   {
     var section = TagHelper.CreatTag("div", "section");
+    if(node.Comments == "page-break") section.AddCssClass("page-break");
     section.InnerHtml.AppendHtml(AddSeparator(node.Content));
     var child = node.Children[0];
     switch (child.NodeType)
@@ -149,6 +150,8 @@ public static class ResumeBuilder
         responsibilities.InnerHtml.AppendHtml(ul);
         job.InnerHtml.AppendHtml(responsibilities);
       }
+      
+      if(node.Comments == "page-break") job.AddCssClass("page-break");
 
       section.InnerHtml.AppendHtml(job);
     }

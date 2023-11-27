@@ -101,6 +101,12 @@ body {
 }
 
 .page-break {
+  @media print {
+    page-break-after: always;
+  }
+  @media screen {
+    border-bottom: 2px dashed black;
+  }
   page-break-after: always;
 }
 
