@@ -30,7 +30,7 @@ namespace ResumeAPI.Controllers
           var stream = new MemoryStream();
         
           var resume = _orchestrator.GetResumeTree(id).Result;
-          var html = resume!.Build();
+          var html = resume!.Build(true);
 
           var properties = new ConverterProperties();
           var fontProvider = new DefaultFontProvider(false,false,false);

@@ -1,0 +1,139 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+body {
+  font-family: "Roboto", "Courier New", courier, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: grey;
+}
+
+.content {
+  width: 44rem;
+  margin: 0 auto 0 auto;
+  background-color: white;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  padding: 3rem;
+
+  .separator-table {
+    display: table;
+    width: 100%;
+    .separator-container {
+      display: table-row;
+      width: 100%;
+      .separator-text {
+        display: table-cell;
+        font-size: 1.5rem;
+        font-weight: bold;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .separator {
+        display: table-cell;
+        padding: 1rem 1rem 1rem 1rem;
+        width: 40%;
+        div {
+          height: 2px;
+          width: 100%;
+          vertical-align: middle;
+          background-color: black;
+        }
+      }
+    }
+  }
+
+  .header {
+    width: 100%;
+    margin-bottom: 1rem;
+
+    .name {
+      font-size: 3rem;
+    }
+
+    div {
+      text-align: center;
+    }
+    span {
+      padding: 0.3rem;
+
+      &.website {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .paragraph p {
+    text-align: center;
+    padding: 0 2rem 0 2rem;
+  }
+
+  .school {
+    margin: 1rem 2rem 2rem 2rem;
+    .degree {
+      margin-bottom: 0.5rem;
+
+      .type {
+        font-weight: bold;
+      }
+
+      .colon {
+        font-weight: bold;
+      }
+    }
+    .school-name {
+      .vertical-separator {
+        padding: 0.3rem;
+      }
+    }
+  }
+
+  .job {
+    width: 100%;
+    margin: 2rem 0 2rem 0;
+    .job-header {
+      width: 100%;
+      text-align: center;
+      .comma {
+        padding-right: 0.3rem;
+      }
+      .vertical-separator,
+      .spacer {
+        padding: 0 0.3rem 0 0.3rem;
+      }
+      .title {
+        font-weight: bold;
+      }
+    }
+    .responsibilities {
+      margin: 0 5rem 0 2rem;
+    }
+  }
+
+  .page-break {
+    border-bottom: 2px dashed black;
+    padding-bottom: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .list {
+    .container {
+      width: 100%;
+      display: table;
+      margin-top: 1rem;
+      .row {
+        display: table-row;
+        .spacer {
+          display: table-cell;
+          width: 30%;
+        }
+
+        .cell {
+          display: table-cell;
+          ul {
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}

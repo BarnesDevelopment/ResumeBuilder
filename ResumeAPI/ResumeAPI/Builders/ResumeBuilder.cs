@@ -6,19 +6,19 @@ namespace ResumeAPI.Builders;
 
 public static class ResumeBuilder
 {
-  public static string Build(this ResumeTreeNode tree)
+  public static string Build(this ResumeTreeNode tree, bool page = false)
   {
     var html = new TagBuilder("html");
-    html.InnerHtml.AppendHtml(BuildStyle());
+    html.InnerHtml.AppendHtml(BuildStyle(page));
     html.InnerHtml.AppendHtml(BuildBody(tree));
     return html.Write();
   }
 
-  private static TagBuilder BuildStyle()
+  private static TagBuilder BuildStyle(bool page)
   {
     var head = new TagBuilder("head");
     var style = new TagBuilder("style");
-    StreamReader sr = new StreamReader("./CSS/DefaultCss.css");
+    StreamReader sr = new StreamReader(page ? "./CSS/pageCss.css" : "./CSS/screenCss.css");
     var css = sr.ReadToEnd();
     sr.Close();
     style.InnerHtml.AppendHtml(css);
@@ -29,19 +29,22 @@ public static class ResumeBuilder
   private static TagBuilder BuildBody(ResumeTreeNode tree)
   {
     var body =  new TagBuilder("body");
+    var content = new TagBuilder("div");
+    content.AddCssClass("content");
     
     for(var i = 0; i < tree.Children.Count; i++)
     {
       if (i == 0)
       {
-        body.InnerHtml.AppendHtml(BuildTitleBlock(tree.Children[i]));
+        content.InnerHtml.AppendHtml(BuildTitleBlock(tree.Children[i]));
       }
       else
       {
-        body.InnerHtml.AppendHtml(BuildSection(tree.Children[i]));
+        content.InnerHtml.AppendHtml(BuildSection(tree.Children[i]));
       }
     }
     
+    body.InnerHtml.AppendHtml(content);
     return body;
   }
   
