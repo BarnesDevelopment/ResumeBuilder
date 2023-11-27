@@ -25,6 +25,7 @@ export class EditResumeComponent implements OnInit {
   form: FormGroup;
   phonePattern =
     '^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$';
+  platform: string = '';
 
   constructor(
     private router: Router,
@@ -33,6 +34,7 @@ export class EditResumeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
 
@@ -1216,6 +1218,33 @@ export class EditResumeComponent implements OnInit {
     this.service.deleteNode(nodeToDrop).subscribe();
   }
   //endregion
+
+  onKeyDown($event: KeyboardEvent): void {
+    // Detect platform
+    if (navigator.platform.match('Mac')) {
+      this.handleMacKeyEvents($event);
+    } else {
+      this.handleWindowsKeyEvents($event);
+    }
+  }
+
+  handleMacKeyEvents($event: KeyboardEvent) {
+    // MetaKey documentation
+    // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/metaKey
+    let charCode = String.fromCharCode($event.which).toLowerCase();
+    if ($event.metaKey && charCode === 's') {
+      this.save();
+      $event.preventDefault();
+    }
+  }
+
+  handleWindowsKeyEvents($event: KeyboardEvent) {
+    let charCode = String.fromCharCode($event.which).toLowerCase();
+    if ($event.ctrlKey && charCode === 's') {
+      this.save();
+      $event.preventDefault();
+    }
+  }
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
