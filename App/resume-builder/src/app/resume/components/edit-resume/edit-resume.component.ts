@@ -33,7 +33,7 @@ export class EditResumeComponent implements OnInit {
   ngOnInit(): void {
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
-      console.log(this.resume);
+
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
         comments: new FormControl(this.resume.comments),
@@ -881,6 +881,17 @@ export class EditResumeComponent implements OnInit {
     ].valueChanges.subscribe(res => {
       section.children[index].children[5].content = res;
     });
+
+    this.form.addControl(
+      `section${section.order}work${index}pagebreak`,
+      new FormControl(false),
+    );
+
+    this.form.controls[
+      `section${section.order}work${index}pagebreak`
+    ].valueChanges.subscribe(res => {
+      section.children[index].comments = res ? 'page-break' : '';
+    });
   }
   removeWorkExperience(section: ResumeTreeNode) {
     const nodeToDrop = section.children.pop();
@@ -903,6 +914,9 @@ export class EditResumeComponent implements OnInit {
     this.form.removeControl(
       `section${section.order}work${section.children.length}end`,
     );
+    this.form.removeControl(
+      `section${section.order}work${section.children.length}pagebreak`,
+    );
 
     this.service.deleteNode(nodeToDrop).subscribe();
   }
@@ -913,6 +927,17 @@ export class EditResumeComponent implements OnInit {
     this.form.controls[`section${sectionOrder}type`].setValue(
       SectionDisplayType.WorkExperience,
     );
+
+    this.form.addControl(
+      `section${sectionOrder}work${workExperience.order}pagebreak`,
+      new FormControl(workExperience.comments === 'page-break'),
+    );
+
+    this.form.controls[
+      `section${sectionOrder}work${workExperience.order}pagebreak`
+    ].valueChanges.subscribe(res => {
+      workExperience.comments = res ? 'page-break' : '';
+    });
 
     this.form.addControl(
       `section${sectionOrder}work${workExperience.order}title`,
