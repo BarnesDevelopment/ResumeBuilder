@@ -12,6 +12,7 @@ import {
   BorderStyle,
   ButtonStyle,
 } from '../../../common/button/button.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-edit-resume',
@@ -28,6 +29,7 @@ export class EditResumeComponent implements OnInit {
   constructor(
     private router: Router,
     private service: ResumeService,
+    private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
@@ -66,7 +68,14 @@ export class EditResumeComponent implements OnInit {
   }
 
   save(): void {
-    this.service.updateResume(this.resume).subscribe();
+    this.service.updateResume(this.resume).subscribe(
+      () => {
+        this.toastr.success('Resume saved successfully', 'Saved');
+      },
+      err => {
+        this.toastr.error('Error saving resume: ' + err.message, 'Error');
+      },
+    );
   }
 
   //region Section

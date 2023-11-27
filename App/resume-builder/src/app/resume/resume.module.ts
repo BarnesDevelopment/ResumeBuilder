@@ -6,7 +6,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { EditResumeComponent } from './components/edit-resume/edit-resume.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {CommonComponentsModule} from "../common/common-components.module";
+import { CommonComponentsModule } from '../common/common-components.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [CreateResumeComponent, EditResumeComponent],
@@ -17,6 +19,8 @@ import {CommonComponentsModule} from "../common/common-components.module";
     MatButtonModule,
     MatProgressSpinnerModule,
     CommonComponentsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
   ],
 })
 export class ResumeModule {}
