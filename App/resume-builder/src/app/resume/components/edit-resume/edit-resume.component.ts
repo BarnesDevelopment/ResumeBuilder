@@ -96,6 +96,19 @@ export class EditResumeComponent implements OnInit {
       },
     );
 
+    this.form.addControl(
+      `section${node.order}pagebreak`,
+      new FormControl(
+        this.resume.children[node.order].comments === 'page-break',
+      ),
+    );
+
+    this.form.controls[`section${node.order}pagebreak`].valueChanges.subscribe(
+      res => {
+        this.resume.children[node.order].comments = res ? 'page-break' : '';
+      },
+    );
+
     node.children.forEach(child => {
       switch (child.nodeType) {
         case NodeType.List:
@@ -156,6 +169,14 @@ export class EditResumeComponent implements OnInit {
     this.form.addControl(
       `section${index}type`,
       new FormControl('', [Validators.required]),
+    );
+
+    this.form.addControl(`section${index}pagebreak`, new FormControl(false));
+
+    this.form.controls[`section${index}pagebreak`].valueChanges.subscribe(
+      res => {
+        this.resume.children[index].comments = res ? 'page-break' : '';
+      },
     );
 
     this.form.controls[`section${index}title`].valueChanges.subscribe(res => {
