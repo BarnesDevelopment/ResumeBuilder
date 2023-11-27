@@ -70,6 +70,14 @@
           </option>
         </select>
       </div>
+      <div class="page-break-check">
+        <label for="section{{ section.order }}pagebreak">Page Break After:</label>
+        <input
+          class="checkbox"
+          type="checkbox"
+          formControlName="section{{ section.order }}pagebreak"
+          title="Page Break" />
+      </div>
       <div
         class="error"
         *ngIf="form.controls['section' + section.order + 'type'].invalid && form.controls['section' + section.order + 'type'].touched">
@@ -178,6 +186,14 @@
         <div
           class="job"
           *ngFor="let job of section.children">
+          <div class="row page-break-check">
+            <label for="section{{ section.order }}work{{ job.order }}pagebreak">Page Break After:</label>
+            <input
+              class="checkbox"
+              type="checkbox"
+              formControlName="section{{ section.order }}work{{ job.order }}pagebreak"
+              title="Page Break" />
+          </div>
           <div class="row">
             <app-input formControlName="section{{ section.order }}work{{ job.order }}title">Job Title</app-input>
             <app-input formControlName="section{{ section.order }}work{{ job.order }}employer">Employer</app-input>
