@@ -18,12 +18,18 @@ pipeline {
       }
       
       steps {
-        sh 'echo ${BUILD_VERSION}'
-        sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
-        sh 'docker build -t sambobbarnes/resume-api:latest .'
-        
-        sh 'docker push sambobbarnes/resume-api:${BUILD_VERSION}'
-        sh 'docker push sambobbarnes/resume-api:latest'
+        app = docker.build("sambobbarnes/resume-api")
+        docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
+          app.push("${BUILD_VERSION}")
+          app.push("latest")
+        }
+      
+//         sh 'echo ${BUILD_VERSION}'
+//         sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
+//         sh 'docker build -t sambobbarnes/resume-api:latest .'
+//         
+//         sh 'docker push sambobbarnes/resume-api:${BUILD_VERSION}'
+//         sh 'docker push sambobbarnes/resume-api:latest'
       }
     }
     
