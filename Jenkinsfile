@@ -14,9 +14,9 @@ pipeline {
         script {
             def BUILD_VERSION
             def userInput = input (id: 'buildVersion', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
-            BUILD_VERSION = userInput.BUILD_VERSION?:''
+            export BUILD_VERSION=userInput['BUILD_VERSION']
         }
-        
+        sh 'echo ${BUILD_VERSION}'
         sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
         sh 'docker build -t sambobbarnes/resume-api:latest .'
         
