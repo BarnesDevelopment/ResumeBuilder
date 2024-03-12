@@ -7,19 +7,6 @@ pipeline {
         checkout scm
       }
     }
-    
-    stage('Generate Swagger') {
-      agent { label 'docker' }
-      steps {
-        sh 'cd ./ResumeAPI/ResumeAPI && \
-            	dotnet tool restore && \
-            	dotnet build --configuration Release -o out && \
-            	cd out && \
-            	dotnet swagger tofile --output ../../Schemas/swagger.json ResumeAPI.dll v1 && \
-            	cd .. && \
-            	rm -rf out'
-      }
-    }
   
     stage('Build and upload') {
       agent { label 'docker' }
