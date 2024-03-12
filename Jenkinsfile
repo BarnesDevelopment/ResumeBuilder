@@ -22,8 +22,8 @@ pipeline {
         sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
         sh 'docker build -t sambobbarnes/resume-api:latest .'
         
-        sh 'docker push -a sambobbarnes/resume-api:${BUILD_VERSION}'
-        sh 'docker push -a sambobbarnes/resume-api:latest'
+        sh 'docker push sambobbarnes/resume-api:${BUILD_VERSION}'
+        sh 'docker push sambobbarnes/resume-api:latest'
       }
     }
     
