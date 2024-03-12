@@ -23,7 +23,6 @@ pipeline {
     stage('Deploy') {
       steps {
         writeFile file: '.env', text: "AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}\nAWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
-        sh 'echo "$(cat .env)"'
         sh 'docker compose up -d --force-recreate'
       }
     }
