@@ -10,7 +10,7 @@ pipeline {
     stage('Build') {
       steps {
         script {
-          def app = docker.build("app:${BUILD_VERSION}")
+          def app = docker.build("sambobbarnes/resume-api")
         }
       }
     }
