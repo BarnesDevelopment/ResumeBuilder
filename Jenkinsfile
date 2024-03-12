@@ -1,11 +1,6 @@
 node {
   def app
-  input {
-      message "Build version:"
-      parameters {
-          string(name: 'BUILD_VERSION', defaultValue: '', description: 'Build Version Tag', trim: true)
-      }
-    }
+  def build_version
   
   stage('Checkout') {
     checkout scm
@@ -16,8 +11,9 @@ node {
   }
   
   stage('Upload image') {
+    build_version = input ()id: 'Build_version', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-      app.push("${BUILD_VERSION}")
+      app.push(build_version)
       app.push("latest")
     }
   }
