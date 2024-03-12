@@ -10,16 +10,19 @@ pipeline {
   
     stage('Build and upload') {
       agent { label 'docker' }
+      input {
+          message "Build version:"
+          parameters {
+              string(name: 'BUILD_VERSION', defaultValue: '', description: 'Build Version Tag', trim: true)
+          }
+      }
+      
       steps {
-        script {
-            env.BUILD_VERSION = input (id: 'buildVersion', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
-            echo "${env.BUILD_VERSION}"
-        }
-        sh 'echo ${env.BUILD_VERSION}'
-        sh 'docker build -t sambobbarnes/resume-api:${env.BUILD_VERSION} .'
+        sh 'echo ${BUILD_VERSION}'
+        sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
         sh 'docker build -t sambobbarnes/resume-api:latest .'
         
-        sh 'docker push -a sambobbarnes/resume-api:${env.BUILD_VERSION}'
+        sh 'docker push -a sambobbarnes/resume-api:${BUILD_VERSION}'
         sh 'docker push -a sambobbarnes/resume-api:latest'
       }
     }
