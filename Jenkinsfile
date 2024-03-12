@@ -22,6 +22,8 @@ pipeline {
     
     stage('Deploy') {
       steps {
+        sh 'echo ${AWS_ACCESS_KEY_ID}'
+        sh 'echo ${AWS_SECRET_ACCESS_KEY}'
         sh 'docker compose up -d --force-recreate'
       }
     }
