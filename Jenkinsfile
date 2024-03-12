@@ -1,11 +1,5 @@
 pipeline {
   agent none
-  parameters {
-    string(name: 'BUILD_VERSION', defaultValue: '', description: 'Build Version Tag')
-  }
-  environment {
-    def BUILD_VERSION = "${params.BUILD_VERSION}"
-  }
   stages {
     stage('Checkout') {
       agent { label 'docker' }
@@ -16,13 +10,16 @@ pipeline {
   
     stage('Build and upload') {
       agent { label 'docker' }
-      
       steps {
-        sh 'echo ${BUILD_VERSION}'
-        sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
+        script {
+            env.BUILD_VERSION = input (id: 'buildVersion', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
+            echo "${env.BUILD_VERSION}"
+        }
+        sh 'echo ${env.BUILD_VERSION}'
+        sh 'docker build -t sambobbarnes/resume-api:${env.BUILD_VERSION} .'
         sh 'docker build -t sambobbarnes/resume-api:latest .'
         
-        sh 'docker push -a sambobbarnes/resume-api:${BUILD_VERSION}'
+        sh 'docker push -a sambobbarnes/resume-api:${env.BUILD_VERSION}'
         sh 'docker push -a sambobbarnes/resume-api:latest'
       }
     }
