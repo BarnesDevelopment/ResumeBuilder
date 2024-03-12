@@ -11,7 +11,7 @@ node {
   }
   
   stage('Upload image') {
-    build_version = input ()id: 'Build_version', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
+    build_version = input (id: 'Build_version', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
       app.push(build_version)
       app.push("latest")
