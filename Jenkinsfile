@@ -11,7 +11,10 @@ pipeline {
     stage('Build and upload') {
       agent { label 'docker' }
       steps {
-        input message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)]
+        def BUILD_VERSION
+        def userInput = input (id: 'buildVersion', message: 'Build version:', parameters: [string(description: 'Build Version Tag', name: 'BUILD_VERSION', trim: true)])
+        BUILD_VERSION = userInput.BUILD_VERSION?:''
+      
         sh 'docker build -t sambobbarnes/resume-api:${BUILD_VERSION} .'
         sh 'docker build -t sambobbarnes/resume-api:latest .'
         
