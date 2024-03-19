@@ -12,9 +12,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ResumeModule} from "./resume/resume.module";
+import { LoginCallbackComponent } from './services/auth/callbacks/login-callback/login-callback.component';
+import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callback/logout-callback.component';
+import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, PageNotFoundComponent],
+  declarations: [AppComponent, HomeComponent, PageNotFoundComponent, LoginCallbackComponent, LogoutCallbackComponent, SilentCallbackComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

@@ -37,6 +37,7 @@
     "ng-bootstrap": "^1.6.3",
     "ngx-cookie-service": "^16.0.0",
     "ngx-toastr": "^17.0.2",
+    "oidc-client": "^1.11.5",
     "rxjs": "~7.8.0",
     "save-dev": "^0.0.1-security",
     "ts-node": "^10.9.1",
