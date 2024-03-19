@@ -56,8 +56,8 @@ export class AuthenticationService {
         new UserManagerSettings();
 
       // set up settings
-      userManagerSettings.authority = '';
-      userManagerSettings.client_id = '';
+      userManagerSettings.authority = 'https://auth.barnes7619.com';
+      userManagerSettings.client_id = 'resume-builder';
       userManagerSettings.response_type = 'code';
       userManagerSettings.scope = 'openid profile resume-id';
 
