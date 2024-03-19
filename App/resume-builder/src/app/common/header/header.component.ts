@@ -34,21 +34,21 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const cookie = this.login.getCookie();
-    if (cookie.cookie !== '' && cookie.userId !== '') {
-      this.login
-        .getUser({
-          key: cookie.cookie,
-          userId: cookie.userId,
-          expiration: new Date(),
-        })
-        .subscribe((x) => {
-          this.user = x;
-          environment.loggedIn = true;
-        });
-    } else {
-      this.user = null;
-      environment.loggedIn = false;
-    }
+    // if (cookie.cookie !== '' && cookie.userId !== '') {
+    //   this.login
+    //     .getUser({
+    //       key: cookie.cookie,
+    //       userId: cookie.userId,
+    //       expiration: new Date(),
+    //     })
+    //     .subscribe((x) => {
+    //       this.user = x;
+    //       environment.loggedIn = true;
+    //     });
+    // } else {
+    //   this.user = null;
+    //   environment.loggedIn = false;
+    // }
   }
 
   ngOnDestroy() {

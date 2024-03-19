@@ -14,6 +14,8 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+    canActivate: [AuthGuard],
+    runGuardsAndResolvers: 'always',
   },
   {
     path: 'login',
@@ -29,7 +31,6 @@ const routes: Routes = [
     path: 'edit/:id',
     component: EditResumeComponent,
   },
-  { path: '**', component: PageNotFoundComponent },
   { path: 'unauthorized', component: PageNotFoundComponent },
   {
     path: 'login-callback',
@@ -43,6 +44,7 @@ const routes: Routes = [
     path: 'silent-callback',
     component: SilentCallbackComponent,
   },
+  { path: '**', component: PageNotFoundComponent },
 ];
 
 @NgModule({

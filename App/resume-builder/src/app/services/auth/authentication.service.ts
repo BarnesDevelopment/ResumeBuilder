@@ -22,6 +22,7 @@ export class AuthenticationService {
   }
 
   startAuthentication(): Promise<void> {
+    console.log('startAuthentication');
     this.getUserManager();
     return this._userManager.signinRedirect();
   }
@@ -56,18 +57,20 @@ export class AuthenticationService {
         new UserManagerSettings();
 
       // set up settings
-      userManagerSettings.authority = 'https://auth.barnes7619.com';
+      userManagerSettings.authority =
+        'https://auth.barnes7619.com/realms/ResumeBuilder/';
       userManagerSettings.client_id = 'resume-builder';
       userManagerSettings.response_type = 'code';
-      userManagerSettings.scope = 'openid profile resume-id';
+      userManagerSettings.scope = 'profile email roles resume-id';
 
-      userManagerSettings.redirect_uri = 'http://localhost:4200/auth-callback';
+      userManagerSettings.redirect_uri =
+        'https://localhost:4200/login-callback';
       userManagerSettings.post_logout_redirect_uri =
-        'http://localhost:4200/logout-callback';
+        'https://localhost:4200/logout-callback';
 
       userManagerSettings.automaticSilentRenew = true;
       userManagerSettings.silent_redirect_uri =
-        'http://localhost:4200/silent-callback';
+        'https://localhost:4200/silent-callback';
 
       userManagerSettings.userStore = new WebStorageStateStore({
         store: window.localStorage,
