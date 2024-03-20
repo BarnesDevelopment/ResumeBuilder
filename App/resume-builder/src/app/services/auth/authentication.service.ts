@@ -30,6 +30,6 @@ export class AuthenticationService {
   }
 
   public logOut() {
-    this.oauthService.revokeTokenAndLogout();
+    this.oauthService.logOut();
   }
 }
