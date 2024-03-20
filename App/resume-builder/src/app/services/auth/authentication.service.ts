@@ -10,6 +10,7 @@ export class AuthenticationService {
 
   public configure() {
     this.oauthService.configure(authConfig);
+    this.oauthService.setupAutomaticSilentRefresh();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
   }
 

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { AuthenticationService } from './services/auth/authentication.service';
+import { Component, OnInit } from '@angular/core';
+import { authConfig } from './services/auth/models/auth-config';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-root',
@@ -9,15 +10,26 @@ import { AuthenticationService } from './services/auth/authentication.service';
 export class AppComponent {
   title = 'resume-builder';
 
-  constructor(private authService: AuthenticationService) {
-    authService.configure();
+  constructor(private oauthService: OAuthService) {
+    this.configure();
   }
 
-  isLoggedIn = this.authService.isLoggedIn;
-  handleLoginClick = () =>
-    this.authService.isLoggedIn
-      ? this.authService.logOut()
-      : this.authService.logIn();
+  public configure() {
+    this.oauthService.configure(authConfig);
+    this.oauthService.setupAutomaticSilentRefresh();
+    this.oauthService.loadDiscoveryDocumentAndTryLogin();
+  }
 
-  claims = this.authService.claims;
+  get isLoggedIn() {
+    return this.oauthService.getIdToken();
+  }
+
+  handleLoginClick = () =>
+    this.isLoggedIn
+      ? this.oauthService.logOut()
+      : this.oauthService.initCodeFlow();
+
+  get claims() {
+    return this.oauthService.getIdentityClaims() as any;
+  }
 }
