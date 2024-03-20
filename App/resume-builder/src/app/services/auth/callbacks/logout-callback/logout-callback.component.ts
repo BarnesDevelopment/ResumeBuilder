@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../authentication.service';
 import { Router } from '@angular/router';
 
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './logout-callback.component.html',
   styleUrls: ['./logout-callback.component.scss'],
 })
-export class LogoutCallbackComponent {
+export class LogoutCallbackComponent implements OnInit {
   constructor(
     private readonly _authService: AuthenticationService,
     private readonly _router: Router,

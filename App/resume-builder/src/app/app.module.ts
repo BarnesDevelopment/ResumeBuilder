@@ -39,7 +39,6 @@ import { OAuthModule } from 'angular-oauth2-oidc';
     MatCardModule,
     FormsModule,
     ResumeModule,
-    HttpClientModule,
     OAuthModule.forRoot(),
   ],
   providers: [

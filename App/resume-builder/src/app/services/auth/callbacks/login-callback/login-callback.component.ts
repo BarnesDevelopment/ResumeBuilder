@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../authentication.service';
 
@@ -7,14 +7,13 @@ import { AuthenticationService } from '../../authentication.service';
   templateUrl: './login-callback.component.html',
   styleUrls: ['./login-callback.component.scss'],
 })
-export class LoginCallbackComponent {
+export class LoginCallbackComponent implements OnInit {
   constructor(
     private readonly _authService: AuthenticationService,
     private readonly _router: Router,
   ) {}
 
   ngOnInit() {
-    // this._authService.completeAuthentication();
-    // this._router.navigate(['/']);
+    this._router.navigate(['/'], { replaceUrl: true });
   }
 }
