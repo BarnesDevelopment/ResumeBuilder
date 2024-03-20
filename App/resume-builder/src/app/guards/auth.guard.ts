@@ -1,13 +1,12 @@
 import { CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
-import { AuthenticationService } from '../services/auth/authentication.service';
-
+import { OAuthService } from 'angular-oauth2-oidc';
 export const AuthGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthenticationService);
-  if (authService.isLoggedIn) {
+  const authService = inject(OAuthService);
+  if (authService.hasValidAccessToken()) {
     return true;
   }
 
-  authService.logIn();
+  authService.initLoginFlow();
   return false;
 };

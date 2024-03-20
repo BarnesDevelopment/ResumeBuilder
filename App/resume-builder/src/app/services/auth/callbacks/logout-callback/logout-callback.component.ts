@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthenticationService } from '../../authentication.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,10 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./logout-callback.component.scss'],
 })
 export class LogoutCallbackComponent implements OnInit {
-  constructor(
-    private readonly _authService: AuthenticationService,
-    private readonly _router: Router,
-  ) {}
+  constructor(private readonly _router: Router) {}
 
   ngOnInit() {
     // this._authService.completeLogout();

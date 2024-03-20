@@ -7,13 +7,13 @@ import {
   HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import { AuthenticationService } from '../app/services/auth/authentication.service';
 import { Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(
-    private readonly _authService: AuthenticationService,
+    private readonly _authService: OAuthService,
     private readonly _router: Router,
   ) {}
 
@@ -21,7 +21,7 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler,
   ): Observable<HttpEvent<any>> {
-    const accessToken = this._authService.accessToken;
+    const accessToken = this._authService.getAccessToken();
     const headers = request.headers.set(
       'Authorization',
       `Bearer ${accessToken}`,
