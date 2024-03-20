@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { authConfig } from './services/auth/models/auth-config';
 import { OAuthService } from 'angular-oauth2-oidc';
 
@@ -18,18 +18,5 @@ export class AppComponent {
     this.oauthService.configure(authConfig);
     this.oauthService.setupAutomaticSilentRefresh();
     this.oauthService.loadDiscoveryDocumentAndTryLogin();
-  }
-
-  get isLoggedIn() {
-    return this.oauthService.getIdToken();
-  }
-
-  handleLoginClick = () =>
-    this.isLoggedIn
-      ? this.oauthService.logOut()
-      : this.oauthService.initCodeFlow();
-
-  get claims() {
-    return this.oauthService.getIdentityClaims() as any;
   }
 }

@@ -1,19 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { User } from '../../models/User';
+import { Component } from '@angular/core';
 import { BorderStyle, ButtonStyle } from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
-import { NavigationEnd, Router } from '@angular/router';
-import { LoginService } from '../../login/services/login.service';
-import { environment } from '../../../environment/environment';
+import { Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit, OnDestroy {
-  navigationSubscription;
-  user: User;
+export class HeaderComponent {
   faCaretDown = faCaretDown;
   showUserPanel: boolean;
 
@@ -22,40 +18,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private login: LoginService,
-  ) {
-    this.navigationSubscription = this.router.events.subscribe((e: any) => {
-      // If it is a NavigationEnd event re-initalise the component
-      if (e instanceof NavigationEnd) {
-        this.user = null;
-      }
-    });
-  }
-
-  ngOnInit() {
-    const cookie = this.login.getCookie();
-    // if (cookie.cookie !== '' && cookie.userId !== '') {
-    //   this.login
-    //     .getUser({
-    //       key: cookie.cookie,
-    //       userId: cookie.userId,
-    //       expiration: new Date(),
-    //     })
-    //     .subscribe((x) => {
-    //       this.user = x;
-    //       environment.loggedIn = true;
-    //     });
-    // } else {
-    //   this.user = null;
-    //   environment.loggedIn = false;
-    // }
-  }
-
-  ngOnDestroy() {
-    if (this.navigationSubscription) {
-      this.navigationSubscription.unsubscribe();
-    }
-  }
+    private oauthService: OAuthService,
+  ) {}
 
   ToggleUserPanel() {
     this.showUserPanel = !this.showUserPanel;
@@ -65,10 +29,19 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.router.navigate([url]);
   }
 
+  get Claims() {
+    return this.oauthService.getIdentityClaims() as any;
+  }
+
+  get isLoggedIn() {
+    return this.oauthService.getIdToken();
+  }
+
+  Login() {
+    this.oauthService.initCodeFlow();
+  }
+
   Logout() {
-    this.login.logout();
-    this.showUserPanel = false;
-    this.router.navigate(['/']);
-    environment.loggedIn = false;
+    this.oauthService.logOut();
   }
 }

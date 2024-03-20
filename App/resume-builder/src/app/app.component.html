@@ -1,10 +1,2 @@
 <app-header></app-header>
-<button (click)="handleLoginClick()">{{ isLoggedIn ? "Logout" : "Login" }}</button>
-<div style="display: flex; margin: 1rem; align-items: center">
-  <img
-    src="{{ claims?.picture }}"
-    alt=""
-    style="border-radius: 50%" />
-  <p style="margin: 1rem">{{ claims?.name }}</p>
-</div>
 <router-outlet></router-outlet>

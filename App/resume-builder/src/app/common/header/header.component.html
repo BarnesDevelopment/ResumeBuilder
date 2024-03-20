@@ -4,13 +4,19 @@
     <h2 (click)="GoTo('/')">Barnes Resume Builder</h2>
   </div>
   <div class="user-info edge-div">
-    <div *ngIf="user != undefined" class="user" (click)="ToggleUserPanel()">
-      <span>{{ this.user!.fullName }}</span>
+    <div
+      *ngIf="isLoggedIn"
+      class="user"
+      (click)="ToggleUserPanel()">
+      <span>{{ this.Claims?.name }}</span>
       <fa-icon [icon]="faCaretDown"></fa-icon>
     </div>
-    <div *ngIf="user == undefined" class="login">
+    <div
+      *ngIf="!isLoggedIn"
+      class="login">
       <app-button
-        href="/login"
+        (click)="Login()"
+        ignoreClick
         [buttonStyle]="ButtonStyle.Transparent"
         [borderStyle]="BorderStyle.Light"
         title="login"
@@ -20,7 +26,10 @@
   </div>
 </div>
 
-<div *ngIf="showUserPanel" class="user-panel" title="userPanel">
+<div
+  *ngIf="showUserPanel"
+  class="user-panel"
+  title="userPanel">
   <table>
     <tr>
       <td (click)="GoTo('/account')">Account</td>
