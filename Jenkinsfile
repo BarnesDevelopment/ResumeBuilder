@@ -8,6 +8,7 @@ pipeline {
     }
     
     stage('Build and upload') {
+      when { changeset 'ResumeApi/**' }
       steps {
         script {
           def app = docker.build("sambobbarnes/resume-api")
