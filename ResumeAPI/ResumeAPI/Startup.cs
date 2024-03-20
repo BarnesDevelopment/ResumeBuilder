@@ -1,26 +1,26 @@
 using System.Reflection;
+using System.Text;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ResumeAPI;
 
 public class Startup
 {
-    public IConfiguration configRoot {
-        get;
-    }
+  private readonly IConfiguration _configuration;
     
     public Startup(IConfiguration configuration) {
-        configRoot = configuration;
+        _configuration = configuration;
     }
     public void ConfigureServices(IServiceCollection services) {
         services.AddControllers();
@@ -56,7 +56,8 @@ public class Startup
                 });
         });
         
-        services.Configure<AWSSecrets>(configRoot);
+        services.Configure<AWSSecrets>(_configuration);
+        var appSettings = _configuration.Get<AppSettings>();
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeService, ResumeService>();
@@ -68,10 +69,16 @@ public class Startup
         services.AddTransient<IResumeTree, ResumeTree>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
         services.AddTransient<ICookieValidator, CookieValidator>();
+        
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+          .AddJwtBearer(options =>
+          {
+            options.Authority = appSettings.Jwt.Authority;
+          });
 
         services.AddHttpClient();
         
-        var awsSecrets = configRoot.Get<AWSSecrets>();
+        var awsSecrets = _configuration.Get<AWSSecrets>();
 
         services.AddHealthChecks()
             .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
@@ -95,6 +102,7 @@ public class Startup
 
         app.UseHttpsRedirection();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
