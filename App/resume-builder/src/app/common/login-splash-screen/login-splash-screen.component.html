@@ -1,7 +1,8 @@
 <div class="center-in-window">
   <div class="button-bounding-box">
     <app-button
-      href="/login"
+      (click)="login()"
+      ignoreClick
       [buttonStyle]="ButtonStyle.Primary"
       [borderStyle]="BorderStyle.Dark"
       title="login"

@@ -67,12 +67,6 @@ const render = async (
   return renderRootComponent(HomeComponent, {
     componentProperties: {
       resumes,
-      environment: {
-        production: false,
-        loggedIn,
-        domain: '',
-        apiBasePath: '',
-      },
     },
   });
 };

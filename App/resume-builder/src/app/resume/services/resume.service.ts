@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import {
   newResumeTreeNodeJson,
   ResumeHeader,
@@ -7,8 +7,7 @@ import {
 } from '../../models/Resume';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environment';
-import { LoginService } from '../../login/services/login.service';
-import { Guid } from 'guid-typescript';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
   providedIn: 'root',
@@ -18,51 +17,31 @@ export class ResumeService {
 
   constructor(
     private http: HttpClient,
-    private loginService: LoginService,
+    private oauthService: OAuthService,
   ) {}
 
   public getResumes(): Observable<ResumeHeader[]> {
-    const cookie = this.loginService.getCookie();
-    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
     return this.http.get<ResumeHeader[]>(
       `${this.env.apiBasePath}/resume/get-all`,
-      {
-        headers,
-      },
     );
   }
 
   public getResume(id: string): Observable<ResumeTreeNode> {
-    const cookie = this.loginService.getCookie();
-    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
     return this.http.get<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/get/${id}`,
-      {
-        headers,
-      },
     );
   }
 
   public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
-    const cookie = this.loginService.getCookie();
-    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
     return this.http.post<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/upsert`,
       newResumeTreeNodeJson(resume),
-      {
-        headers,
-      },
     );
   }
 
   public deleteNode(resume: ResumeTreeNode): Observable<boolean> {
-    const cookie = this.loginService.getCookie();
-    const headers = new HttpHeaders().set('Authorization', cookie.cookie);
     return this.http.delete<boolean>(
       `${this.env.apiBasePath}/resume/delete/${resume.id}`,
-      {
-        headers,
-      },
     );
   }
 }

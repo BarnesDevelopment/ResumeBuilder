@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BorderStyle, ButtonStyle } from '../button/button.component';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
   selector: 'app-login-splash-screen',
@@ -9,4 +10,10 @@ import { BorderStyle, ButtonStyle } from '../button/button.component';
 export class LoginSplashScreenComponent {
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
+
+  constructor(private oauthService: OAuthService) {}
+
+  login() {
+    this.oauthService.initCodeFlow();
+  }
 }
