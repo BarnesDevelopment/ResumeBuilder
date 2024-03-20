@@ -14,14 +14,11 @@ const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
-    canActivate: [AuthGuard],
-    runGuardsAndResolvers: 'always',
+    // canActivate: [AuthGuard],
   },
   {
     path: 'login',
     component: LoginPageComponent,
-    canActivate: [AuthGuard],
-    runGuardsAndResolvers: 'always',
   },
   {
     path: 'create',

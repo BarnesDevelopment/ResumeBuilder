@@ -16,6 +16,7 @@ import { LoginCallbackComponent } from './services/auth/callbacks/login-callback
 import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callback/logout-callback.component';
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
+import {OAuthModule} from "angular-oauth2-oidc";
 
 @NgModule({
   declarations: [
@@ -38,13 +39,16 @@ import { AuthInterceptor } from '../interceptors/auth.interceptor';
     MatCardModule,
     FormsModule,
     ResumeModule,
+    HttpClientModule,
+    OAuthModule.forRoot(),
+    OAuthModule.forRoot(),
   ],
   providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptor,
+    //   multi: true,
+    // },
   ],
   bootstrap: [AppComponent],
 })

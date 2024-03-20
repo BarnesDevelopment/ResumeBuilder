@@ -1,15 +1,27 @@
 import { Injectable } from '@angular/core';
-import { User, UserManager, WebStorageStateStore } from 'oidc-client';
-import { UserManagerSettings } from './models/userManagerSettings';
+import {
+  User,
+  UserManager,
+  UserManagerSettings,
+  WebStorageStateStore,
+} from 'oidc-client';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthenticationService {
-  isUserDefined = false;
   private _user: User | null;
   private _userManager: UserManager;
+
+  constructor() {
+    this._userManager = new UserManager(this.getUserManagerSettings());
+
+    this._userManager.getUser().then(user => {
+      this._user = user;
+    });
+  }
   isLoggedIn() {
+    // this._user = JSON.parse(sessionStorage.getItem('oidc.user')) as User;
     return this._user != null && !this._user.expired;
   }
 
@@ -22,68 +34,42 @@ export class AuthenticationService {
   }
 
   startAuthentication(): Promise<void> {
-    console.log('startAuthentication');
-    this.getUserManager();
     return this._userManager.signinRedirect();
   }
 
   completeAuthentication() {
-    this.getUserManager();
     return this._userManager.signinRedirectCallback().then(user => {
+      debugger;
       this._user = user;
-      this.isUserDefined = true;
     });
   }
 
   startLogout(): Promise<void> {
-    this.getUserManager();
     return this._userManager.signoutRedirect();
   }
 
   completeLogout() {
-    this.getUserManager();
     this._user = null;
     return this._userManager.signoutRedirectCallback();
   }
 
   silentSignInAuthentication() {
-    this.getUserManager();
     return this._userManager.signinSilentCallback();
   }
 
-  private getUserManager() {
-    if (!this._userManager) {
-      const userManagerSettings: UserManagerSettings =
-        new UserManagerSettings();
-
-      // set up settings
-      userManagerSettings.authority =
-        'https://auth.barnes7619.com/realms/ResumeBuilder/';
-      userManagerSettings.client_id = 'resume-builder';
-      userManagerSettings.response_type = 'code';
-      userManagerSettings.scope = 'profile email roles resume-id';
-
-      userManagerSettings.redirect_uri =
-        'https://localhost:4200/login-callback';
-      userManagerSettings.post_logout_redirect_uri =
-        'https://localhost:4200/logout-callback';
-
-      userManagerSettings.automaticSilentRenew = true;
-      userManagerSettings.silent_redirect_uri =
-        'https://localhost:4200/silent-callback';
-
-      userManagerSettings.userStore = new WebStorageStateStore({
-        store: window.localStorage,
-      });
-
-      this._userManager = new UserManager(userManagerSettings);
-
-      this._userManager.getUser().then(user => {
-        if (user) {
-          this._user = user;
-          this.isUserDefined = true;
-        }
-      });
-    }
+  private getUserManagerSettings(): UserManagerSettings {
+    return {
+      authority: 'https://auth.barnes7619.com/realms/ResumeBuilder/',
+      client_id: 'resume-builder',
+      redirect_uri: 'https://localhost:4200/login-callback',
+      post_logout_redirect_uri: 'https://localhost:4200/logout-callback',
+      response_type: 'code',
+      response_mode: 'query',
+      scope: 'profile email roles resume-id',
+      silent_redirect_uri: 'https://localhost:4200/silent-callback',
+      automaticSilentRenew: true,
+      filterProtocolClaims: true,
+      loadUserInfo: false,
+    };
   }
 }
