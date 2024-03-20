@@ -14,7 +14,7 @@ export class LoginCallbackComponent {
   ) {}
 
   ngOnInit() {
-    this._authService.completeAuthentication();
-    this._router.navigate(['/']);
+    // this._authService.completeAuthentication();
+    // this._router.navigate(['/']);
   }
 }

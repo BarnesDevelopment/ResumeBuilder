@@ -11,10 +11,10 @@ import { SilentCallbackComponent } from './services/auth/callbacks/silent-callba
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
+  // { path: '**', canActivate: [AuthGuard] },
   {
     path: '',
     component: HomeComponent,
-    // canActivate: [AuthGuard],
   },
   {
     path: 'login',
@@ -28,7 +28,6 @@ const routes: Routes = [
     path: 'edit/:id',
     component: EditResumeComponent,
   },
-  { path: 'unauthorized', component: PageNotFoundComponent },
   {
     path: 'login-callback',
     component: LoginCallbackComponent,

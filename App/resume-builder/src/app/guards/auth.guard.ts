@@ -2,13 +2,12 @@ import { CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthenticationService } from '../services/auth/authentication.service';
 
-export const AuthGuard: CanActivateFn = async (route, state) => {
+export const AuthGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthenticationService);
-  console.log('guard');
-  if (authService.isLoggedIn()) {
+  if (authService.isLoggedIn) {
     return true;
   }
 
-  await authService.startAuthentication();
+  authService.logIn();
   return false;
 };

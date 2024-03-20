@@ -14,7 +14,7 @@ export class LogoutCallbackComponent {
   ) {}
 
   ngOnInit() {
-    this._authService.completeLogout();
-    this._router.navigate(['/']);
+    // this._authService.completeLogout();
+    // this._router.navigate(['/']);
   }
 }

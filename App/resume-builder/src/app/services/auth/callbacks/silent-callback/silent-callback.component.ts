@@ -10,6 +10,6 @@ export class SilentCallbackComponent {
   constructor(private readonly _authService: AuthenticationService) {}
 
   ngOnInit() {
-    this._authService.silentSignInAuthentication();
+    // this._authService.silentSignInAuthentication();
   }
 }
