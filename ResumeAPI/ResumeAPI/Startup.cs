@@ -75,6 +75,12 @@ public class Startup
           {
             options.Authority = appSettings.Jwt.Authority;
           });
+        
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("User", policy =>
+                policy.RequireClaim("resume-id"));
+        });
 
         services.AddHttpClient();
         

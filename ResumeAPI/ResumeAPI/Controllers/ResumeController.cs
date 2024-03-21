@@ -1,5 +1,6 @@
 using iText.Html2pdf;
 using iText.Html2pdf.Resolver.Font;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Builders;
 using ResumeAPI.Helpers;
@@ -10,6 +11,7 @@ namespace ResumeAPI.Controllers
 {
     [ApiController]
     [Route("resume/")]
+    [Authorize]
     public class ResumeController : ControllerBase
     {
         private readonly ILogger<ResumeController> _logger;
@@ -24,6 +26,7 @@ namespace ResumeAPI.Controllers
         }
         
         [HttpGet("build/{id:guid}")]
+        [Authorize("User")]
         public IActionResult BuildPdfFromGuid(Guid id)
         {
           
@@ -43,6 +46,7 @@ namespace ResumeAPI.Controllers
         }
 
         [HttpPost("build")]
+        [Authorize("User")]
         public IActionResult BuildPdf([FromBody] Resume resume)
         {
             var stream = _orchestrator.BuildResume(resume);
@@ -243,6 +247,7 @@ namespace ResumeAPI.Controllers
         #endregion
         
         [HttpGet("get-all")]
+        [Authorize("User")]
         public async Task<ActionResult<IEnumerable<ResumeTreeNode>>> GetAllResumes()
         {
             try
@@ -259,6 +264,7 @@ namespace ResumeAPI.Controllers
         }
         
         [HttpGet("get/{id:guid}")]
+        [Authorize("User")]
         public async Task<ActionResult<ResumeTreeNode>> GetResumeById(Guid id)
         {
             try
@@ -277,6 +283,7 @@ namespace ResumeAPI.Controllers
         }
         
         [HttpPost("upsert")]
+        [Authorize("User")]
         public async Task<ActionResult<ResumeTreeNode>> UpsertNode([FromBody] ResumeTreeNode resume)
         {
             try
@@ -293,6 +300,7 @@ namespace ResumeAPI.Controllers
         }
 
         [HttpDelete("delete/{id:guid}")]
+        [Authorize("User")]
         public async Task<ActionResult> DeleteNode(Guid id)
         {
             try
