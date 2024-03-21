@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
-using Cookie = ResumeAPI.Models.Cookie;
 
 namespace ResumeAPI.Controllers;
 
