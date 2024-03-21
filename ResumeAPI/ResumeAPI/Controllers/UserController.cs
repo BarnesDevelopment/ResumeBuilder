@@ -24,7 +24,7 @@ public class UserController : ControllerBase
   /// Create user
   /// </summary>
   /// <returns></returns>
-  [HttpPost("user")]
+  [HttpPost("create")]
   [ProducesResponseType(typeof(User), 201)]
   public async Task<IActionResult> CreateUser()
   {
@@ -44,7 +44,7 @@ public class UserController : ControllerBase
   /// </summary>
   /// <param name="id">UserId</param>
   /// <returns></returns>
-  [HttpDelete("user/{id}")]
+  [HttpDelete("{id}")]
   [ProducesResponseType(202)]
   [ProducesResponseType(404)]
   public async Task<IActionResult> DeleteUser([FromRoute] string id)

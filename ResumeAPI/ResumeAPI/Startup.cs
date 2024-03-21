@@ -1,9 +1,7 @@
 using System.Reflection;
-using System.Text;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
@@ -11,7 +9,6 @@ using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 
 namespace ResumeAPI;
 
@@ -40,14 +37,6 @@ public class Startup
       var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
       var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
       c.IncludeXmlComments(xmlPath);
-
-      c.AddSecurityDefinition("User cookie", new OpenApiSecurityScheme
-      {
-        Type = SecuritySchemeType.ApiKey,
-        Description = "User cookie",
-        Name = "Authorization",
-        In = ParameterLocation.Header
-      });
     });
 
     services.AddCors(options =>
