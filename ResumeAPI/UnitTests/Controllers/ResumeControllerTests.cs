@@ -8,7 +8,7 @@ using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 
-namespace UnitTests;
+namespace UnitTests.Controllers;
 
 public class ResumeControllerTests
 {

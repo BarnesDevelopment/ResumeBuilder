@@ -11,13 +11,11 @@ namespace ResumeAPI.Controllers;
 public class UserController : ControllerBase
 {
   private readonly ILogger<UserController> _logger;
-  private readonly IUserService _service;
   private readonly IUserOrchestrator _orchestrator;
 
   public UserController(ILogger<UserController> logger, IUserService service, IUserOrchestrator orchestrator)
   {
     _logger = logger;
-    _service = service;
     _orchestrator = orchestrator;
   }
 
@@ -26,16 +24,14 @@ public class UserController : ControllerBase
   /// <summary>
   /// Create user
   /// </summary>
-  /// <param name="userInput">User object</param>
-  /// <param name="key"></param>
   /// <returns></returns>
   [HttpPost("user")]
   [ProducesResponseType(typeof(User), 201)]
-  public async Task<IActionResult> CreateUser([FromBody] UserInfo userInput, [FromHeader] string key)
+  public async Task<IActionResult> CreateUser()
   {
     try
     {
-      return Ok(await _orchestrator.CreateAccount(new UserViewModel(userInput), key));
+      return Created("", await _orchestrator.CreateUser());
     }
     catch (Exception e)
     {
