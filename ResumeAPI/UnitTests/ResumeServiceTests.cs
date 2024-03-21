@@ -6,12 +6,7 @@ namespace UnitTests;
 
 public class ResumeServiceTests
 {
-    private readonly IResumeService _serivce;
-
-    public ResumeServiceTests()
-    {
-        _serivce = new ResumeService();
-    }
+    private readonly IResumeService _service = new ResumeService();
 
     [Fact]
     public void BuildSummary_AddsText()
@@ -22,8 +17,8 @@ public class ResumeServiceTests
             Summary = text
         };
     
-        var actual = _serivce.BuildSummary(header);
-        actual.Attributes["class"].Should().Be("summary");
+        var actual = _service.BuildSummary(header);
+        actual.Attributes["class"].Should().Be("paragraph");
         actual.Write().Should().Contain(text);
     }
     
@@ -31,7 +26,7 @@ public class ResumeServiceTests
     public void VerticalSeparator_CreatesText()
     {
     
-        var actual = _serivce.VerticalSeparator();
+        var actual = _service.VerticalSeparator();
         actual.Attributes["class"].Should().Be("vertical-separator");
         actual.Write().Should().Contain("|");
     }
