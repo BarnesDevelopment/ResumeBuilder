@@ -8,7 +8,7 @@ public interface IUserData
 {
     Task<List<UserViewModel>> GetUsers();
     Task<UserViewModel?> GetUser(string username);
-    Task<User> GetUser(Guid id);
+    Task<User?> GetUser(Guid id);
     Task<Guid> GetUserByCookie(Guid cookie);
     Task<User> CreateUser(User user);
     Task<UserViewModel> UpdateUser(Guid id, UserViewModel user);
