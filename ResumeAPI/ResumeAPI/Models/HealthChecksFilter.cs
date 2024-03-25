@@ -6,41 +6,42 @@ namespace ResumeAPI.Models;
 public class HealthChecksFilter : IDocumentFilter
 
 {
+  public const string HealthCheckEndpoint = @"/healthcheck";
 
-    public const string HealthCheckEndpoint = @"/healthcheck";
+  public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
 
-    public void Apply(OpenApiDocument openApiDocument, DocumentFilterContext context)
+  {
+    var pathItem = new OpenApiPathItem();
+
+    var operation = new OpenApiOperation();
+
+    operation.Tags.Add(new OpenApiTag { Name = "ApiHealth" });
+
+    var properties = new Dictionary<string, OpenApiSchema>();
+
+    properties.Add("status", new OpenApiSchema() { Type = "string" });
+
+    var response = new OpenApiResponse();
+    response.Description = "";
+
+    response.Content.Add("application/json", new OpenApiMediaType
 
     {
+      Schema = new OpenApiSchema
+      {
+        Type = "object",
 
-        var pathItem = new OpenApiPathItem();
+        AdditionalPropertiesAllowed = true,
 
-        var operation = new OpenApiOperation();
+        Properties = properties
+      }
+    });
 
-        operation.Tags.Add(new OpenApiTag { Name = "ApiHealth" });
+    operation.Responses.Add("200", response);
+    operation.Description = "Health check endpoint";
 
-        var properties = new Dictionary<string, OpenApiSchema>();
+    pathItem.AddOperation(OperationType.Get, operation);
 
-        properties.Add("status", new OpenApiSchema() { Type = "string" });
-
-        var response = new OpenApiResponse();
-
-        response.Content.Add("application/json", new OpenApiMediaType
-
-        { Schema = new OpenApiSchema {
-
-            Type = "object",
-
-            AdditionalPropertiesAllowed = true,
-
-            Properties = properties,
-
-        } });
-
-        operation.Responses.Add("200", response);
-
-        pathItem.AddOperation(OperationType.Get, operation);
-
-        openApiDocument?.Paths.Add(HealthCheckEndpoint, pathItem);
-
-    } }
+    swaggerDoc?.Paths.Add(HealthCheckEndpoint, pathItem);
+  }
+}
