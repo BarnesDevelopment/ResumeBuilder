@@ -56,13 +56,19 @@ public class Startup
 
     services.AddTransient<IUserOrchestrator, UserOrchestrator>();
     services.AddTransient<IUserService, UserService>();
+    
 
     services.AddTransient<IUserData, UserData>();
     services.AddTransient<IResumeTree, ResumeTree>();
-    services.AddTransient<IPasswordHasher, PasswordHasher>();
+    
+    services.AddTransient<IUserValidator, UserValidator>();
 
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-      .AddJwtBearer(options => { options.Authority = appSettings.Jwt.Authority; });
+      .AddJwtBearer(options =>
+      {
+        options.Authority = appSettings.Jwt.Authority;
+        options.Audience = appSettings.Jwt.Audience;
+      });
 
     services.AddAuthorization(options =>
     {
@@ -90,12 +96,13 @@ public class Startup
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
     app.UseStaticFiles();
-    app.UseRouting();
     app.UseCors();
 
     app.UseHttpsRedirection();
 
+
     app.UseAuthentication();
+    app.UseRouting();
     app.UseAuthorization();
 
     app.UseEndpoints(endpoints =>
