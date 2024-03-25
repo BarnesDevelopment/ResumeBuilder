@@ -335,7 +335,10 @@ public class ResumeController : ControllerBase
   {
     try
     {
-      var valid = await _validator.Validate(HttpContext, resume.Id);
+      var valid = await _validator.ValidateUser(HttpContext);
+      var userId = _validator.GetUserId(HttpContext);
+      if(resume.UserId != Guid.Empty) 
+        valid = await _validator.ValidateResource(userId, resume.Id);
       switch (valid)
       {
         case UserValidationResult.Invalid:
@@ -343,8 +346,7 @@ public class ResumeController : ControllerBase
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
       }
-
-      var userId = _validator.GetUserId(HttpContext);
+      
       return Ok(await _orchestrator.UpsertNode(resume, userId));
     }
     catch (Exception e)
