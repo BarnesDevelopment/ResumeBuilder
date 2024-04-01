@@ -26,17 +26,20 @@ export class EditResumeComponent implements OnInit {
   phonePattern =
     '^(\\+\\d{1,2}\\s?)?\\(?\\d{3}\\)?[\\s.-]?\\d{3}[\\s.-]?\\d{4}$';
   platform: string = '';
+  pdfSource: Blob;
 
   constructor(
     private router: Router,
     private service: ResumeService,
-    private toastr: ToastrService,
+    private toaster: ToastrService,
   ) {}
 
   ngOnInit(): void {
     this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
+
+      this.refreshPreview();
 
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
@@ -61,6 +64,7 @@ export class EditResumeComponent implements OnInit {
       this.resume.children.forEach(node => {
         this.createSectionFormControls(node);
       });
+
       this.loading = false;
     });
   }
@@ -72,12 +76,19 @@ export class EditResumeComponent implements OnInit {
   save(): void {
     this.service.updateResume(this.resume).subscribe(
       () => {
-        this.toastr.success('Resume saved successfully', 'Saved');
+        this.toaster.success('Resume saved successfully', 'Saved');
+        this.refreshPreview();
       },
       err => {
-        this.toastr.error('Error saving resume: ' + err.message, 'Error');
+        this.toaster.error('Error saving resume: ' + err.message, 'Error');
       },
     );
+  }
+
+  refreshPreview(): void {
+    this.service
+      .getPreview(this.resume)
+      .subscribe(res => (this.pdfSource = res));
   }
 
   //region Section

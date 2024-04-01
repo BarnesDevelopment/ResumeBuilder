@@ -7,7 +7,6 @@ import {
 } from '../../models/Resume';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environment';
-import { OAuthService } from 'angular-oauth2-oidc';
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +14,7 @@ import { OAuthService } from 'angular-oauth2-oidc';
 export class ResumeService {
   env = environment;
 
-  constructor(
-    private http: HttpClient,
-    private oauthService: OAuthService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   public getResumes(): Observable<ResumeHeader[]> {
     return this.http.get<ResumeHeader[]>(
@@ -43,5 +39,11 @@ export class ResumeService {
     return this.http.delete<boolean>(
       `${this.env.apiBasePath}/resume/delete/${resume.id}`,
     );
+  }
+
+  public getPreview(resume: ResumeTreeNode): Observable<Blob> {
+    return this.http.get(`${this.env.apiBasePath}/resume/build/${resume.id}`, {
+      responseType: 'blob',
+    });
   }
 }
