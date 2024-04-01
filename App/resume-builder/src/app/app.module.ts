@@ -18,34 +18,32 @@ import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { OAuthModule } from 'angular-oauth2-oidc';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HomeComponent,
-    PageNotFoundComponent,
-    LoginCallbackComponent,
-    LogoutCallbackComponent,
-    SilentCallbackComponent,
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    CommonComponentsModule,
-    FontAwesomeModule,
-    BrowserAnimationsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    MatCardModule,
-    FormsModule,
-    ResumeModule,
-    OAuthModule.forRoot(),
-  ],
-  providers: [
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
-  ],
-  bootstrap: [AppComponent],
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        CommonComponentsModule,
+        FontAwesomeModule,
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        HttpClientModule,
+        MatCardModule,
+        FormsModule,
+        ResumeModule,
+        OAuthModule.forRoot(),
+        HomeComponent,
+        PageNotFoundComponent,
+        LoginCallbackComponent,
+        LogoutCallbackComponent,
+        SilentCallbackComponent,
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true,
+        },
+    ],
+    bootstrap: [AppComponent],
 })
 export class AppModule {}

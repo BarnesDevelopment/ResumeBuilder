@@ -3,11 +3,6 @@ import { Component } from '@angular/core';
   selector: 'app-silent-callback',
   templateUrl: './silent-callback.component.html',
   styleUrls: ['./silent-callback.component.scss'],
+  standalone: true,
 })
-export class SilentCallbackComponent {
-  constructor() {}
-
-  ngOnInit() {
-    // this._authService.silentSignInAuthentication();
-  }
-}
+export class SilentCallbackComponent {}

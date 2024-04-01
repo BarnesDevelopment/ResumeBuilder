@@ -8,24 +8,22 @@ import { InputComponent } from './input/input.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [
-    HeaderComponent,
-    ButtonComponent,
-    LoginSplashScreenComponent,
-    InputComponent,
-  ],
-  exports: [
-    HeaderComponent,
-    ButtonComponent,
-    LoginSplashScreenComponent,
-    InputComponent,
-  ],
-  imports: [
-    NgIf,
-    FontAwesomeModule,
-    FormsModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+    exports: [
+        HeaderComponent,
+        ButtonComponent,
+        LoginSplashScreenComponent,
+        InputComponent,
+    ],
+    imports: [
+        NgIf,
+        FontAwesomeModule,
+        FormsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        HeaderComponent,
+        ButtonComponent,
+        LoginSplashScreenComponent,
+        InputComponent,
+    ],
 })
 export class CommonComponentsModule {}

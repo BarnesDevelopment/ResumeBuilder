@@ -12,17 +12,17 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @NgModule({
-  declarations: [CreateResumeComponent, EditResumeComponent],
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatProgressSpinnerModule,
-    CommonComponentsModule,
-    ToastrModule.forRoot(),
-    BrowserAnimationsModule,
-    NgxExtendedPdfViewerModule,
-  ],
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        CommonComponentsModule,
+        ToastrModule.forRoot(),
+        BrowserAnimationsModule,
+        NgxExtendedPdfViewerModule,
+        CreateResumeComponent, EditResumeComponent,
+    ],
 })
 export class ResumeModule {}

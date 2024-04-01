@@ -1,21 +1,24 @@
 <div [className]="noTitle ? 'text noTitle' : 'text'">
-  <label
-    *ngIf="!noTitle"
-    for="{{ this.formControlName }}"
-    ><ng-content></ng-content>:</label
-  >
-  <input
-    [className]="invalid ? 'invalid' : ''"
-    type="{{ this.type }}"
-    title="{{ this.formControlName }}"
-    [(ngModel)]="value"
-    [disabled]="disabled"
-    (input)="onChange(value)"
-    (blur)="onTouched()"
-    id="{{ this.formControlName }}" />
-</div>
-<div
-  class="error"
-  *ngIf="invalid">
-  <span>{{ errorMessage ?? "This field is required!" }}</span>
-</div>
+  @if (!noTitle) {
+    <label
+      for="{{ this.formControlName }}"
+      ><ng-content></ng-content>:</label
+      >
+    }
+    <input
+      [className]="invalid ? 'invalid' : ''"
+      type="{{ this.type }}"
+      title="{{ this.formControlName }}"
+      [(ngModel)]="value"
+      [disabled]="disabled"
+      (input)="onChange(value)"
+      (blur)="onTouched()"
+      id="{{ this.formControlName }}" />
+    </div>
+    @if (invalid) {
+      <div
+        class="error"
+        >
+        <span>{{ errorMessage ?? "This field is required!" }}</span>
+      </div>
+    }

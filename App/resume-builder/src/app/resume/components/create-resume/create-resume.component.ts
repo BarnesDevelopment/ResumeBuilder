@@ -1,18 +1,23 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ResumeService } from '../../services/resume.service';
 import { ResumeTreeNode, NodeType } from '../../../models/Resume';
 import { Guid } from 'guid-typescript';
 import { ActivatedRoute, Router } from '@angular/router';
-import {
-  BorderStyle,
-  ButtonStyle,
-} from '../../../common/button/button.component';
+import { BorderStyle, ButtonStyle, ButtonComponent } from '../../../common/button/button.component';
+import { InputComponent } from '../../../common/input/input.component';
 
 @Component({
-  selector: 'app-create-resume',
-  templateUrl: './create-resume.component.html',
-  styleUrls: ['./create-resume.component.scss'],
+    selector: 'app-create-resume',
+    templateUrl: './create-resume.component.html',
+    styleUrls: ['./create-resume.component.scss'],
+    standalone: true,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        InputComponent,
+        ButtonComponent,
+    ],
 })
 export class CreateResumeComponent {
   phonePattern =
