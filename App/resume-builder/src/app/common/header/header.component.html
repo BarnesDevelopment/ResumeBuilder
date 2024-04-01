@@ -4,38 +4,41 @@
     <h2 (click)="GoTo('/')">Barnes Resume Builder</h2>
   </div>
   <div class="user-info edge-div">
-    <div
-      *ngIf="isLoggedIn"
-      class="user"
-      (click)="ToggleUserPanel()">
-      <span>{{ this.Claims?.name }}</span>
-      <fa-icon [icon]="faCaretDown"></fa-icon>
-    </div>
-    <div
-      *ngIf="!isLoggedIn"
-      class="login">
-      <app-button
-        (click)="Login()"
-        ignoreClick
-        [buttonStyle]="ButtonStyle.Transparent"
-        [borderStyle]="BorderStyle.Light"
-        title="login"
-        >Login</app-button
-      >
+    @if (isLoggedIn) {
+      <div
+        class="user"
+        (click)="ToggleUserPanel()">
+        <span>{{ this.Claims?.name }}</span>
+        <fa-icon [icon]="faCaretDown"></fa-icon>
+      </div>
+    }
+    @if (!isLoggedIn) {
+      <div
+        class="login">
+        <app-button
+          (click)="Login()"
+          ignoreClick
+          [buttonStyle]="ButtonStyle.Transparent"
+          [borderStyle]="BorderStyle.Light"
+          title="login"
+          >Login</app-button
+          >
+        </div>
+      }
     </div>
   </div>
-</div>
 
-<div
-  *ngIf="showUserPanel"
-  class="user-panel"
-  title="userPanel">
-  <table>
-    <tr>
-      <td (click)="GoTo('/account')">Account</td>
-    </tr>
-    <tr>
-      <td (click)="Logout()">Logout</td>
-    </tr>
-  </table>
-</div>
+  @if (showUserPanel) {
+    <div
+      class="user-panel"
+      title="userPanel">
+      <table>
+        <tr>
+          <td (click)="GoTo('/account')">Account</td>
+        </tr>
+        <tr>
+          <td (click)="Logout()">Logout</td>
+        </tr>
+      </table>
+    </div>
+  }
