@@ -1,13 +1,20 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { BorderStyle, ButtonStyle } from '../common/button/button.component';
-import { environment } from '../../environment/environment';
+import { Component, OnInit } from '@angular/core';
+import {
+  BorderStyle,
+  ButtonStyle,
+  ButtonComponent,
+} from '../common/button/button.component';
 import { ResumeHeader } from '../models/Resume';
 import { ResumeService } from '../resume/services/resume.service';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { MatCardModule } from '@angular/material/card';
+import { LoginSplashScreenComponent } from '../common/login-splash-screen/login-splash-screen.component';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [LoginSplashScreenComponent, MatCardModule, ButtonComponent],
 })
 export class HomeComponent implements OnInit {
   protected readonly ButtonStyle = ButtonStyle;

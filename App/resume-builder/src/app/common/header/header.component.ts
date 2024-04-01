@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
-import { BorderStyle, ButtonStyle } from '../button/button.component';
+import { BorderStyle, ButtonStyle, ButtonComponent } from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: true,
+    imports: [FaIconComponent, ButtonComponent],
 })
 export class HeaderComponent {
   faCaretDown = faCaretDown;
