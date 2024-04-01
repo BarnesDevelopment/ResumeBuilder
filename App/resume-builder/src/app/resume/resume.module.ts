@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonComponentsModule } from '../common/common-components.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 @NgModule({
   declarations: [CreateResumeComponent, EditResumeComponent],
@@ -21,6 +22,7 @@ import { ToastrModule } from 'ngx-toastr';
     CommonComponentsModule,
     ToastrModule.forRoot(),
     BrowserAnimationsModule,
+    NgxExtendedPdfViewerModule,
   ],
 })
 export class ResumeModule {}
