@@ -6,27 +6,39 @@ import {
 } from '../../../models/Resume';
 import { Router } from '@angular/router';
 import { ResumeService } from '../../services/resume.service';
-import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { Guid } from 'guid-typescript';
-import { BorderStyle, ButtonStyle, ButtonComponent } from '../../../common/button/button.component';
+import {
+  BorderStyle,
+  ButtonStyle,
+  ButtonComponent,
+} from '../../../common/button/button.component';
 import { ToastrService } from 'ngx-toastr';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { InputComponent } from '../../../common/input/input.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { SectionComponent } from './components/section/section.component';
 
 @Component({
-    selector: 'app-edit-resume',
-    templateUrl: './edit-resume.component.html',
-    styleUrls: ['./edit-resume.component.scss'],
-    standalone: true,
-    imports: [
-        MatProgressSpinnerModule,
-        FormsModule,
-        ReactiveFormsModule,
-        InputComponent,
-        ButtonComponent,
-        NgxExtendedPdfViewerModule,
-    ],
+  selector: 'app-edit-resume',
+  templateUrl: './edit-resume.component.html',
+  styleUrls: ['./edit-resume.component.scss'],
+  standalone: true,
+  imports: [
+    MatProgressSpinnerModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputComponent,
+    ButtonComponent,
+    NgxExtendedPdfViewerModule,
+    SectionComponent,
+  ],
 })
 export class EditResumeComponent implements OnInit {
   resume: ResumeTreeNode;
