@@ -3,7 +3,7 @@ services:
   api:
     env_file:
       - .env
-    image: sambobbarnes/resume-api:latest
+    image: ghcr.io/barnesdevelopment/resume-api:latest
     depends_on:
       - db
     ports:
