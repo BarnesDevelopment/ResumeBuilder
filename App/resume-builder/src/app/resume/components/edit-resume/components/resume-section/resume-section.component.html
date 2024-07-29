@@ -1,0 +1,13 @@
+<div>
+  <form [formGroup]="form">
+    <app-input formControlName="name">Section title</app-input>
+    <div class="select">
+      <label for="type">Section type:</label>
+      <select formControlName="type" id="type">
+        @for(displayType of SectionDisplayTypeList; track $index) {
+          <option [value]="displayType">{{ displayType }}</option>
+        }
+      </select>
+    </div>
+  </form>
+</div>

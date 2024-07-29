@@ -43,11 +43,9 @@
         }
       </div>
     </div>
-    @for (section of sections(); track section) {
-    <app-section
-      [section]="section"
-      [form]="form"
-      [resume]="resume" />
+    @for (section of sections(); track $index) {
+    <app-resume-section
+      [section]="section" />
     }
     <div class="button">
       <app-button
