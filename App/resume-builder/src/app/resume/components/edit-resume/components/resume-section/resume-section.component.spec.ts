@@ -1,23 +1,151 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import {
+  NodeType,
+  ResumeTreeNode,
+  SectionDisplayType,
+} from '../../../../../models/Resume';
+import { renderRootComponent } from '../../../../../common/RenderRootComponent';
 import { ResumeSectionComponent } from './resume-section.component';
+import { Guid } from 'guid-typescript';
+import { fireEvent, screen } from '@testing-library/angular';
+import '@testing-library/jest-dom';
+import { By } from '@angular/platform-browser';
 
 describe('ResumeSectionComponent', () => {
-  let component: ResumeSectionComponent;
-  let fixture: ComponentFixture<ResumeSectionComponent>;
+  let section: ResumeTreeNode;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ResumeSectionComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(ResumeSectionComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  beforeEach(() => {
+    section = {
+      active: true,
+      depth: 0,
+      order: 0,
+      parentId: Guid.create(),
+      userId: Guid.create(),
+      id: Guid.create(),
+      content: '',
+      nodeType: NodeType.Section,
+      children: [],
+      comments: '',
+    };
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  describe('Init', () => {
+    it('should show a single empty input', async () => {
+      await render(section);
+
+      expect(screen.queryByTitle('name')).toBeInTheDocument();
+      expect(screen.queryByTitle('name')).toHaveValue('');
+    });
+    it.each([
+      '',
+      SectionDisplayType.List,
+      SectionDisplayType.Education,
+      SectionDisplayType.Paragraph,
+      SectionDisplayType.WorkExperience,
+    ])(
+      'should show a select list with section option %s',
+      async (option: string) => {
+        await render(section);
+
+        const options = screen
+          .getAllByRole('option')
+          .map(x => x.getAttribute('value'));
+        expect(options).toContain(option);
+      },
+    );
+    it.each([
+      SectionDisplayType.List,
+      SectionDisplayType.Education,
+      SectionDisplayType.Paragraph,
+      SectionDisplayType.WorkExperience,
+    ])(
+      'should load correct body when list option %s selected',
+      async (option: string) => {
+        let selector: string;
+        switch (option) {
+          case SectionDisplayType.List:
+            selector = 'app-section-list';
+            break;
+          case SectionDisplayType.Education:
+            selector = 'app-section-education';
+            break;
+          case SectionDisplayType.Paragraph:
+            selector = 'app-section-paragraph';
+            break;
+          case SectionDisplayType.WorkExperience:
+            selector = 'app-section-work-experience';
+            break;
+        }
+
+        const component = await render(section);
+
+        expect(component.debugElement.query(By.css(selector))).toBeFalsy();
+
+        const select = component.debugElement.query(By.css('select'));
+        select.nativeElement.value = option;
+        select.nativeElement.dispatchEvent(new Event('change'));
+        component.fixture.detectChanges();
+
+        expect(component.debugElement.query(By.css(selector))).toBeTruthy();
+      },
+    );
   });
+  describe('Load Data', () => {
+    it('should load titles', async () => {
+      section.content = 'TestTitle';
+      await render(section);
+
+      expect(screen.queryByTitle('name')).toHaveValue('TestTitle');
+    });
+    it.each([
+      SectionDisplayType.List,
+      SectionDisplayType.Education,
+      SectionDisplayType.Paragraph,
+      SectionDisplayType.WorkExperience,
+    ])('should load correct section bodies for %s', async (option: string) => {
+      const nodeType = NodeType[option as keyof typeof SectionDisplayType];
+      let selector: string;
+      switch (option) {
+        case SectionDisplayType.List:
+          selector = 'app-section-list';
+          break;
+        case SectionDisplayType.Education:
+          selector = 'app-section-education';
+          break;
+        case SectionDisplayType.Paragraph:
+          selector = 'app-section-paragraph';
+          break;
+        case SectionDisplayType.WorkExperience:
+          selector = 'app-section-work-experience';
+          break;
+      }
+
+      section.children = [
+        {
+          active: true,
+          depth: 1,
+          order: 0,
+          parentId: section.id,
+          userId: Guid.create(),
+          id: Guid.create(),
+          content: 'TestBody',
+          nodeType: nodeType,
+          children: [],
+          comments: '',
+        },
+      ];
+
+      const component = await render(section);
+
+      expect(component.debugElement.query(By.css(selector))).toBeTruthy();
+    });
+  });
+  describe('Save', () => {});
 });
+
+const render = async (section: ResumeTreeNode) => {
+  return await renderRootComponent(ResumeSectionComponent, {
+    componentProperties: {
+      section,
+    },
+  });
+};

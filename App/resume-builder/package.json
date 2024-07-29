@@ -50,6 +50,7 @@
     "@angular/cli": "~17.3.2",
     "@angular/compiler-cli": "^17.3.2",
     "@testing-library/angular": "^14.2.0",
+    "@testing-library/jest-dom": "^6.4.8",
     "prettier": "^3.0.3",
     "typescript": "~5.4.3"
   },

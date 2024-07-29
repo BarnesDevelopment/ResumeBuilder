@@ -4,10 +4,25 @@
     <div class="select">
       <label for="type">Section type:</label>
       <select formControlName="type" id="type">
+        <option value=""></option>
         @for(displayType of SectionDisplayTypeList; track $index) {
           <option [value]="displayType">{{ displayType }}</option>
         }
       </select>
     </div>
+    @switch(form.get('type').value) {
+      @case (SectionDisplayType.List) {
+        <app-section-list />
+      }
+      @case (SectionDisplayType.Paragraph) {
+        <app-section-paragraph />
+      }
+      @case (SectionDisplayType.Education){
+        <app-section-education />
+      }
+      @case (SectionDisplayType.WorkExperience) {
+        <app-section-work-experience />
+      }
+    }
   </form>
 </div>
