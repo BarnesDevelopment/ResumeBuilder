@@ -78,3 +78,10 @@ export enum SectionDisplayType {
   WorkExperience = 'WorkExperience',
   Education = 'Education',
 }
+
+export const SectionDisplayTypeList = [
+  SectionDisplayType.List,
+  SectionDisplayType.Paragraph,
+  SectionDisplayType.WorkExperience,
+  SectionDisplayType.Education,
+];
