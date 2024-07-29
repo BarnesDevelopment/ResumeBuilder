@@ -141,7 +141,7 @@ export class EditResumeComponent implements OnInit {
       children: [
         {
           id: Guid.create(),
-          content: 'Section Title',
+          content: '',
           comments: '',
           active: true,
           userId: this.resume.userId,
