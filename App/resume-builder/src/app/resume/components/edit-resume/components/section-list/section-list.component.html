@@ -1,1 +1,13 @@
-<p>section-list works!</p>
+<div class="list">
+  @for (item of form.controls; track $index) {
+    <div class="list-item" data-cy="list-item">
+      <app-input [formControl]="item" noTitle />
+      @if (form.length > 1) {
+        <app-button title="minusButton" (click)="RemoveItem($index)" ignoreClick>-</app-button>
+      }
+      @if ($index === form.length - 1) {
+        <app-button title="plusButton" (click)="AddItem()" ignoreClick>+</app-button>
+      }
+    </div>
+  }
+</div>

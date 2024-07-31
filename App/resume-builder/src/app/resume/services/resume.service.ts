@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
-  newResumeTreeNodeJson,
+  duplicateTreeNode,
   ResumeHeader,
   ResumeTreeNode,
 } from '../../models/Resume';
@@ -31,7 +31,7 @@ export class ResumeService {
   public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
     return this.http.post<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/upsert`,
-      newResumeTreeNodeJson(resume),
+      duplicateTreeNode(resume),
     );
   }
 
