@@ -6,7 +6,7 @@ import {
 import { renderRootComponent } from '../../../../../common/RenderRootComponent';
 import { ResumeSectionComponent } from './resume-section.component';
 import { Guid } from 'guid-typescript';
-import { fireEvent, screen } from '@testing-library/angular';
+import { screen } from '@testing-library/angular';
 import '@testing-library/jest-dom';
 import { By } from '@angular/platform-browser';
 
