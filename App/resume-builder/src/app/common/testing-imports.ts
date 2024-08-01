@@ -3,6 +3,7 @@ import { screen, fireEvent } from '@testing-library/angular';
 import { renderRootComponent } from './RenderRootComponent';
 import { NodeType, ResumeTreeNode } from '../models/Resume';
 import { Guid } from 'guid-typescript';
+import { Component, Input } from '@angular/core';
 
 export {
   screen,
@@ -12,3 +13,12 @@ export {
   ResumeTreeNode,
   Guid,
 };
+
+@Component({
+  standalone: true,
+  selector: 'app-section-list',
+  template: '',
+})
+export class SectionListComponentStub {
+  @Input() section: ResumeTreeNode;
+}
