@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {
+  newResumeTreeNode,
+  NodeType,
   ResumeTreeNode,
   SectionDisplayType,
   SectionDisplayTypeList,
@@ -37,6 +39,36 @@ export class ResumeSectionComponent implements OnInit {
     });
     if (this.section.children.length > 0) {
       this.form.controls['type'].setValue(this.section.children[0].nodeType);
+    }
+    this.form.controls['type'].valueChanges.subscribe(value => {
+      this.UpdateSectionType(value);
+    });
+  }
+
+  UpdateSectionType(value: SectionDisplayType) {
+    switch (value) {
+      case SectionDisplayType.List:
+        this.section.children = [
+          newResumeTreeNode(NodeType.List, 0, this.section),
+        ];
+        break;
+      case SectionDisplayType.Education:
+        this.section.children = [
+          newResumeTreeNode(NodeType.Education, 0, this.section),
+        ];
+        break;
+      case SectionDisplayType.Paragraph:
+        this.section.children = [
+          newResumeTreeNode(NodeType.Paragraph, 0, this.section),
+        ];
+        break;
+      case SectionDisplayType.WorkExperience:
+        this.section.children = [
+          newResumeTreeNode(NodeType.WorkExperience, 0, this.section),
+        ];
+        break;
+      default:
+        this.section.children = [];
     }
   }
 

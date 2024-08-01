@@ -1,13 +1,15 @@
+import { SectionDisplayType } from '../../../../../models/Resume';
+import { ResumeSectionComponent } from './resume-section.component';
+import '@testing-library/jest-dom';
+import { SectionListComponent } from '../section-list/section-list.component';
 import {
+  screen,
+  Guid,
+  renderRootComponent,
   NodeType,
   ResumeTreeNode,
-  SectionDisplayType,
-} from '../../../../../models/Resume';
-import { renderRootComponent } from '../../../../../common/RenderRootComponent';
-import { ResumeSectionComponent } from './resume-section.component';
-import { Guid } from 'guid-typescript';
-import { screen } from '@testing-library/angular';
-import '@testing-library/jest-dom';
+  SectionListComponentStub,
+} from '../../../../../common/testing-imports';
 import { By } from '@angular/platform-browser';
 
 describe('ResumeSectionComponent', () => {
@@ -52,6 +54,8 @@ describe('ResumeSectionComponent', () => {
         expect(options).toContain(option);
       },
     );
+  });
+  describe('Selection', () => {
     it.each([
       SectionDisplayType.List,
       SectionDisplayType.Education,
@@ -86,6 +90,32 @@ describe('ResumeSectionComponent', () => {
         component.fixture.detectChanges();
 
         expect(component.debugElement.query(By.css(selector))).toBeTruthy();
+      },
+    );
+    it.each([
+      SectionDisplayType.List,
+      SectionDisplayType.Education,
+      SectionDisplayType.Paragraph,
+      SectionDisplayType.WorkExperience,
+    ])(
+      'should should create correct child when %s is selected',
+      async (option: string) => {
+        const component = await render(section);
+
+        const select = component.debugElement.query(By.css('select'));
+        select.nativeElement.value = option;
+        select.nativeElement.dispatchEvent(new Event('change'));
+        component.fixture.detectChanges();
+
+        expect(
+          component.fixture.componentInstance.section.children.length,
+        ).toBe(1);
+        expect(
+          component.fixture.componentInstance.section.children[0].content,
+        ).toBe('');
+        expect(
+          component.fixture.componentInstance.section.children[0].nodeType,
+        ).toBe(NodeType[option as keyof typeof SectionDisplayType]);
       },
     );
   });
@@ -147,5 +177,9 @@ const render = async (section: ResumeTreeNode) => {
     componentProperties: {
       section,
     },
+    imports: [],
+    importOverrides: [
+      { remove: SectionListComponent, add: SectionListComponentStub },
+    ],
   });
 };
