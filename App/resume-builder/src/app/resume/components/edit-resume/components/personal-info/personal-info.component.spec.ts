@@ -180,6 +180,7 @@ describe('PersonalInfoComponent', () => {
       });
     });
   });
+  //TODO: input pattern validation
   describe('Save', () => {});
 });
 
