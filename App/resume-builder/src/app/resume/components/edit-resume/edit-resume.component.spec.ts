@@ -24,20 +24,12 @@ describe('EditResumeComponent', () => {
     };
   });
   describe('Init', () => {
-    //load title and comments
-    //load name email phone
-    describe('Website', () => {
-      //load website
-      //add website button
-    });
+    describe('Personal Info', () => {});
     describe('Sections', () => {
       //add section button
     });
   });
   describe('Load Data', () => {
-    describe('Website', () => {
-      //load website
-    });
     describe('Sections', () => {
       //load sections
     });
@@ -46,16 +38,6 @@ describe('EditResumeComponent', () => {
     describe('Title', () => {
       //edit title
       //edit comments
-    });
-    describe('Personal Info', () => {
-      //edit name
-      //edit email
-      //edit phone
-    });
-    describe('Website', () => {
-      //add website
-      //remove website
-      //edit website
     });
     describe('Sections', () => {
       //add section

@@ -1,74 +1,39 @@
 @if (loading) {
-<div class="spinner">
-  <mat-spinner></mat-spinner>
-</div>
+  <div class="spinner">
+    <mat-spinner></mat-spinner>
+  </div>
 } @else {
-<div (keydown)="onKeyDown($event)">
-  <form [formGroup]="form">
-    <app-input formControlName="title">Title</app-input>
-    <app-input formControlName="comments">Comments</app-input>
-    <div class="title division">
-      <app-input formControlName="name">Name</app-input>
-      <app-input
-        formControlName="email"
-        errorMessage="Incorrect pattern"
-        >Email
-      </app-input>
-      <app-input
-        formControlName="phone"
-        errorMessage="Incorrect pattern"
-        >Phone
-      </app-input>
-      @if (title().children.length > 2) {
-      <div class="add-remove-row">
-        <app-input formControlName="website">Website</app-input>
-        <app-button
-          [borderStyle]="BorderStyle.Dark"
-          [buttonStyle]="ButtonStyle.Primary"
-          ignoreClick
-          (click)="removeWebsite()"
-          >&nbsp;&mdash;&nbsp;
-        </app-button>
-      </div>
+  <div (keydown)="onKeyDown($event)">
+    <form [formGroup]="form">
+      <app-input formControlName="title">Title</app-input>
+      <app-input formControlName="comments">Comments</app-input>
+      <app-personal-info [node]="resume.children[0]" />
+      @for (section of sections(); track $index) {
+        <app-resume-section
+          [section]="section" />
       }
-      <div class="add-website-button">
-        @if (title().children.length == 2) {
+      <div class="button">
         <app-button
-          [borderStyle]="BorderStyle.Dark"
-          [buttonStyle]="ButtonStyle.Secondary"
           ignoreClick
-          (click)="addWebsite()"
-          >Add Website
-        </app-button>
-        }
-      </div>
-    </div>
-    @for (section of sections(); track $index) {
-    <app-resume-section
-      [section]="section" />
-    }
-    <div class="button">
-      <app-button
-        ignoreClick
-        [buttonStyle]="ButtonStyle.Secondary"
-        [borderStyle]="BorderStyle.Dark"
-        (click)="addSection()"
+          [buttonStyle]="ButtonStyle.Secondary"
+          [borderStyle]="BorderStyle.Dark"
+          (click)="addSection()"
         >Add Section
-      </app-button>
-    </div>
-    <div class="button save">
-      <app-button
-        ignoreClick
-        [buttonStyle]="ButtonStyle.Primary"
-        [borderStyle]="BorderStyle.Dark"
-        (click)="save()"
+        </app-button>
+      </div>
+      <div class="button save">
+        <app-button
+          ignoreClick
+          [buttonStyle]="ButtonStyle.Primary"
+          [borderStyle]="BorderStyle.Dark"
+          (click)="save()"
         >Save
-      </app-button>
-    </div>
-  </form>
-  <ngx-extended-pdf-viewer
-    [src]="pdfSource"
-    [height]="'1000px'"
-    [textLayer]="true"></ngx-extended-pdf-viewer>
-</div>
+        </app-button>
+      </div>
+    </form>
+    <ngx-extended-pdf-viewer
+      [src]="pdfSource"
+      [height]="'1000px'"
+      [textLayer]="true"></ngx-extended-pdf-viewer>
+  </div>
 }

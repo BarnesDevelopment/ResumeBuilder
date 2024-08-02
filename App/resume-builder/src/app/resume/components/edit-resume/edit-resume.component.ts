@@ -30,6 +30,7 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { InputComponent } from '../../../common/input/input.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResumeSectionComponent } from './components/resume-section/resume-section.component';
+import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
 
 @Component({
   selector: 'app-edit-resume',
@@ -44,6 +45,7 @@ import { ResumeSectionComponent } from './components/resume-section/resume-secti
     ButtonComponent,
     NgxExtendedPdfViewerModule,
     ResumeSectionComponent,
+    PersonalInfoComponent,
   ],
 })
 export class EditResumeComponent implements OnInit {
@@ -68,6 +70,7 @@ export class EditResumeComponent implements OnInit {
     this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
+      console.log({ resume: this.resume });
 
       this.refreshPreview();
 
