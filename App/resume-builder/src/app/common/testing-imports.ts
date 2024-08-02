@@ -20,5 +20,5 @@ export {
   template: '',
 })
 export class SectionListComponentStub {
-  @Input() section: ResumeTreeNode;
+  @Input() node: ResumeTreeNode;
 }

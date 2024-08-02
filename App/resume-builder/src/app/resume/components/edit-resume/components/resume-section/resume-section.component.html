@@ -12,16 +12,16 @@
     </div>
     @switch(form.get('type').value) {
       @case (SectionDisplayType.List) {
-        <app-section-list />
+        <app-section-list [node]="section.children[0]" />
       }
       @case (SectionDisplayType.Paragraph) {
-        <app-section-paragraph />
+        <app-section-paragraph [node]="section.children[0]" />
       }
       @case (SectionDisplayType.Education){
-        <app-section-education />
+        <app-section-education [node]="section.children[0]" />
       }
       @case (SectionDisplayType.WorkExperience) {
-        <app-section-work-experience />
+        <app-section-work-experience [node]="section.children[0]" />
       }
     }
   </form>
