@@ -100,7 +100,6 @@ describe('SectionListComponent', () => {
 
       expect(screen.queryAllByRole('textbox').length).toBe(1);
     });
-
     it('should remove the current input from node tree when the minus button is clicked', async () => {
       const component = await render(rootNode);
 
@@ -120,7 +119,28 @@ describe('SectionListComponent', () => {
         'Hello, World #1!',
       );
     });
+    it('should update order when item is deleted', async () => {
+      const component = await render(rootNode);
 
+      fireEvent.click(screen.queryByTitle('plusButton'));
+      fireEvent.click(screen.queryByTitle('plusButton'));
+
+      screen.queryAllByRole('textbox').forEach((input, index) => {
+        fireEvent.input(input, {
+          target: { value: `Hello, World #${index}!` },
+        });
+      });
+
+      const minusButton = screen.queryAllByTitle('minusButton')[0];
+      fireEvent.click(minusButton);
+
+      expect(component.fixture.componentInstance.node.children[0].order).toBe(
+        0,
+      );
+      expect(component.fixture.componentInstance.node.children[1].order).toBe(
+        1,
+      );
+    });
     it('should update the node content when input is changed', async () => {
       const component = await render(rootNode);
 

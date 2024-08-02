@@ -56,5 +56,12 @@ export class SectionListComponent implements OnInit {
   RemoveItem($index: number) {
     this.node.children.splice($index, 1);
     this.form.removeAt($index);
+    this.UpdateOrder();
+  }
+
+  UpdateOrder() {
+    this.node.children.forEach((child, index) => {
+      child.order = index;
+    });
   }
 }
