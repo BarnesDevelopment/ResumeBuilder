@@ -3,7 +3,7 @@
     <div class="list-item" data-cy="list-item">
       <app-input [formControl]="item" noTitle />
       @if (form.length > 1) {
-        <app-button title="minusButton" (click)="RemoveItem($index)" ignoreClick>-</app-button>
+        <app-button title="minusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
       }
       @if ($index === form.length - 1) {
         <app-button title="plusButton" (click)="AddItem()" ignoreClick>+</app-button>
