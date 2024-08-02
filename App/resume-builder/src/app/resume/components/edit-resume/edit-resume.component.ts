@@ -1,14 +1,9 @@
-import {
-  AfterViewInit,
-  Component,
-  OnInit,
-  QueryList,
-  ViewChildren,
-} from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
   ResumeTreeNode,
   SectionDisplayType,
   NodeType,
+  newResumeTreeNode,
 } from '../../../models/Resume';
 import { Router } from '@angular/router';
 import { ResumeService } from '../../services/resume.service';
@@ -70,36 +65,21 @@ export class EditResumeComponent implements OnInit {
     this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
-      console.log({ resume: this.resume });
 
       this.refreshPreview();
 
       this.form = new FormGroup({
         title: new FormControl(this.resume.content, [Validators.required]),
         comments: new FormControl(this.resume.comments),
-        name: new FormControl(this.title().content, [Validators.required]),
-        email: new FormControl(this.title().children[0].content, [
-          Validators.required,
-          Validators.email,
-        ]),
-        phone: new FormControl(this.title().children[1].content, [
-          Validators.required,
-          Validators.pattern(this.phonePattern),
-        ]),
       });
-      if (this.title().children.length > 2) {
-        this.form.addControl(
-          'website',
-          new FormControl(this.title().children[2].content),
-        );
-      }
+
+      this.form.valueChanges.subscribe(() => {
+        this.resume.content = this.form.get('title').value;
+        this.resume.comments = this.form.get('comments').value;
+      });
 
       this.loading = false;
     });
-  }
-
-  title(): ResumeTreeNode {
-    return this.resume.children.find(node => node.nodeType === NodeType.Title);
   }
 
   save(): void {
@@ -129,68 +109,10 @@ export class EditResumeComponent implements OnInit {
 
   addSection(): void {
     const index = this.resume.children.length;
-    const sectionId = Guid.create();
 
-    this.resume.children.push({
-      id: sectionId,
-      content: 'Section Title',
-      comments: '',
-      active: true,
-      userId: this.resume.userId,
-      nodeType: NodeType.Section,
-      parentId: this.resume.id,
-      order: index,
-      depth: 1,
-      children: [
-        {
-          id: Guid.create(),
-          content: '',
-          comments: '',
-          active: true,
-          userId: this.resume.userId,
-          nodeType: NodeType.Separator,
-          parentId: sectionId,
-          order: 0,
-          depth: 2,
-          children: [],
-        },
-      ],
-    });
-  }
-
-  //endregion
-
-  //region Website
-  addWebsite(): void {
-    const index = this.title().children.length;
-    this.title().children.push({
-      id: Guid.create(),
-      content: '',
-      comments: '',
-      children: [],
-      active: true,
-      userId: this.resume.userId,
-      nodeType: NodeType.ListItem,
-      parentId: this.title().id,
-      order: index,
-      depth: 2,
-    });
-
-    this.form.addControl(
-      'website',
-      new FormControl(this.title().children[index].content),
+    this.resume.children.push(
+      newResumeTreeNode(NodeType.Section, index, this.resume),
     );
-
-    this.form.controls['website'].valueChanges.subscribe(res => {
-      this.title().children[index].content = res;
-    });
-  }
-
-  removeWebsite(): void {
-    const nodeToDrop = this.title().children.pop();
-    this.form.removeControl('website');
-
-    this.service.deleteNode(nodeToDrop).subscribe();
   }
 
   //endregion

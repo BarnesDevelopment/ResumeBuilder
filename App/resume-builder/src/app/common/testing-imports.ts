@@ -22,3 +22,23 @@ export {
 export class SectionListComponentStub {
   @Input() node: ResumeTreeNode;
 }
+
+@Component({
+  standalone: true,
+  selector: 'app-personal-info',
+  template: '',
+})
+export class PersonalInfoComponentStub {
+  @Input() node: ResumeTreeNode;
+}
+
+@Component({
+  standalone: true,
+  selector: 'ngx-extended-pdf-viewer',
+  template: '',
+})
+export class NgxExtendedPdfViewerComponentStub {
+  @Input() src;
+  @Input() height;
+  @Input() textLayer;
+}
