@@ -15,7 +15,6 @@ export class SectionParagraphComponent implements OnInit {
   form: FormGroup;
 
   ngOnInit() {
-    console.log({ node: this.node });
     this.form = new FormGroup({
       paragraph: new FormControl(this.node.content),
     });
