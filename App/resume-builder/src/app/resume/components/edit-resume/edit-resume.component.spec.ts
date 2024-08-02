@@ -12,18 +12,18 @@ import { EditResumeComponent } from './edit-resume.component';
 import { By } from '@angular/platform-browser';
 import { ToastrService } from 'ngx-toastr';
 import { ResumeService } from '../../services/resume.service';
-import { of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
-import {
-  NgxExtendedPdfViewerComponent,
-  NgxExtendedPdfViewerModule,
-} from 'ngx-extended-pdf-viewer';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { newResumeTreeNode } from '../../../models/Resume';
+import 'jest';
 
 describe('EditResumeComponent', () => {
   let rootNode: ResumeTreeNode;
   let resumeServiceSpy;
 
   beforeEach(() => {
+    jest.resetAllMocks();
     rootNode = {
       id: Guid.create(),
       nodeType: NodeType.Resume,
@@ -141,19 +141,129 @@ describe('EditResumeComponent', () => {
   describe('Save', () => {
     //save collection
     //delete collection
-    //execute saves and deletes
+    let toasterErrorSpy, toasterSuccessSpy, updateSpy, deleteSpy;
+
+    beforeEach(() => {
+      updateSpy = jest.spyOn(ResumeService.prototype, 'updateResume');
+      deleteSpy = jest.spyOn(ResumeService.prototype, 'deleteNode');
+      toasterSuccessSpy = jest.spyOn(ToasterServiceMock.prototype, 'success');
+      toasterErrorSpy = jest.spyOn(ToasterServiceMock.prototype, 'error');
+    });
+    it('should run all saves when there are no deletes', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+      ];
+      updateSpy.mockReturnValue(of());
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).toHaveBeenCalledTimes(2);
+      expect(updateSpy).toHaveBeenCalledWith(saves[0]);
+      expect(updateSpy).toHaveBeenCalledWith(saves[1]);
+    });
+    it('should run all deletes', async () => {
+      const deletes = [Guid.create(), Guid.create()];
+      deleteSpy.mockReturnValue(of());
+      await render([], deletes);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(deleteSpy).toHaveBeenCalledTimes(2);
+      expect(deleteSpy).toHaveBeenCalledWith(deletes[0]);
+      expect(deleteSpy).toHaveBeenCalledWith(deletes[1]);
+    });
+    it('should remove deletes from saves before saving', async () => {
+      const deletes = [Guid.create(), Guid.create()];
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+      ];
+      saves[0].id = deletes[0];
+
+      updateSpy.mockReturnValue(of());
+      deleteSpy.mockReturnValue(of());
+      await render(saves, deletes);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledWith(saves[1]);
+      expect(deleteSpy).toHaveBeenCalledTimes(2);
+      expect(deleteSpy).toHaveBeenCalledWith(deletes[0]);
+      expect(deleteSpy).toHaveBeenCalledWith(deletes[1]);
+    });
+    it('should show success toaster on successful save', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+      ];
+
+      updateSpy
+        .mockReturnValueOnce(of(saves[0]))
+        .mockReturnValueOnce(of(saves[1]));
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(toasterErrorSpy).not.toHaveBeenCalled();
+      expect(toasterSuccessSpy).toHaveBeenCalledWith(
+        'Resume saved successfully',
+        'Saved',
+      );
+    });
+    it('should show error toaster on failed save', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+      ];
+
+      updateSpy
+        .mockImplementationOnce(() => {
+          return throwError(() => new Error('error'));
+        })
+        .mockReturnValueOnce(of(saves[1]));
+
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(toasterSuccessSpy).not.toHaveBeenCalled();
+      expect(toasterErrorSpy).toHaveBeenCalledWith(
+        'Error saving resume: Error: error',
+        'Error',
+      );
+    });
+    it('should do nothing if there is nothing to save', async () => {
+      await render();
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(deleteSpy).not.toHaveBeenCalled();
+      expect(toasterSuccessSpy).not.toHaveBeenCalled();
+      expect(toasterErrorSpy).not.toHaveBeenCalled();
+    });
   });
 });
 
-const render = async () => {
+const render = async (saves: ResumeTreeNode[] = [], deletes: Guid[] = []) => {
   return await renderRootComponent(EditResumeComponent, {
+    componentProperties: {
+      saves,
+      deletes,
+    },
     providers: [
       {
         provide: ToastrService,
-        useValue: {
-          success: () => {},
-          error: () => {},
-        },
+        useClass: ToasterServiceMock,
       },
     ],
     importOverrides: [
@@ -165,3 +275,9 @@ const render = async () => {
     ],
   });
 };
+
+class ToasterServiceMock {
+  success() {}
+
+  error() {}
+}

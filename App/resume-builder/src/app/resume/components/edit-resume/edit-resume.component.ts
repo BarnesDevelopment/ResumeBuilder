@@ -26,6 +26,7 @@ import { InputComponent } from '../../../common/input/input.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResumeSectionComponent } from './components/resume-section/resume-section.component';
 import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
+import { combineLatest, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-edit-resume',
@@ -55,6 +56,9 @@ export class EditResumeComponent implements OnInit {
   @ViewChildren(ResumeSectionComponent)
   sectionsElements: QueryList<ResumeSectionComponent>;
 
+  saves: ResumeTreeNode[] = [];
+  deletes: Guid[] = [];
+
   constructor(
     private router: Router,
     private service: ResumeService,
@@ -83,13 +87,18 @@ export class EditResumeComponent implements OnInit {
   }
 
   save(): void {
-    this.service.updateResume(this.resume).subscribe({
+    const apiCalls: Observable<any>[] = [];
+    this.saves = this.saves.filter(node => !this.deletes.includes(node.id));
+    this.saves.forEach(node => apiCalls.push(this.service.updateResume(node)));
+    this.deletes.forEach(id => apiCalls.push(this.service.deleteNode(id)));
+    if (apiCalls.length === 0) return;
+    combineLatest(apiCalls).subscribe({
       next: () => {
         this.toaster.success('Resume saved successfully', 'Saved');
         this.refreshPreview();
       },
-      error: err => {
-        this.toaster.error('Error saving resume: ' + err.message, 'Error');
+      error: error => {
+        this.toaster.error('Error saving resume: ' + error, 'Error');
       },
     });
   }

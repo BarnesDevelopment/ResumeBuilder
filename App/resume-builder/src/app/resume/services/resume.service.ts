@@ -7,6 +7,7 @@ import {
 } from '../../models/Resume';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment/environment';
+import { Guid } from 'guid-typescript';
 
 @Injectable({
   providedIn: 'root',
@@ -35,9 +36,9 @@ export class ResumeService {
     );
   }
 
-  public deleteNode(resume: ResumeTreeNode): Observable<boolean> {
+  public deleteNode(guid: Guid): Observable<boolean> {
     return this.http.delete<boolean>(
-      `${this.env.apiBasePath}/resume/delete/${resume.id}`,
+      `${this.env.apiBasePath}/resume/delete/${guid}`,
     );
   }
 
