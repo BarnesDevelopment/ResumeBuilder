@@ -153,6 +153,16 @@ export class EditResumeComponent implements OnInit {
     }
   }
 
+  queueSave(node: ResumeTreeNode) {
+    const oldSave = this.saves.find(n => n.id === node.id);
+    if (oldSave) this.saves.splice(this.saves.indexOf(oldSave), 1);
+    this.saves.push(node);
+  }
+
+  queueDelete(id: Guid) {
+    this.deletes.push(id);
+  }
+
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
   protected readonly SectionDisplayType = SectionDisplayType;

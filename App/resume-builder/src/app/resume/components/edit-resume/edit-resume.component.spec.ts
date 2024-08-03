@@ -149,6 +149,39 @@ describe('EditResumeComponent', () => {
       toasterSuccessSpy = jest.spyOn(ToasterServiceMock.prototype, 'success');
       toasterErrorSpy = jest.spyOn(ToasterServiceMock.prototype, 'error');
     });
+    describe('Save lists', () => {
+      it('should add item to saves list', async () => {
+        const save = newResumeTreeNode(NodeType.Section, 0, rootNode);
+        save.content = 'New Section';
+        const { fixture } = await render();
+
+        fixture.componentInstance.queueSave(save);
+
+        expect(fixture.componentInstance.saves[0]).toBe(save);
+      });
+      it('should add item to deletes list', async () => {
+        const deleteId = Guid.create();
+        const { fixture } = await render();
+
+        fixture.componentInstance.queueDelete(deleteId);
+
+        expect(fixture.componentInstance.deletes[0]).toBe(deleteId);
+      });
+      it('should update item in saves list', async () => {
+        const save = newResumeTreeNode(NodeType.Section, 0, rootNode);
+        save.content = 'New Section';
+        const updatedSave = {
+          ...save,
+          content: 'Updated Section',
+        };
+        const { fixture } = await render([save]);
+
+        fixture.componentInstance.queueSave(updatedSave);
+
+        expect(fixture.componentInstance.saves[0]).toBe(updatedSave);
+        expect(fixture.componentInstance.saves.length).toBe(1);
+      });
+    });
     it('should run all saves when there are no deletes', async () => {
       const saves = [
         newResumeTreeNode(NodeType.Section, 0, rootNode),
