@@ -13,6 +13,7 @@ import { SectionParagraphComponent } from '../section-paragraph/section-paragrap
 import { SectionEducationComponent } from '../section-education/section-education.component';
 import { SectionWorkExperienceComponent } from '../section-work-experience/section-work-experience.component';
 import { Guid } from 'guid-typescript';
+import { UpsertSignal } from '../upsert-signal/upsert-signal';
 
 @Component({
   selector: 'app-resume-section',
@@ -28,12 +29,10 @@ import { Guid } from 'guid-typescript';
   templateUrl: './resume-section.component.html',
   styleUrl: './resume-section.component.scss',
 })
-export class ResumeSectionComponent implements OnInit {
+export class ResumeSectionComponent extends UpsertSignal implements OnInit {
   @Input() section: ResumeTreeNode;
 
   form: FormGroup;
-  onSave = output<ResumeTreeNode>();
-  onDelete = output<Guid>();
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -84,14 +83,6 @@ export class ResumeSectionComponent implements OnInit {
     if (this.section.children.length > 0) {
       this.queueSave(this.section.children[0]);
     }
-  }
-
-  queueSave(node: ResumeTreeNode) {
-    this.onSave.emit({ ...node, children: [] });
-  }
-
-  queueDelete(id: Guid) {
-    this.onDelete.emit(id);
   }
 
   protected readonly SectionDisplayType = SectionDisplayType;

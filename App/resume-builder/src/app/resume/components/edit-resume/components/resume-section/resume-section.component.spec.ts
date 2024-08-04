@@ -174,10 +174,9 @@ describe('ResumeSectionComponent', () => {
     });
   });
   describe('Save', () => {
-    let saveSpy, deleteSpy, instance;
+    let saveSpy, deleteSpy;
     beforeEach(async () => {
       const { fixture } = await render(section);
-      instance = fixture.componentInstance;
       saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
       deleteSpy = jest.spyOn(fixture.componentInstance.onDelete, 'emit');
     });
@@ -230,20 +229,6 @@ describe('ResumeSectionComponent', () => {
       });
 
       expect(deleteSpy).toHaveBeenCalledTimes(1);
-    });
-    it('should emit delete when queued', async () => {
-      const node = newResumeTreeNode(NodeType.Education, 0, section);
-      instance.queueDelete(node.id);
-
-      expect(deleteSpy).toHaveBeenCalledTimes(1);
-      expect(deleteSpy).toHaveBeenCalledWith(node.id);
-    });
-    it('should emit save when queued', async () => {
-      const node = newResumeTreeNode(NodeType.Education, 0, section);
-      instance.queueSave(node);
-
-      expect(saveSpy).toHaveBeenCalledTimes(1);
-      expect(saveSpy).toHaveBeenCalledWith(node);
     });
   });
 });
