@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ResumeTreeNode } from '../../../../../models/Resume';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { UpsertSignal } from '../upsert-signal/upsert-signal';
 
 @Component({
   selector: 'app-section-paragraph',
@@ -9,7 +10,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './section-paragraph.component.html',
   styleUrl: './section-paragraph.component.scss',
 })
-export class SectionParagraphComponent implements OnInit {
+export class SectionParagraphComponent extends UpsertSignal implements OnInit {
   @Input() node: ResumeTreeNode;
 
   form: FormGroup;

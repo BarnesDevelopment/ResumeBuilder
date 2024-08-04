@@ -12,16 +12,16 @@
     </div>
     @switch(form.get('type').value) {
       @case (SectionDisplayType.List) {
-        <app-section-list [node]="section.children[0]" />
+        <app-section-list [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
       @case (SectionDisplayType.Paragraph) {
-        <app-section-paragraph [node]="section.children[0]" />
+        <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
       @case (SectionDisplayType.Education){
-        <app-section-education [node]="section.children[0]" />
+        <app-section-education [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
       @case (SectionDisplayType.WorkExperience) {
-        <app-section-work-experience [node]="section.children[0]" />
+        <app-section-work-experience [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
     }
   </form>
