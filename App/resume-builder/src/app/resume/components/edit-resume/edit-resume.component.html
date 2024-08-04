@@ -10,7 +10,10 @@
       <app-personal-info [node]="resume.children[0]" />
       @for (section of sections(); track $index) {
         <app-resume-section
-          [section]="section" />
+          [section]="section"
+          (onSave)="queueSave($event)"
+          (onDelete)="queueDelete($event)"
+        />
       }
       <div class="button">
         <app-button

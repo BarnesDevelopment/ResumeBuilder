@@ -139,8 +139,6 @@ describe('EditResumeComponent', () => {
   });
   //TODO: PDF Preview
   describe('Save', () => {
-    //save collection
-    //delete collection
     let toasterErrorSpy, toasterSuccessSpy, updateSpy, deleteSpy;
 
     beforeEach(() => {
@@ -283,6 +281,23 @@ describe('EditResumeComponent', () => {
       expect(deleteSpy).not.toHaveBeenCalled();
       expect(toasterSuccessSpy).not.toHaveBeenCalled();
       expect(toasterErrorSpy).not.toHaveBeenCalled();
+    });
+    it('should clear lists after saving successfully', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+      ];
+
+      updateSpy
+        .mockReturnValueOnce(of(saves[0]))
+        .mockReturnValueOnce(of(saves[1]));
+      const { fixture } = await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(fixture.componentInstance.saves.length).toBe(0);
+      expect(fixture.componentInstance.deletes.length).toBe(0);
     });
   });
 });

@@ -91,11 +91,15 @@ export class EditResumeComponent implements OnInit {
     this.saves = this.saves.filter(node => !this.deletes.includes(node.id));
     this.saves.forEach(node => apiCalls.push(this.service.updateResume(node)));
     this.deletes.forEach(id => apiCalls.push(this.service.deleteNode(id)));
+    // console.log({ saves: this.saves, deletes: this.deletes });
     if (apiCalls.length === 0) return;
     combineLatest(apiCalls).subscribe({
       next: () => {
+        this.saves = [];
+        this.deletes = [];
         this.toaster.success('Resume saved successfully', 'Saved');
         this.refreshPreview();
+        console.log('Resume saved successfully');
       },
       error: error => {
         this.toaster.error('Error saving resume: ' + error, 'Error');
@@ -157,10 +161,12 @@ export class EditResumeComponent implements OnInit {
     const oldSave = this.saves.find(n => n.id === node.id);
     if (oldSave) this.saves.splice(this.saves.indexOf(oldSave), 1);
     this.saves.push(node);
+    console.log({ saves: this.saves });
   }
 
   queueDelete(id: Guid) {
     this.deletes.push(id);
+    console.log({ deletes: this.deletes });
   }
 
   protected readonly ButtonStyle = ButtonStyle;
