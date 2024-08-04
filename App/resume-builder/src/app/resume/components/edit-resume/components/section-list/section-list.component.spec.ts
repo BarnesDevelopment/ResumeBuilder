@@ -194,6 +194,20 @@ describe('SectionListComponent', () => {
       expect(node.nodeType).toBe(NodeType.ListItem);
       expect(node.content).toBe('');
     });
+    it('should emit save when order is updated', async () => {
+      rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 0, rootNode));
+      rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 1, rootNode));
+      const { fixture } = await render(rootNode);
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      deleteSpy = jest.spyOn(fixture.componentInstance.onDelete, 'emit');
+      const plusButton = screen.queryByTitle('plusButton');
+      fireEvent.click(plusButton);
+      const minusButton = screen.queryAllByTitle('minusButton')[1];
+      fireEvent.click(minusButton);
+
+      expect(saveSpy).toHaveBeenCalledTimes(2);
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+    });
     it('should emit save when updating list item text', async () => {
       rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 0, rootNode));
       const { fixture } = await render(rootNode);

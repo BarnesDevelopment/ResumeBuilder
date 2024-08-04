@@ -65,7 +65,10 @@ export class SectionListComponent extends UpsertSignal implements OnInit {
 
   UpdateOrder() {
     this.node.children.forEach((child, index) => {
-      child.order = index;
+      if (child.order !== index) {
+        child.order = index;
+        this.queueSave(child);
+      }
     });
   }
 }
