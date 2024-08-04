@@ -1,4 +1,7 @@
-import { SectionDisplayType } from '../../../../../models/Resume';
+import {
+  newResumeTreeNode,
+  SectionDisplayType,
+} from '../../../../../models/Resume';
 import { ResumeSectionComponent } from './resume-section.component';
 import '@testing-library/jest-dom';
 import { SectionListComponent } from '../section-list/section-list.component';
@@ -9,6 +12,7 @@ import {
   NodeType,
   ResumeTreeNode,
   SectionListComponentStub,
+  fireEvent,
 } from '../../../../../common/testing-imports';
 import { By } from '@angular/platform-browser';
 
@@ -169,7 +173,79 @@ describe('ResumeSectionComponent', () => {
       expect(component.debugElement.query(By.css(selector))).toBeTruthy();
     });
   });
-  describe('Save', () => {});
+  describe('Save', () => {
+    let saveSpy, deleteSpy, instance;
+    beforeEach(async () => {
+      const { fixture } = await render(section);
+      instance = fixture.componentInstance;
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      deleteSpy = jest.spyOn(fixture.componentInstance.onDelete, 'emit');
+    });
+    it('should emit a save when section title is changed', async () => {
+      const newSection = { ...section, content: 'TestTitle' };
+
+      const input = screen.queryByTitle('name');
+      fireEvent.input(input, { target: { value: 'TestTitle' } });
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      expect(saveSpy).toHaveBeenCalledWith(newSection);
+    });
+    it('should emit a save when section type is changed', async () => {
+      const select = screen.queryByTitle('type');
+      fireEvent.change(select, { target: { value: SectionDisplayType.List } });
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      const functionArg = saveSpy.mock.calls[0][0];
+      expect(functionArg.content).toEqual('');
+      expect(functionArg.nodeType).toEqual(NodeType.List);
+      expect(functionArg.parentId).toEqual(section.id);
+    });
+    it('should strip children from node when saving', async () => {
+      const newSection = { ...section, children: [], content: 'TestTitle' };
+
+      const select = screen.queryByTitle('type');
+      fireEvent.change(select, { target: { value: SectionDisplayType.List } });
+      const input = screen.queryByTitle('name');
+      fireEvent.input(input, { target: { value: 'TestTitle' } });
+
+      expect(saveSpy).toHaveBeenCalledTimes(2);
+      const functionArg = saveSpy.mock.calls[0][0];
+      expect(functionArg.content).toEqual('');
+      expect(functionArg.nodeType).toEqual(NodeType.List);
+      expect(functionArg.parentId).toEqual(section.id);
+      expect(functionArg.children).toEqual([]);
+      expect(saveSpy).toHaveBeenCalledWith(newSection);
+    });
+    it('should not emit a delete on initial section change', async () => {
+      const select = screen.queryByTitle('type');
+      fireEvent.change(select, { target: { value: SectionDisplayType.List } });
+
+      expect(deleteSpy).not.toHaveBeenCalled();
+    });
+    it('should emit a delete when section type is changed', async () => {
+      const select = screen.queryByTitle('type');
+      fireEvent.change(select, { target: { value: SectionDisplayType.List } });
+      fireEvent.change(select, {
+        target: { value: SectionDisplayType.Paragraph },
+      });
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+    });
+    it('should emit delete when queued', async () => {
+      const node = newResumeTreeNode(NodeType.Education, 0, section);
+      instance.queueDelete(node.id);
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+      expect(deleteSpy).toHaveBeenCalledWith(node.id);
+    });
+    it('should emit save when queued', async () => {
+      const node = newResumeTreeNode(NodeType.Education, 0, section);
+      instance.queueSave(node);
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      expect(saveSpy).toHaveBeenCalledWith(node);
+    });
+  });
 });
 
 const render = async (section: ResumeTreeNode) => {

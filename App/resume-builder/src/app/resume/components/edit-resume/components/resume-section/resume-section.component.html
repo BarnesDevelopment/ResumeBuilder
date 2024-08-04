@@ -3,7 +3,7 @@
     <app-input formControlName="name">Section title</app-input>
     <div class="select">
       <label for="type">Section type:</label>
-      <select formControlName="type" id="type">
+      <select formControlName="type" id="type" title="type">
         <option value=""></option>
         @for(displayType of SectionDisplayTypeList; track $index) {
           <option [value]="displayType">{{ displayType }}</option>

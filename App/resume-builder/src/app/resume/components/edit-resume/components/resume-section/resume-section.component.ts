@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, output } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -12,6 +12,7 @@ import { SectionListComponent } from '../section-list/section-list.component';
 import { SectionParagraphComponent } from '../section-paragraph/section-paragraph.component';
 import { SectionEducationComponent } from '../section-education/section-education.component';
 import { SectionWorkExperienceComponent } from '../section-work-experience/section-work-experience.component';
+import { Guid } from 'guid-typescript';
 
 @Component({
   selector: 'app-resume-section',
@@ -31,6 +32,8 @@ export class ResumeSectionComponent implements OnInit {
   @Input() section: ResumeTreeNode;
 
   form: FormGroup;
+  onSave = output<ResumeTreeNode>();
+  onDelete = output<Guid>();
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -40,12 +43,20 @@ export class ResumeSectionComponent implements OnInit {
     if (this.section.children.length > 0) {
       this.form.controls['type'].setValue(this.section.children[0].nodeType);
     }
+    this.form.controls['name'].valueChanges.subscribe(value => {
+      this.section.content = value;
+      this.queueSave(this.section);
+    });
     this.form.controls['type'].valueChanges.subscribe(value => {
       this.UpdateSectionType(value);
     });
   }
 
   UpdateSectionType(value: SectionDisplayType) {
+    const shouldDelete = this.section.children.length > 0;
+    if (shouldDelete) {
+      this.queueDelete(this.section.children[0].id);
+    }
     switch (value) {
       case SectionDisplayType.List:
         this.section.children = [
@@ -70,6 +81,17 @@ export class ResumeSectionComponent implements OnInit {
       default:
         this.section.children = [];
     }
+    if (this.section.children.length > 0) {
+      this.queueSave(this.section.children[0]);
+    }
+  }
+
+  queueSave(node: ResumeTreeNode) {
+    this.onSave.emit({ ...node, children: [] });
+  }
+
+  queueDelete(id: Guid) {
+    this.onDelete.emit(id);
   }
 
   protected readonly SectionDisplayType = SectionDisplayType;
