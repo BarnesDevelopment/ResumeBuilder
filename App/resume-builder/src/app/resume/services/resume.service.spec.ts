@@ -5,38 +5,88 @@ import {
   HttpHandler,
   HttpRequest,
 } from '@angular/common/http';
-import { firstValueFrom, Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of, throwError } from 'rxjs';
 import { Guid, renderRootComponent } from '../../common/testing-imports';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { Type } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 
 describe('ResumeService', () => {
-  beforeEach(() => {});
+  let service: ResumeService;
+  let httpMock: HttpTestingController;
+  let baseUrl: string;
+  const guid = Guid.create();
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [ResumeService],
+    });
+    service = TestBed.inject(ResumeService);
+    httpMock = TestBed.inject(HttpTestingController);
+
+    baseUrl = service.env.apiBasePath;
+  });
+  afterEach(() => {
+    httpMock.verify();
+  });
 
   describe('Delete', () => {
-    it('should call http delete with correct url', async () => {
-      const guid = Guid.create();
-      const { fixture } = await renderRootComponent(ResumeService, {
-        imports: [HttpClientTestingModule],
+    it('should call http delete with correct url', done => {
+      service.deleteNode(guid).subscribe({
+        next: data => {
+          expect(data).toBeTruthy();
+          done();
+        },
+        error: () => fail('should not throw error'),
       });
-      const httpMock = fixture.debugElement.injector.get<HttpTestingController>(
-        HttpTestingController as Type<HttpTestingController>,
-      );
-
-      fixture.componentInstance.deleteNode(Guid.create());
-      const req = httpMock.expectOne(
-        `${fixture.componentInstance.env.apiBasePath}/resume/delete/${guid}`,
-      );
-
-      req.flush(true);
-
+      const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
       expect(req.request.method).toBe('DELETE');
+      req.flush(true, { status: 202, statusText: 'Accepted' });
     });
-    it.each([202, 404])('should not throw error on %i', async () => {});
-    it.each([400, 401, 403, 500])('should throw error on %i', async () => {});
+    it.each([202, 404])(
+      'should not throw error on %i',
+      (statusCode: number, done) => {
+        const statusText = statusCode == 202 ? 'Accepted' : 'Not Found';
+        service.deleteNode(guid).subscribe({
+          next: data => {
+            expect(data).toBeTruthy();
+            done();
+          },
+          error: () => {
+            expect(true).toBeFalsy();
+            done();
+          },
+        });
+        const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
+        req.flush(true, { status: statusCode, statusText: statusText });
+      },
+    );
+    it.each([400, 401, 403, 500])(
+      'should throw error on %i',
+      (statusCode: number, done) => {
+        const statusText =
+          statusCode == 400
+            ? 'Bad Request'
+            : statusCode == 401
+            ? 'Unauthorized'
+            : statusCode == 403
+            ? 'Forbidden'
+            : 'Internal Server Error';
+        service.deleteNode(guid).subscribe({
+          next: () => throwError(() => new Error('should not call next')),
+          error: error => {
+            expect(error.status).toBe(statusCode);
+            done();
+          },
+        });
+        const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
+        req.flush(null, { status: statusCode, statusText: statusText });
+      },
+    );
   });
 });
 

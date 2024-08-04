@@ -5,7 +5,7 @@ import {
   ResumeHeader,
   ResumeTreeNode,
 } from '../../models/Resume';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { environment } from '../../../environment/environment';
 import { Guid } from 'guid-typescript';
 
@@ -37,9 +37,17 @@ export class ResumeService {
   }
 
   public deleteNode(guid: Guid): Observable<boolean> {
-    return this.http.delete<boolean>(
-      `${this.env.apiBasePath}/resume/delete/${guid}`,
-    );
+    return this.http
+      .delete<boolean>(`${this.env.apiBasePath}/resume/delete/${guid}`)
+      .pipe(
+        catchError(error => {
+          if (error.status === 404) {
+            return of(true);
+          } else {
+            throw error;
+          }
+        }),
+      );
   }
 
   public getPreview(resume: ResumeTreeNode): Observable<Blob> {
