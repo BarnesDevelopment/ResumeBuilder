@@ -179,7 +179,65 @@ describe('SectionListComponent', () => {
       });
     });
   });
-  describe('Save', () => {});
+  describe('Save', () => {
+    let saveSpy, deleteSpy;
+    it('should emit save when adding list item', async () => {
+      rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 0, rootNode));
+      const { fixture } = await render(rootNode);
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      const plusButton = screen.queryByTitle('plusButton');
+      fireEvent.click(plusButton);
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      const node = saveSpy.mock.calls[0][0];
+      expect(node.parentId).toBe(rootNode.id);
+      expect(node.nodeType).toBe(NodeType.ListItem);
+      expect(node.content).toBe('');
+    });
+    it('should emit save when updating list item text', async () => {
+      rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 0, rootNode));
+      const { fixture } = await render(rootNode);
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      const input = screen.queryByRole('textbox');
+      fireEvent.input(input, { target: { value: 'Hello, World!' } });
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      const node = saveSpy.mock.calls[0][0];
+      expect(node.parentId).toBe(rootNode.id);
+      expect(node.nodeType).toBe(NodeType.ListItem);
+      expect(node.content).toBe('Hello, World!');
+    });
+    it('should emit save on initial load', async () => {
+      const { fixture } = await render(rootNode);
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      fixture.componentInstance.node.children = [];
+      fixture.componentInstance.ngOnInit();
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+      const node = saveSpy.mock.calls[0][0];
+      expect(node.parentId).toBe(rootNode.id);
+      expect(node.nodeType).toBe(NodeType.ListItem);
+      expect(node.content).toBe('');
+    });
+    it('should not emit save when list items exist', async () => {
+      rootNode.children.push(newResumeTreeNode(NodeType.ListItem, 0, rootNode));
+      const { fixture } = await render(rootNode);
+      saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+
+      expect(saveSpy).toHaveBeenCalledTimes(0);
+    });
+    it('should emit delete when removing list item', async () => {
+      const { fixture } = await render(rootNode);
+      deleteSpy = jest.spyOn(fixture.componentInstance.onDelete, 'emit');
+
+      const plusButton = screen.queryByTitle('plusButton');
+      fireEvent.click(plusButton);
+      const minusButton = screen.queryAllByTitle('minusButton')[0];
+      fireEvent.click(minusButton);
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 const render = async (node: ResumeTreeNode) => {

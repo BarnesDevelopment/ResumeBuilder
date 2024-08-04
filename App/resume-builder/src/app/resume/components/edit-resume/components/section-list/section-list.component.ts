@@ -10,6 +10,7 @@ import {
   ButtonComponent,
   ButtonStyle,
 } from '../../../../../common/button/button.component';
+import { UpsertSignal } from '../upsert-signal/upsert-signal';
 
 @Component({
   selector: 'app-section-list',
@@ -18,7 +19,7 @@ import {
   templateUrl: './section-list.component.html',
   styleUrl: './section-list.component.scss',
 })
-export class SectionListComponent implements OnInit {
+export class SectionListComponent extends UpsertSignal implements OnInit {
   @Input() node: ResumeTreeNode;
   form: FormArray<FormControl<string>>;
 
@@ -37,6 +38,7 @@ export class SectionListComponent implements OnInit {
     this.node.children.push(
       newResumeTreeNode(NodeType.ListItem, order, this.node),
     );
+    this.queueSave(this.node.children[0]);
     this.AddFormListItem('', order);
   }
 
@@ -44,6 +46,7 @@ export class SectionListComponent implements OnInit {
     this.form.push(new FormControl(content));
     this.form.controls[order].valueChanges.subscribe(value => {
       this.node.children[order].content = value;
+      this.queueSave(this.node.children[order]);
     });
   }
 
@@ -54,9 +57,10 @@ export class SectionListComponent implements OnInit {
   }
 
   RemoveItem($index: number) {
-    this.node.children.splice($index, 1);
+    const removed = this.node.children.splice($index, 1);
     this.form.removeAt($index);
     this.UpdateOrder();
+    this.queueDelete(removed[0].id);
   }
 
   UpdateOrder() {
