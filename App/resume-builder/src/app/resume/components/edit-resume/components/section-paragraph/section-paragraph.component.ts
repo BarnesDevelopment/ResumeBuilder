@@ -22,6 +22,7 @@ export class SectionParagraphComponent extends UpsertSignal implements OnInit {
 
     this.form.valueChanges.subscribe(value => {
       this.node.content = value.paragraph;
+      this.onSave.emit(this.node);
     });
   }
 }

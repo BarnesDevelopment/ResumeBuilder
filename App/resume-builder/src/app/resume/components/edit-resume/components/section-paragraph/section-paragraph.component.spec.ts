@@ -53,7 +53,26 @@ describe('SectionParagraphComponent', () => {
       expect(input.value).toBe('Test');
     });
   });
-  describe('Save', () => {});
+  describe('Save', () => {
+    it('should emit save when input is changed', async () => {
+      const component = await render(node);
+      const onSave = jest.spyOn(
+        component.fixture.componentInstance.onSave,
+        'emit',
+      );
+
+      const input = component.queryByRole('textbox');
+      fireEvent.input(input, { target: { value: 'Test' } });
+      component.detectChanges();
+
+      expect(onSave).toHaveBeenCalledTimes(1);
+      const savedNode = onSave.mock.calls[0][0];
+      expect(savedNode.content).toBe('Test');
+      expect(savedNode.id).toBe(node.id);
+      expect(savedNode.nodeType).toBe(NodeType.Paragraph);
+      expect(savedNode.order).toBe(0);
+    });
+  });
 });
 
 const render = async (node: ResumeTreeNode) => {
