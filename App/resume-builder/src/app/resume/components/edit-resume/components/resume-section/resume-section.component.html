@@ -19,9 +19,11 @@
       }
       @case (SectionDisplayType.Education){
         <app-section-education [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+<!--        TODO: Make Extensible -->
       }
       @case (SectionDisplayType.WorkExperience) {
         <app-section-work-experience [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+<!--        TODO: Make Extensible-->
       }
     }
   </form>
