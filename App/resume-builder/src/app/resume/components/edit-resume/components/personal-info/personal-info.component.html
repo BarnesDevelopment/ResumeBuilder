@@ -1,0 +1,28 @@
+<div class="personal-info" [formGroup]="form">
+  <app-input formControlName="name">Name</app-input>
+  <app-input formControlName="email" errorMessage="Incorrect pattern">Email</app-input>
+  <app-input formControlName="phone">Phone</app-input>
+  <div class="row">
+    @if (node.children.length > 2) {
+      <app-input formControlName="website">Website</app-input>
+      <app-button
+        title="minusButton"
+        [borderStyle]="BorderStyle.Dark"
+        [buttonStyle]="ButtonStyle.Primary"
+        ignoreClick
+        (click)="RemoveWebsite()"
+      >&nbsp;&mdash;&nbsp;
+      </app-button>
+    } @else {
+      <div class="add-website-button">
+        <app-button
+          [borderStyle]="BorderStyle.Dark"
+          [buttonStyle]="ButtonStyle.Secondary"
+          ignoreClick
+          (click)="AddWebsite()"
+        >Add Website
+        </app-button>
+      </div>
+    }
+  </div>
+</div>

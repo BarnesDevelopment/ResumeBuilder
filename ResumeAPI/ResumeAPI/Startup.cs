@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -9,6 +10,9 @@ using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ResumeAPI;
 
@@ -66,8 +70,35 @@ public class Startup
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       .AddJwtBearer(options =>
       {
-        options.Authority = appSettings.Jwt.Authority;
-        options.Audience = appSettings.Jwt.Audience;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+          ValidateIssuer = true,
+          ValidIssuer = appSettings.Jwt.Authority,
+          ValidateAudience = false,
+          ValidateIssuerSigningKey = false,
+          ValidateLifetime = true,
+          SignatureValidator = (token, parameters) => new JwtSecurityToken(token),
+          RequireSignedTokens = false
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+          OnAuthenticationFailed = context =>
+          {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            context.Response.ContentType = "application/json";
+            Console.WriteLine("Authentication failed.");
+            Console.WriteLine(context.Exception.Message);
+            return Task.CompletedTask;
+          },
+          OnForbidden = context =>
+          {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            context.Response.ContentType = "application/json";
+            Console.WriteLine("Forbidden. Role is likely incorrect.");
+            return Task.CompletedTask;
+          }
+        };
       });
 
     services.AddAuthorization(options =>

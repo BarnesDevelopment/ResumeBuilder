@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
-  newResumeTreeNodeJson,
+  duplicateTreeNode,
   ResumeHeader,
   ResumeTreeNode,
 } from '../../models/Resume';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 import { environment } from '../../../environment/environment';
+import { Guid } from 'guid-typescript';
 
 @Injectable({
   providedIn: 'root',
@@ -31,14 +32,22 @@ export class ResumeService {
   public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
     return this.http.post<ResumeTreeNode>(
       `${this.env.apiBasePath}/resume/upsert`,
-      newResumeTreeNodeJson(resume),
+      duplicateTreeNode(resume),
     );
   }
 
-  public deleteNode(resume: ResumeTreeNode): Observable<boolean> {
-    return this.http.delete<boolean>(
-      `${this.env.apiBasePath}/resume/delete/${resume.id}`,
-    );
+  public deleteNode(guid: Guid): Observable<boolean> {
+    return this.http
+      .delete<boolean>(`${this.env.apiBasePath}/resume/delete/${guid}`)
+      .pipe(
+        catchError(error => {
+          if (error.status === 404) {
+            return of(true);
+          } else {
+            throw error;
+          }
+        }),
+      );
   }
 
   public getPreview(resume: ResumeTreeNode): Observable<Blob> {

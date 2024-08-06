@@ -27,11 +27,9 @@ export interface ResumeTreeNodeJson
   children: ResumeTreeNodeJson[];
 }
 
-export function newResumeTreeNodeJson(
-  node: ResumeTreeNode,
-): ResumeTreeNodeJson {
+export function duplicateTreeNode(node: ResumeTreeNode): ResumeTreeNodeJson {
   return {
-    children: node.children.map(newResumeTreeNodeJson),
+    children: node.children.map(duplicateTreeNode),
     comments: node.comments,
     id: node.id.toString(),
     active: node.active,
@@ -41,6 +39,26 @@ export function newResumeTreeNodeJson(
     nodeType: node.nodeType,
     depth: node.depth,
     order: node.order,
+  };
+}
+
+export function newResumeTreeNode(
+  nodeType: NodeType,
+  order: number,
+  parent: ResumeTreeNode,
+  content: string = '',
+): ResumeTreeNode {
+  return {
+    children: [],
+    comments: '',
+    id: Guid.create(),
+    active: true,
+    userId: parent.userId,
+    parentId: parent.id,
+    content: content,
+    nodeType,
+    depth: parent.depth + 1,
+    order,
   };
 }
 
@@ -78,3 +96,10 @@ export enum SectionDisplayType {
   WorkExperience = 'WorkExperience',
   Education = 'Education',
 }
+
+export const SectionDisplayTypeList = [
+  SectionDisplayType.List,
+  SectionDisplayType.Paragraph,
+  SectionDisplayType.WorkExperience,
+  SectionDisplayType.Education,
+];
