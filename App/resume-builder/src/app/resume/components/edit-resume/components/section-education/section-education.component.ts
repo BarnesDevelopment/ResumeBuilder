@@ -27,7 +27,6 @@ export class SectionEducationComponent extends UpsertSignal implements OnInit {
         this.onSave.emit(child);
       });
     }
-    console.log(this.node);
     this.form = new FormGroup({
       degree: new FormControl(this.node.children[0].content),
       major: new FormControl(this.node.children[1].content),

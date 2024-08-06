@@ -27,6 +27,7 @@ describe('SectionEducationComponent', () => {
   it('should create child nodes on creation', async () => {
     const { fixture } = await render(node);
 
+    expect(fixture.componentInstance.node.children.length).toBe(7);
     fixture.componentInstance.node.children.forEach((child, index) => {
       expect(child.nodeType).toBe(NodeType.ListItem);
       expect(child.order).toBe(index);
@@ -43,6 +44,14 @@ describe('SectionEducationComponent', () => {
     fixture.componentInstance.ngOnInit();
 
     expect(onSave).toHaveBeenCalledTimes(7);
+  });
+  it('should not emit saves if children already exist', async () => {
+    const { fixture } = await render(node);
+    const onSave = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+
+    fixture.componentInstance.ngOnInit();
+
+    expect(onSave).toHaveBeenCalledTimes(0);
   });
   it('should update nodes on text updates', async () => {
     const { fixture } = await render(node);
