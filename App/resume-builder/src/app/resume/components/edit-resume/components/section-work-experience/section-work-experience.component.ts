@@ -1,14 +1,80 @@
-import { Component, Input } from '@angular/core';
-import { ResumeTreeNode } from '../../../../../models/Resume';
+import { Component, Input, OnInit } from '@angular/core';
+import {
+  newResumeTreeNode,
+  NodeType,
+  ResumeTreeNode,
+} from '../../../../../models/Resume';
 import { UpsertSignal } from '../upsert-signal/upsert-signal';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { InputComponent } from '../../../../../common/input/input.component';
+import { MatInputModule } from '@angular/material/input';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-section-work-experience',
   standalone: true,
-  imports: [],
+  imports: [InputComponent, ReactiveFormsModule],
   templateUrl: './section-work-experience.component.html',
   styleUrl: './section-work-experience.component.scss',
 })
-export class SectionWorkExperienceComponent extends UpsertSignal {
+export class SectionWorkExperienceComponent
+  extends UpsertSignal
+  implements OnInit
+{
   @Input() node: ResumeTreeNode;
+  form: FormGroup;
+
+  ngOnInit(): void {
+    if (!this.node.children.length) {
+      this.CreateChildren();
+      this.node.children.forEach(child => {
+        this.onSave.emit(child);
+      });
+    }
+    this.form = new FormGroup({
+      title: new FormControl(this.node.children[0].content),
+      employer: new FormControl(this.node.children[1].content),
+      city: new FormControl(this.node.children[2].content),
+      state: new FormControl(this.node.children[3].content),
+      startDate: new FormControl(this.node.children[4].content),
+      endDate: new FormControl(this.node.children[5].content),
+    });
+    this.form.controls['title'].valueChanges.subscribe(value => {
+      this.node.children[0].content = value;
+      this.onSave.emit(this.node.children[0]);
+    });
+    this.form.controls['employer'].valueChanges.subscribe(value => {
+      this.node.children[1].content = value;
+      this.onSave.emit(this.node.children[1]);
+    });
+    this.form.controls['city'].valueChanges.subscribe(value => {
+      this.node.children[2].content = value;
+      this.onSave.emit(this.node.children[2]);
+    });
+    this.form.controls['state'].valueChanges.subscribe(value => {
+      this.node.children[3].content = value;
+      this.onSave.emit(this.node.children[3]);
+    });
+    this.form.controls['startDate'].valueChanges.subscribe(value => {
+      this.node.children[4].content = value;
+      this.onSave.emit(this.node.children[4]);
+    });
+    this.form.controls['endDate'].valueChanges.subscribe(value => {
+      this.node.children[5].content = value;
+      this.onSave.emit(this.node.children[5]);
+    });
+  }
+
+  CreateChildren() {
+    this.node.children = [
+      newResumeTreeNode(NodeType.ListItem, 0, this.node),
+      newResumeTreeNode(NodeType.ListItem, 1, this.node),
+      newResumeTreeNode(NodeType.ListItem, 2, this.node),
+      newResumeTreeNode(NodeType.ListItem, 3, this.node),
+      newResumeTreeNode(NodeType.ListItem, 4, this.node),
+      newResumeTreeNode(NodeType.ListItem, 5, this.node),
+    ];
+  }
 }
