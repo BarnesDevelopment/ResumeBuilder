@@ -56,7 +56,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
@@ -73,7 +73,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
@@ -324,7 +324,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
@@ -351,7 +351,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
@@ -375,7 +375,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
