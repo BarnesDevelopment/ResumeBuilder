@@ -296,8 +296,83 @@ describe('EditResumeComponent', () => {
       const saveButton = screen.getByText('Save');
       saveButton.click();
 
+      fixture.detectChanges();
+
       expect(fixture.componentInstance.saves.length).toBe(0);
       expect(fixture.componentInstance.deletes.length).toBe(0);
+    });
+    it('should save in order', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 1, rootNode),
+        newResumeTreeNode(NodeType.Section, 0, rootNode),
+        newResumeTreeNode(NodeType.Section, 2, rootNode),
+      ];
+
+      updateSpy
+        .mockReturnValueOnce(of(saves[1]))
+        .mockReturnValueOnce(of(saves[0]))
+        .mockReturnValueOnce(of(saves[2]));
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[1]);
+      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[0]);
+      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[2]);
+    });
+    it('should save in order of depth', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 0, rootNode), // depth 2
+        newResumeTreeNode(NodeType.Section, 1, rootNode), // depth 3
+        newResumeTreeNode(NodeType.Section, 2, rootNode), // depth 1
+      ];
+      saves[0].depth = 2;
+      saves[1].depth = 3;
+
+      updateSpy
+        .mockReturnValueOnce(of(saves[2]))
+        .mockReturnValueOnce(of(saves[0]))
+        .mockReturnValueOnce(of(saves[1]));
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[2]);
+      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[0]);
+      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[1]);
+    });
+    it('should save by depth and then order', async () => {
+      const saves = [
+        newResumeTreeNode(NodeType.Section, 1, rootNode), // depth 2
+        newResumeTreeNode(NodeType.Section, 0, rootNode), // depth 2
+        newResumeTreeNode(NodeType.Section, 0, rootNode), // depth 3
+        newResumeTreeNode(NodeType.Section, 3, rootNode), // depth 1
+        newResumeTreeNode(NodeType.Section, 4, rootNode), // depth 1
+      ];
+      saves[0].depth = 2;
+      saves[1].depth = 2;
+      saves[2].depth = 3;
+      saves[3].depth = 1;
+      saves[4].depth = 1;
+
+      updateSpy
+        .mockReturnValueOnce(of(saves[3]))
+        .mockReturnValueOnce(of(saves[4]))
+        .mockReturnValueOnce(of(saves[1]))
+        .mockReturnValueOnce(of(saves[0]))
+        .mockReturnValueOnce(of(saves[2]));
+      await render(saves);
+
+      const saveButton = screen.getByText('Save');
+      saveButton.click();
+
+      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[3]);
+      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[4]);
+      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[1]);
+      expect(updateSpy).toHaveBeenNthCalledWith(4, saves[0]);
+      expect(updateSpy).toHaveBeenNthCalledWith(5, saves[2]);
     });
   });
 });

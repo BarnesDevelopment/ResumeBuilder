@@ -1,24 +1,24 @@
 import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
+  newResumeTreeNode,
+  NodeType,
   ResumeTreeNode,
   SectionDisplayType,
-  NodeType,
-  newResumeTreeNode,
 } from '../../../models/Resume';
 import { Router } from '@angular/router';
 import { ResumeService } from '../../services/resume.service';
 import {
   FormControl,
   FormGroup,
-  Validators,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { Guid } from 'guid-typescript';
 import {
   BorderStyle,
-  ButtonStyle,
   ButtonComponent,
+  ButtonStyle,
 } from '../../../common/button/button.component';
 import { ToastrService } from 'ngx-toastr';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
@@ -26,7 +26,7 @@ import { InputComponent } from '../../../common/input/input.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResumeSectionComponent } from './components/resume-section/resume-section.component';
 import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
-import { combineLatest, Observable } from 'rxjs';
+import { concat, Observable, toArray } from 'rxjs';
 
 @Component({
   selector: 'app-edit-resume',
@@ -88,22 +88,39 @@ export class EditResumeComponent implements OnInit {
 
   save(): void {
     const apiCalls: Observable<any>[] = [];
-    this.saves = this.saves.filter(node => !this.deletes.includes(node.id));
-    this.saves.forEach(node => apiCalls.push(this.service.updateResume(node)));
-    this.deletes.forEach(id => apiCalls.push(this.service.deleteNode(id)));
+    this.saves = this.saves
+      .filter(node => !this.deletes.includes(node.id))
+      .sort(this.sortSaves());
+    apiCalls.push(
+      ...this.deletes.map(id => this.service.deleteNode(id)),
+      ...this.saves.map(node => this.service.updateResume(node)),
+    );
+
     if (apiCalls.length === 0) return;
-    combineLatest(apiCalls).subscribe({
-      next: () => {
-        this.saves = [];
-        this.deletes = [];
-        this.toaster.success('Resume saved successfully', 'Saved');
-        this.refreshPreview();
-        console.log('Resume saved successfully');
-      },
-      error: error => {
-        this.toaster.error('Error saving resume: ' + error, 'Error');
-      },
-    });
+
+    concat(...apiCalls)
+      .pipe(toArray())
+      .subscribe({
+        next: value => {
+          this.saves = [];
+          this.deletes = [];
+          this.toaster.success('Resume saved successfully', 'Saved');
+          this.refreshPreview();
+          console.log('Resume saved successfully');
+        },
+        error: error => {
+          this.toaster.error('Error saving resume: ' + error, 'Error');
+        },
+      });
+  }
+
+  sortSaves() {
+    return (a: ResumeTreeNode, b: ResumeTreeNode) => {
+      if (a.depth === b.depth) {
+        return a.order - b.order;
+      }
+      return a.depth - b.depth;
+    };
   }
 
   refreshPreview(): void {
