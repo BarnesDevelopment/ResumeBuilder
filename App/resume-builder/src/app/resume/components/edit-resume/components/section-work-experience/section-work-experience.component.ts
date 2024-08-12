@@ -7,15 +7,18 @@ import {
 import { UpsertSignal } from '../upsert-signal/upsert-signal';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { InputComponent } from '../../../../../common/input/input.component';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatNativeDateModule } from '@angular/material/core';
+import { SectionListComponent } from '../section-list/section-list.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-section-work-experience',
   standalone: true,
-  imports: [InputComponent, ReactiveFormsModule],
+  imports: [
+    InputComponent,
+    ReactiveFormsModule,
+    SectionListComponent,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './section-work-experience.component.html',
   styleUrl: './section-work-experience.component.scss',
 })
@@ -25,6 +28,7 @@ export class SectionWorkExperienceComponent
 {
   @Input() node: ResumeTreeNode;
   form: FormGroup;
+  loading: boolean = true;
 
   ngOnInit(): void {
     if (!this.node.children.length) {
@@ -65,6 +69,7 @@ export class SectionWorkExperienceComponent
       this.node.children[5].content = value;
       this.onSave.emit(this.node.children[5]);
     });
+    this.loading = false;
   }
 
   CreateChildren() {
@@ -75,6 +80,7 @@ export class SectionWorkExperienceComponent
       newResumeTreeNode(NodeType.ListItem, 3, this.node),
       newResumeTreeNode(NodeType.ListItem, 4, this.node),
       newResumeTreeNode(NodeType.ListItem, 5, this.node),
+      newResumeTreeNode(NodeType.List, 6, this.node),
     ];
   }
 }

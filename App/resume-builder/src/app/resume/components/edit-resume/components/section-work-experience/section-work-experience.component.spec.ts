@@ -26,9 +26,10 @@ describe('SectionWorkExperienceComponent', () => {
   it('should create child nodes on creation', async () => {
     const { fixture } = await render(node);
 
-    expect(fixture.componentInstance.node.children.length).toBe(6);
+    expect(fixture.componentInstance.node.children.length).toBe(7);
     fixture.componentInstance.node.children.forEach((child, index) => {
-      expect(child.nodeType).toBe(NodeType.ListItem);
+      if (index < 6) expect(child.nodeType).toBe(NodeType.ListItem);
+      else expect(child.nodeType).toBe(NodeType.List);
       expect(child.order).toBe(index);
       expect(child.parentId).toBe(node.id);
       expect(child.depth).toBe(node.depth + 1);
@@ -42,7 +43,7 @@ describe('SectionWorkExperienceComponent', () => {
 
     fixture.componentInstance.ngOnInit();
 
-    expect(onSave).toHaveBeenCalledTimes(6);
+    expect(onSave).toHaveBeenCalledTimes(7);
   });
   it('should not emit saves if children already exist', async () => {
     const { fixture } = await render(node);
@@ -52,71 +53,42 @@ describe('SectionWorkExperienceComponent', () => {
 
     expect(onSave).toHaveBeenCalledTimes(0);
   });
-  it('should update nodes on text updates', async () => {
-    const { fixture } = await render(node);
-
-    fireEvent.input(screen.getByTitle('title'), {
-      target: { value: 'title changed' },
+  describe('Changes', () => {
+    let instance, onSave;
+    beforeEach(async () => {
+      const { fixture } = await render(node);
+      onSave = jest.spyOn(fixture.componentInstance.onSave, 'emit');
+      instance = fixture.componentInstance;
+      fireEvent.input(screen.getByTitle('title'), {
+        target: { value: 'title changed' },
+      });
+      fireEvent.input(screen.getByTitle('employer'), {
+        target: { value: 'employer changed' },
+      });
+      fireEvent.input(screen.getByTitle('city'), {
+        target: { value: 'city changed' },
+      });
+      fireEvent.input(screen.getByTitle('state'), {
+        target: { value: 'state changed' },
+      });
+      fireEvent.input(screen.getByTitle('startDate'), {
+        target: { value: '1999-08-08' },
+      });
+      fireEvent.input(screen.getByTitle('endDate'), {
+        target: { value: '2000-08-08' },
+      });
     });
-    fireEvent.input(screen.getByTitle('employer'), {
-      target: { value: 'employer changed' },
+    it('should update nodes on text updates', () => {
+      expect(instance.node.children[0].content).toBe('title changed');
+      expect(instance.node.children[1].content).toBe('employer changed');
+      expect(instance.node.children[2].content).toBe('city changed');
+      expect(instance.node.children[3].content).toBe('state changed');
+      expect(instance.node.children[4].content).toBe('1999-08-08');
+      expect(instance.node.children[5].content).toBe('2000-08-08');
     });
-    fireEvent.input(screen.getByTitle('city'), {
-      target: { value: 'city changed' },
+    it('should emit saves on text updates', () => {
+      expect(onSave).toHaveBeenCalledTimes(6);
     });
-    fireEvent.input(screen.getByTitle('state'), {
-      target: { value: 'state changed' },
-    });
-    fireEvent.input(screen.getByTitle('startDate'), {
-      target: { value: '1999-08-08' },
-    });
-    fireEvent.input(screen.getByTitle('endDate'), {
-      target: { value: '2000-08-08' },
-    });
-
-    expect(fixture.componentInstance.node.children[0].content).toBe(
-      'title changed',
-    );
-    expect(fixture.componentInstance.node.children[1].content).toBe(
-      'employer changed',
-    );
-    expect(fixture.componentInstance.node.children[2].content).toBe(
-      'city changed',
-    );
-    expect(fixture.componentInstance.node.children[3].content).toBe(
-      'state changed',
-    );
-    expect(fixture.componentInstance.node.children[4].content).toBe(
-      '1999-08-08',
-    );
-    expect(fixture.componentInstance.node.children[5].content).toBe(
-      '2000-08-08',
-    );
-  });
-  it('should emit saves on text updates', async () => {
-    const { fixture } = await render(node);
-    const onSave = jest.spyOn(fixture.componentInstance.onSave, 'emit');
-
-    fireEvent.input(screen.getByTitle('title'), {
-      target: { value: 'title changed' },
-    });
-    fireEvent.input(screen.getByTitle('employer'), {
-      target: { value: 'employer changed' },
-    });
-    fireEvent.input(screen.getByTitle('city'), {
-      target: { value: 'city changed' },
-    });
-    fireEvent.input(screen.getByTitle('state'), {
-      target: { value: 'state changed' },
-    });
-    fireEvent.input(screen.getByTitle('startDate'), {
-      target: { value: '1999-08-08' },
-    });
-    fireEvent.input(screen.getByTitle('endDate'), {
-      target: { value: '2000-08-08' },
-    });
-
-    expect(onSave).toHaveBeenCalledTimes(6);
   });
 });
 
