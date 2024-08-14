@@ -80,6 +80,7 @@ export class EditResumeComponent implements OnInit {
       this.form.valueChanges.subscribe(() => {
         this.resume.content = this.form.get('title').value;
         this.resume.comments = this.form.get('comments').value;
+        this.queueSave(this.resume);
       });
 
       this.loading = false;
@@ -177,7 +178,6 @@ export class EditResumeComponent implements OnInit {
     const oldSave = this.saves.find(n => n.id === node.id);
     if (oldSave) this.saves.splice(this.saves.indexOf(oldSave), 1);
     this.saves.push(node);
-    console.log({ saves: this.saves });
   }
 
   queueDelete(id: Guid) {

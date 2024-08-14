@@ -106,6 +106,26 @@ describe('EditResumeComponent', () => {
           'New Comments',
         );
       });
+      describe('Save', () => {
+        it('should queue save on title change', async () => {
+          const component = await render();
+          const title = screen.getByTitle('title');
+          fireEvent.input(title, { target: { value: 'New Title' } });
+
+          expect(component.fixture.componentInstance.saves[0].content).toBe(
+            'New Title',
+          );
+        });
+        it('should queue save on comments change', async () => {
+          const component = await render();
+          const comments = screen.getByTitle('comments');
+          fireEvent.input(comments, { target: { value: 'New Comments' } });
+
+          expect(component.fixture.componentInstance.saves[0].comments).toBe(
+            'New Comments',
+          );
+        });
+      });
     });
     describe('Sections', () => {
       it('should add section', async () => {
