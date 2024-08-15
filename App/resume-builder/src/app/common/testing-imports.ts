@@ -25,6 +25,24 @@ export class SectionListComponentStub {
 
 @Component({
   standalone: true,
+  selector: 'app-section-education',
+  template: '',
+})
+export class SectionEducationComponentStub {
+  @Input() node: ResumeTreeNode;
+}
+
+@Component({
+  standalone: true,
+  selector: 'app-section-work-experience',
+  template: '',
+})
+export class SectionWorkExperienceComponentStub {
+  @Input() node: ResumeTreeNode;
+}
+
+@Component({
+  standalone: true,
   selector: 'app-personal-info',
   template: '',
 })

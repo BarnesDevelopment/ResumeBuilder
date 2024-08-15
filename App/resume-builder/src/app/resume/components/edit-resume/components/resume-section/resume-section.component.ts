@@ -14,6 +14,7 @@ import { SectionEducationComponent } from '../section-education/section-educatio
 import { SectionWorkExperienceComponent } from '../section-work-experience/section-work-experience.component';
 import { Guid } from 'guid-typescript';
 import { UpsertSignal } from '../upsert-signal/upsert-signal';
+import { ButtonComponent } from '../../../../../common/button/button.component';
 
 @Component({
   selector: 'app-resume-section',
@@ -25,6 +26,7 @@ import { UpsertSignal } from '../upsert-signal/upsert-signal';
     SectionParagraphComponent,
     SectionEducationComponent,
     SectionWorkExperienceComponent,
+    ButtonComponent,
   ],
   templateUrl: './resume-section.component.html',
   styleUrl: './resume-section.component.scss',
@@ -87,4 +89,41 @@ export class ResumeSectionComponent extends UpsertSignal implements OnInit {
 
   protected readonly SectionDisplayType = SectionDisplayType;
   protected readonly SectionDisplayTypeList = SectionDisplayTypeList;
+
+  RemoveItem($index: number) {
+    this.queueDelete(this.section.children[$index].id);
+    this.section.children.splice($index, 1);
+    this.ReorderChildren();
+  }
+
+  AddItem() {
+    switch (this.form.controls['type'].value) {
+      case SectionDisplayType.Education:
+        this.section.children.push(
+          newResumeTreeNode(
+            NodeType.Education,
+            this.section.children.length,
+            this.section,
+          ),
+        );
+        break;
+      case SectionDisplayType.WorkExperience:
+        this.section.children.push(
+          newResumeTreeNode(
+            NodeType.WorkExperience,
+            this.section.children.length,
+            this.section,
+          ),
+        );
+        break;
+    }
+    this.queueSave(this.section.children[this.section.children.length - 1]);
+  }
+
+  ReorderChildren() {
+    this.section.children.forEach((child, index) => {
+      child.order = index;
+      this.queueSave(child);
+    });
+  }
 }

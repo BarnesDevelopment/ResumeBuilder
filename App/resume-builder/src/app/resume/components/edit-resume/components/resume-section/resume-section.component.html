@@ -5,25 +5,43 @@
       <label for="type">Section type:</label>
       <select formControlName="type" id="type" title="type">
         <option value=""></option>
-        @for(displayType of SectionDisplayTypeList; track $index) {
+        @for (displayType of SectionDisplayTypeList; track $index) {
           <option [value]="displayType">{{ displayType }}</option>
         }
       </select>
     </div>
-    @switch(form.get('type').value) {
+    @switch (form.get('type').value) {
       @case (SectionDisplayType.List) {
         <app-section-list [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
       @case (SectionDisplayType.Paragraph) {
         <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
       }
-      @case (SectionDisplayType.Education){
-        <app-section-education [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-<!--        TODO: Make Extensible -->
+      @case (SectionDisplayType.Education) {
+        @for (child of section.children; track $index) {
+          <div class="list-item" data-cy="list-item">
+            <app-section-education [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+            @if (section.children.length > 1) {
+              <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
+            }
+            @if ($index === section.children.length - 1) {
+              <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
+            }
+          </div>
+        }
       }
       @case (SectionDisplayType.WorkExperience) {
-        <app-section-work-experience [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-<!--        TODO: Make Extensible-->
+        @for (child of section.children; track $index) {
+          <div class="list-item" data-cy="list-item">
+            <app-section-work-experience [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+            @if (section.children.length > 1) {
+              <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
+            }
+            @if ($index === section.children.length - 1) {
+              <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
+            }
+          </div>
+        }
       }
     }
   </form>

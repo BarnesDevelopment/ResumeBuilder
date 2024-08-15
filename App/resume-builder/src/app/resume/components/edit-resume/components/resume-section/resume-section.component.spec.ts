@@ -13,8 +13,12 @@ import {
   ResumeTreeNode,
   SectionListComponentStub,
   fireEvent,
+  SectionEducationComponentStub,
+  SectionWorkExperienceComponentStub,
 } from '../../../../../common/testing-imports';
 import { By } from '@angular/platform-browser';
+import { SectionEducationComponent } from '../section-education/section-education.component';
+import { SectionWorkExperienceComponent } from '../section-work-experience/section-work-experience.component';
 
 describe('ResumeSectionComponent', () => {
   let section: ResumeTreeNode;
@@ -122,6 +126,104 @@ describe('ResumeSectionComponent', () => {
         ).toBe(NodeType[option as keyof typeof SectionDisplayType]);
       },
     );
+    describe.each([
+      SectionDisplayType.Education,
+      SectionDisplayType.WorkExperience,
+    ])('Multiple Entry %s', (option: string) => {
+      async function selectOption(optionToSelect: string) {
+        const component = await render(section);
+        const select = component.debugElement.query(By.css('select'));
+        select.nativeElement.value = optionToSelect;
+        select.nativeElement.dispatchEvent(new Event('change'));
+        component.fixture.detectChanges();
+        return component;
+      }
+
+      it('should show plus button', async () => {
+        const component = await selectOption(option);
+
+        expect(screen.queryByTitle('sectionPlusButton')).toBeInTheDocument();
+      });
+      it('should not show minus button by default', async () => {
+        const component = await selectOption(option);
+
+        expect(
+          screen.queryByTitle('sectionMinusButton'),
+        ).not.toBeInTheDocument();
+      });
+      it('should add a new child when plus button is clicked', async () => {
+        const component = await selectOption(option);
+
+        const plusButton = screen.queryByTitle('sectionPlusButton');
+        fireEvent.click(plusButton);
+
+        expect(
+          component.fixture.componentInstance.section.children.length,
+        ).toBe(2);
+      });
+      it('should queue save when a new child is added', async () => {
+        const component = await selectOption(option);
+        const saveSpy = jest.spyOn(
+          component.fixture.componentInstance,
+          'queueSave',
+        );
+        const plusButton = screen.queryByTitle('sectionPlusButton');
+        fireEvent.click(plusButton);
+
+        expect(saveSpy).toHaveBeenCalledTimes(1);
+      });
+      it('should show minus button after adding', async () => {
+        const component = await selectOption(option);
+
+        const plusButton = screen.queryByTitle('sectionPlusButton');
+        fireEvent.click(plusButton);
+
+        expect(screen.queryAllByTitle('sectionMinusButton').length).toBe(2);
+      });
+      it('should remove a section when minus button is clicked', async () => {
+        const component = await selectOption(option);
+
+        const plusButton = screen.queryByTitle('sectionPlusButton');
+        fireEvent.click(plusButton);
+
+        const minusButton = screen.queryAllByTitle('sectionMinusButton')[1];
+        fireEvent.click(minusButton);
+
+        expect(
+          component.fixture.componentInstance.section.children.length,
+        ).toBe(1);
+      });
+      it('should queue delete when minus button is clicked', async () => {
+        const component = await selectOption(option);
+        const deleteSpy = jest.spyOn(
+          component.fixture.componentInstance,
+          'queueDelete',
+        );
+
+        const plusButton = screen.queryByTitle('sectionPlusButton');
+        fireEvent.click(plusButton);
+
+        const minusButton = screen.queryAllByTitle('sectionMinusButton')[1];
+        fireEvent.click(minusButton);
+
+        expect(deleteSpy).toHaveBeenCalledTimes(1);
+      });
+      it('should reorder children when removing', async () => {
+        const component = await selectOption(option);
+
+        fireEvent.click(screen.queryByTitle('sectionPlusButton'));
+        fireEvent.click(screen.queryByTitle('sectionPlusButton'));
+
+        const minusButton = screen.queryAllByTitle('sectionMinusButton')[0];
+        fireEvent.click(minusButton);
+
+        component.fixture.componentInstance.section.children.forEach(
+          (child, index) => {
+            expect(child.order).toBe(index);
+          },
+        );
+      });
+    });
   });
   describe('Load Data', () => {
     it('should load titles', async () => {
@@ -241,6 +343,11 @@ const render = async (section: ResumeTreeNode) => {
     imports: [],
     importOverrides: [
       { remove: SectionListComponent, add: SectionListComponentStub },
+      { remove: SectionEducationComponent, add: SectionEducationComponentStub },
+      {
+        remove: SectionWorkExperienceComponent,
+        add: SectionWorkExperienceComponentStub,
+      },
     ],
   });
 };
