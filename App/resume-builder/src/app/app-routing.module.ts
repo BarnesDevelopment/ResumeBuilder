@@ -7,7 +7,6 @@ import { EditResumeComponent } from './resume/components/edit-resume/edit-resume
 import { LoginCallbackComponent } from './services/auth/callbacks/login-callback/login-callback.component';
 import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callback/logout-callback.component';
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
-import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   // { path: '**', canActivate: [AuthGuard] },
