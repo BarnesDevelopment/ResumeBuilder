@@ -1,4 +1,4 @@
-import { provideRouter, Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 import { render, RenderResult } from '@testing-library/angular';
 import { APP_BASE_HREF, CommonModule } from '@angular/common';
@@ -12,6 +12,7 @@ interface TestRenderOptions<T> {
   providers?: unknown[];
   declarations?: unknown[];
   componentProperties?: Partial<T>;
+  componentInputs?: Partial<T>;
   routes?: Routes;
   importOverrides?: ImportOverride[];
 }
@@ -27,6 +28,7 @@ export async function renderRootComponent<T>(
     imports = [],
     providers = [],
     componentProperties = {},
+    componentInputs = {},
     declarations = [],
     routes = [],
     importOverrides = [],
@@ -49,6 +51,7 @@ export async function renderRootComponent<T>(
     ],
     schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
     componentProperties,
+    componentInputs,
     configureTestBed: testBed => {
       testBed.overrideComponent(component, {
         remove: { imports: importOverrides.map(x => x.remove) },

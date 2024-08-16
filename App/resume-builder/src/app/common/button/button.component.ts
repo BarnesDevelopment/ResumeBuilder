@@ -3,24 +3,26 @@ import { Router } from '@angular/router';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
 
 @Component({
-    selector: 'app-button',
-    templateUrl: './button.component.html',
-    styleUrls: ['./button.component.scss'],
-    standalone: true,
+  selector: 'app-button',
+  templateUrl: './button.component.html',
+  styleUrls: ['./button.component.scss'],
+  standalone: true,
 })
 export class ButtonComponent {
   @Input() href: string = '';
   @Input() buttonStyle: ButtonStyle = ButtonStyle.Primary;
   @Input() borderStyle: BorderStyle = BorderStyle.Dark;
   @Input() queryParams: any = {};
-  private _ignoreClick: boolean;
+  private _ignoreClick: boolean = false;
   @Input()
   get ignoreClick() {
     return this._ignoreClick;
   }
+
   set ignoreClick(value: any) {
     this._ignoreClick = coerceBooleanProperty(value);
   }
+
   @Input() onClick: any = () => {};
 
   constructor(private router: Router) {}
