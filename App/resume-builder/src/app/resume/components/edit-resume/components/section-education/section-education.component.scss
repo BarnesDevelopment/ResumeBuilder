@@ -1,8 +1,10 @@
 @import "../../../../../../variables";
+
 .education {
   display: flex;
   flex-direction: column;
-  padding: 1rem 0 1rem 0;
+  padding: 1rem 0 1rem 2rem;
+
   .row {
     display: flex;
     flex-direction: row;

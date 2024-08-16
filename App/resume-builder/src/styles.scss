@@ -3,10 +3,22 @@
 @import "variables";
 @import "../node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css";
 @import "https://fonts.googleapis.com/icon?family=Material+Icons";
+
 body {
   margin: 0;
   padding: 0;
   background-color: $background;
   font-family: "Roboto", "Courier New", courier, sans-serif;
   color: $dark;
+}
+
+.division {
+  margin: 1rem 1rem 0 1rem;
+  padding-left: 3rem;
+  border-top: 2px solid $dark;
+
+  &.light {
+    border-color: #d2d2d2;
+    margin-right: 3rem;
+  }
 }

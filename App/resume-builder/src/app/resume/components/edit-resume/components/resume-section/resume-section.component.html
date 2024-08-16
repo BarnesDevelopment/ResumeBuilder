@@ -1,5 +1,5 @@
 <div>
-  <form [formGroup]="form">
+  <div [formGroup]="form" class="division">
     <app-input formControlName="name">Section title</app-input>
     <div class="select">
       <label for="type">Section type:</label>
@@ -10,39 +10,48 @@
         }
       </select>
     </div>
-    @switch (form.get('type').value) {
-      @case (SectionDisplayType.List) {
-        <app-section-list [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-      }
-      @case (SectionDisplayType.Paragraph) {
-        <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-      }
-      @case (SectionDisplayType.Education) {
-        @for (child of section.children; track $index) {
-          <div class="list-item" data-cy="list-item">
-            <app-section-education [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-            @if (section.children.length > 1) {
-              <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
+    <div class="section">
+      @switch (form.get('type').value) {
+        @case (SectionDisplayType.List) {
+          <app-section-list [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+        }
+        @case (SectionDisplayType.Paragraph) {
+          <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+        }
+        @case (SectionDisplayType.Education) {
+          @for (child of section.children; track $index) {
+            <div class="section-item">
+              <app-section-education [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+              @if (section.children.length > 1) {
+                <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
+              }
+              @if ($index === section.children.length - 1) {
+                <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
+              }
+
+            </div>
+            @if (section.children.length > 1 && $index !== section.children.length - 1) {
+              <div class="division light"></div>
             }
-            @if ($index === section.children.length - 1) {
-              <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
+          }
+        }
+        @case (SectionDisplayType.WorkExperience) {
+          @for (child of section.children; track $index) {
+            <div class="section-item">
+              <app-section-work-experience [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+              @if (section.children.length > 1) {
+                <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
+              }
+              @if ($index === section.children.length - 1) {
+                <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
+              }
+            </div>
+            @if (section.children.length > 1 && $index !== section.children.length - 1) {
+              <div class="division light"></div>
             }
-          </div>
+          }
         }
       }
-      @case (SectionDisplayType.WorkExperience) {
-        @for (child of section.children; track $index) {
-          <div class="list-item" data-cy="list-item">
-            <app-section-work-experience [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
-            @if (section.children.length > 1) {
-              <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
-            }
-            @if ($index === section.children.length - 1) {
-              <app-button title="sectionPlusButton" (click)="AddItem()" ignoreClick>+</app-button>
-            }
-          </div>
-        }
-      }
-    }
-  </form>
+    </div>
+  </div>
 </div>
