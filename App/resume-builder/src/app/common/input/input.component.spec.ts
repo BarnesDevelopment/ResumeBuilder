@@ -2,6 +2,7 @@ import { screen } from '@testing-library/angular';
 import { InputComponent } from './input.component';
 import { renderRootComponent } from '../RenderRootComponent';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
 
 describe('InputComponent', () => {
   beforeEach(() => {
@@ -9,8 +10,14 @@ describe('InputComponent', () => {
   });
 
   it('should show label', async () => {
-    await render('Test');
+    await renderContainer('Test');
+
     expect(screen.getByText('Test:')).toBeTruthy();
+  });
+
+  it('should have correct title', async () => {
+    await render('Test');
+    expect(screen.getByTitle('Test')).toBeTruthy();
   });
 
   it('should be of correct input type by default', async () => {
@@ -52,6 +59,15 @@ describe('InputComponent', () => {
   const render = async (title: string) => {
     return await renderRootComponent(InputComponent, {
       componentProperties: {
+        formControlName: title,
+      },
+      imports: [FormsModule, ReactiveFormsModule],
+    });
+  };
+
+  const renderContainer = async (title: string) => {
+    return await renderRootComponent(InputContainerComponent, {
+      componentProperties: {
         title,
       },
       imports: [FormsModule, ReactiveFormsModule],
@@ -65,7 +81,7 @@ describe('InputComponent', () => {
   ) => {
     return await renderRootComponent(InputComponent, {
       componentProperties: {
-        title,
+        formControlName: title,
         type,
         errorMessage,
       },
@@ -73,3 +89,14 @@ describe('InputComponent', () => {
     });
   };
 });
+
+@Component({
+  standalone: true,
+  selector: 'app-input-container',
+  template:
+    '<app-input formControlName="formControlName">{{title}}</app-input>',
+  imports: [InputComponent],
+})
+class InputContainerComponent {
+  @Input() title: string;
+}
