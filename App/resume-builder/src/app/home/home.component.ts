@@ -9,6 +9,7 @@ import { ResumeService } from '../resume/services/resume.service';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { MatCardModule } from '@angular/material/card';
 import { LoginSplashScreenComponent } from '../common/login-splash-screen/login-splash-screen.component';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -29,9 +30,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    setTimeout(() => {
-      if (this.isLoggedIn) this.getResumes();
-    }, 2000);
+    if (this.isLoggedIn) this.getResumes();
   }
 
   getResumes() {
