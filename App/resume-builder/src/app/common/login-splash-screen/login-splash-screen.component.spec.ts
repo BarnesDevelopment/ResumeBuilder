@@ -1,21 +1,23 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LoginSplashScreenComponent } from './login-splash-screen.component';
+import { fireEvent, renderRootComponent, screen } from '../testing-imports';
+import { OAuthService } from 'angular-oauth2-oidc';
 
 describe('LoginSplashScreenComponent', () => {
-  let component: LoginSplashScreenComponent;
-  let fixture: ComponentFixture<LoginSplashScreenComponent>;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      declarations: [LoginSplashScreenComponent]
+  let spy;
+  beforeEach(async () => {
+    spy = jest.spyOn(MockOAuthService.prototype, 'initCodeFlow');
+    await renderRootComponent(LoginSplashScreenComponent, {
+      providers: [{ provide: OAuthService, useClass: MockOAuthService }],
     });
-    fixture = TestBed.createComponent(LoginSplashScreenComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    fireEvent.click(screen.getByText('Login'));
+
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
+
+class MockOAuthService {
+  initCodeFlow() {}
+}

@@ -40,9 +40,11 @@ describe('AuthInterceptor', () => {
 
     expect(handler).toHaveBeenCalledTimes(1);
 
-    const mock = handler.mock.calls[0][0];
+    const lastCall = handler.mock.calls[0][0];
     expect(
-      mock.headers.lazyUpdate.filter(x => x.name == 'Authorization')[0].value,
+      lastCall.headers.lazyUpdate.filter(x => x.name == 'Authorization')[0]
+        .value,
     ).toEqual('Bearer MyAccessToken');
+    expect(lastCall.url).toEqual('My.Domain.net');
   });
 });
