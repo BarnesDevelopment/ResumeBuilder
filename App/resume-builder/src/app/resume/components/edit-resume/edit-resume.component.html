@@ -8,12 +8,24 @@
       <app-input formControlName="title">Title</app-input>
       <app-input formControlName="comments">Comments</app-input>
       <app-personal-info [node]="resume.children[0]" />
-      @for (section of sections(); track $index) {
-        <app-resume-section
-          [section]="section"
-          (onSave)="queueSave($event)"
-          (onDelete)="queueDelete($event)"
-        />
+      @for (section of resume.children; track $index) {
+        <div class="section-item" data-testid="section">
+          <app-resume-section
+            [section]="section"
+            (onSave)="queueSave($event)"
+            (onDelete)="queueDelete($event)"
+          />
+          <div class="button">
+            <app-button
+              class="remove"
+              ignoreClick
+              [buttonStyle]="ButtonStyle.Primary"
+              [borderStyle]="BorderStyle.Dark"
+              (click)="removeSection($index)"
+            >Remove Section
+            </app-button>
+          </div>
+        </div>
       }
       <div class="button">
         <app-button

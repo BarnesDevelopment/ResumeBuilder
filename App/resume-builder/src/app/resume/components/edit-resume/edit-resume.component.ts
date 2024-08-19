@@ -69,6 +69,7 @@ export class EditResumeComponent implements OnInit {
     this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
+      console.log({ res });
 
       this.refreshPreview();
 
@@ -182,10 +183,25 @@ export class EditResumeComponent implements OnInit {
 
   queueDelete(id: Guid) {
     this.deletes.push(id);
-    console.log({ deletes: this.deletes });
   }
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
   protected readonly SectionDisplayType = SectionDisplayType;
+
+  removeSection($index: number) {
+    console.log('Removing section at index: ' + $index);
+    //TODO: something is broken here
+    this.queueDelete(this.resume.children[$index + 1].id);
+    console.log(this.resume.children.splice($index + 1, 1));
+    this.ReorderChildren();
+  }
+
+  ReorderChildren() {
+    this.resume.children.forEach((child, index) => {
+      child.order = index;
+      this.queueSave(child);
+    });
+    console.log({ children: this.resume.children });
+  }
 }

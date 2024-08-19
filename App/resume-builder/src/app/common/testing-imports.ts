@@ -16,6 +16,15 @@ export {
 
 @Component({
   standalone: true,
+  selector: 'app-resume-section',
+  template: '',
+})
+export class ResumeSectionComponentStub {
+  @Input() section: ResumeTreeNode;
+}
+
+@Component({
+  standalone: true,
   selector: 'app-section-list',
   template: '',
 })

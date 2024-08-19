@@ -5,6 +5,7 @@ import {
   NodeType,
   PersonalInfoComponentStub,
   renderRootComponent,
+  ResumeSectionComponentStub,
   ResumeTreeNode,
   screen,
 } from '../../../common/testing-imports';
@@ -16,7 +17,7 @@ import { Observable, of, throwError } from 'rxjs';
 import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { newResumeTreeNode } from '../../../models/Resume';
-import 'jest';
+import { ResumeSectionComponent } from './components/resume-section/resume-section.component';
 
 describe('EditResumeComponent', () => {
   let rootNode: ResumeTreeNode;
@@ -81,11 +82,6 @@ describe('EditResumeComponent', () => {
       });
     });
   });
-  describe('Load Data', () => {
-    describe('Sections', () => {
-      //load sections
-    });
-  });
   describe('Edit', () => {
     describe('Title', () => {
       it('should update title', async () => {
@@ -128,33 +124,81 @@ describe('EditResumeComponent', () => {
       });
     });
     describe('Sections', () => {
-      it('should add section', async () => {
-        const component = await render();
-        const addSectionButton = screen.getByText('Add Section');
+      describe('Add', () => {
+        it('should add section', async () => {
+          const component = await render();
 
-        addSectionButton.click();
-        component.fixture.detectChanges();
+          fireEvent.click(screen.getByText('Add Section'));
 
-        expect(
-          component.debugElement.queryAll(By.css('app-resume-section')).length,
-        ).toBe(1);
-        expect(component.fixture.componentInstance.resume.children.length).toBe(
-          2,
-        );
-        expect(
-          component.fixture.componentInstance.resume.children[1].nodeType,
-        ).toBe(NodeType.Section);
-        expect(
-          component.fixture.componentInstance.resume.children[1].children
-            .length,
-        ).toBe(0);
+          expect(
+            component.debugElement.queryAll(By.css('app-resume-section'))
+              .length,
+          ).toBe(1);
+          expect(
+            component.fixture.componentInstance.resume.children.length,
+          ).toBe(2);
+          expect(
+            component.fixture.componentInstance.resume.children[1].nodeType,
+          ).toBe(NodeType.Section);
+          expect(
+            component.fixture.componentInstance.resume.children[1].children
+              .length,
+          ).toBe(0);
+        });
       });
 
-      it('should remove section', async () => {
-        //TODO: add remove functionality
+      describe('Remove', () => {
+        it('should remove section', async () => {
+          const component = await render();
+
+          fireEvent.click(screen.getByText('Add Section'));
+          fireEvent.click(screen.getByText('Add Section'));
+
+          expect(screen.getAllByTestId('section').length).toBe(2);
+
+          fireEvent.click(screen.getAllByText('Remove Section')[0]);
+
+          expect(screen.getAllByTestId('section').length).toBe(1);
+        });
+
+        it('should reorder sections', async () => {
+          const component = await render();
+
+          fireEvent.click(screen.getByText('Add Section'));
+          fireEvent.click(screen.getByText('Add Section'));
+          fireEvent.click(screen.getByText('Add Section'));
+
+          const ids = [
+            component.fixture.componentInstance.resume.children[0].id,
+            component.fixture.componentInstance.resume.children[2].id,
+            component.fixture.componentInstance.resume.children[3].id,
+          ];
+
+          fireEvent.click(screen.getAllByText('Remove Section')[0]);
+
+          component.fixture.componentInstance.resume.children.forEach(
+            (child, index) => {
+              expect(child.order).toBe(index);
+              expect(child.id).toBe(ids[index]);
+            },
+          );
+        });
+
+        it('should queue delete on section removal', async () => {
+          const component = await render();
+
+          fireEvent.click(screen.getByText('Add Section'));
+
+          const expectedId =
+            component.fixture.componentInstance.resume.children[1].id;
+
+          fireEvent.click(screen.getAllByText('Remove Section')[0]);
+
+          expect(component.fixture.componentInstance.deletes[0]).toBe(
+            expectedId,
+          );
+        });
       });
-      //add section
-      //remove section
     });
   });
   //TODO: PDF Preview
@@ -414,6 +458,10 @@ const render = async (saves: ResumeTreeNode[] = [], deletes: Guid[] = []) => {
       {
         remove: NgxExtendedPdfViewerModule,
         add: NgxExtendedPdfViewerComponentStub,
+      },
+      {
+        remove: ResumeSectionComponent,
+        add: ResumeSectionComponentStub,
       },
     ],
   });
