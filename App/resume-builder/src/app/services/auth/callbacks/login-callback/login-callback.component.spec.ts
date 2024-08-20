@@ -1,5 +1,3 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { LoginCallbackComponent } from './login-callback.component';
 import { renderRootComponent } from '../../../../common/testing-imports';
 import { Router } from '@angular/router';
@@ -11,7 +9,10 @@ describe('LoginCallbackComponent', () => {
     await renderRootComponent(LoginCallbackComponent, {});
   });
 
-  it('should navigate', () => {
-    expect(router).toHaveBeenCalledWith(['/'], { replaceUrl: true });
+  it('should navigate', done => {
+    setTimeout(() => {
+      expect(router).toHaveBeenCalledWith(['/'], { replaceUrl: true });
+      done();
+    }, 2000);
   });
 });

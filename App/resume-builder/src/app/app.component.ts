@@ -17,6 +17,6 @@ export class AppComponent {
   public configure() {
     this.oauthService.configure(authConfig);
     this.oauthService.setupAutomaticSilentRefresh();
-    this.oauthService.loadDiscoveryDocumentAndTryLogin();
+    this.oauthService.loadDiscoveryDocumentAndTryLogin().then(() => {});
   }
 }
