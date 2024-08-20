@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  QueryList,
-  Signal,
-  signal,
-  ViewChildren,
-} from '@angular/core';
+import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -109,7 +102,7 @@ export class EditResumeComponent implements OnInit {
     concat(...apiCalls)
       .pipe(toArray())
       .subscribe({
-        next: value => {
+        next: () => {
           this.saves = [];
           this.deletes = [];
           this.toaster.success('Resume saved successfully', 'Saved');
@@ -148,10 +141,6 @@ export class EditResumeComponent implements OnInit {
   }
 
   removeSection($index: number) {
-    console.log({
-      index: $index,
-      children: this.resume.children[$index].id,
-    });
     this.queueDelete(this.resume.children[$index].id);
     this.resume.children = this.resume.children.filter((_, i) => i !== $index);
     this.reorderChildren();

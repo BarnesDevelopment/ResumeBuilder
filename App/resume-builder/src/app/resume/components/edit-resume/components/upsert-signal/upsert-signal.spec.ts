@@ -34,6 +34,20 @@ describe('UpsertSignal', () => {
     expect(deleteSpy).toHaveBeenCalledTimes(1);
     expect(deleteSpy).toHaveBeenCalledWith(node.id);
   });
+  it('should emit delete for all children recursively', async () => {
+    const { fixture } = await renderRootComponent(UpsertSignal);
+    deleteSpy = jest.spyOn(fixture.componentInstance.onDelete, 'emit');
+    const node = newResumeTreeNode(NodeType.Education, 0, root);
+    root.children.push(node);
+    node.children.push(newResumeTreeNode(NodeType.Education, 0, node));
+    fixture.componentInstance.queueDeleteRecursive(root);
+
+    expect(deleteSpy).toHaveBeenCalledTimes(3);
+    expect(deleteSpy).toHaveBeenCalledWith(root.id);
+    expect(deleteSpy).toHaveBeenCalledWith(node.id);
+    expect(deleteSpy).toHaveBeenCalledWith(node.children[0].id);
+  });
+
   it('should emit save when queued', async () => {
     const { fixture } = await renderRootComponent(UpsertSignal);
     saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');

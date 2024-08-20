@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, output } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -12,7 +12,6 @@ import { SectionListComponent } from '../section-list/section-list.component';
 import { SectionParagraphComponent } from '../section-paragraph/section-paragraph.component';
 import { SectionEducationComponent } from '../section-education/section-education.component';
 import { SectionWorkExperienceComponent } from '../section-work-experience/section-work-experience.component';
-import { Guid } from 'guid-typescript';
 import { UpsertSignal } from '../upsert-signal/upsert-signal';
 import { ButtonComponent } from '../../../../../common/button/button.component';
 
@@ -56,7 +55,9 @@ export class ResumeSectionComponent extends UpsertSignal implements OnChanges {
   UpdateSectionType(value: SectionDisplayType) {
     const shouldDelete = this.section.children.length > 0;
     if (shouldDelete) {
-      this.queueDelete(this.section.children[0].id);
+      this.section.children.forEach(child => {
+        this.queueDelete(child.id);
+      });
     }
     switch (value) {
       case SectionDisplayType.List:
@@ -91,7 +92,7 @@ export class ResumeSectionComponent extends UpsertSignal implements OnChanges {
   protected readonly SectionDisplayTypeList = SectionDisplayTypeList;
 
   RemoveItem($index: number) {
-    this.queueDelete(this.section.children[$index].id);
+    this.queueDeleteRecursive(this.section.children[$index]);
     this.section.children.splice($index, 1);
     this.ReorderChildren();
   }

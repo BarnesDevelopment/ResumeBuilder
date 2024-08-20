@@ -17,4 +17,9 @@ export class UpsertSignal {
   queueDelete(id: Guid) {
     this.onDelete.emit(id);
   }
+
+  queueDeleteRecursive(node: ResumeTreeNode) {
+    this.onDelete.emit(node.id);
+    node.children.forEach(child => this.queueDeleteRecursive(child));
+  }
 }

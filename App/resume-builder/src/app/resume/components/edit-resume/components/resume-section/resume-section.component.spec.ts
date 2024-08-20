@@ -140,12 +140,12 @@ describe('ResumeSectionComponent', () => {
       }
 
       it('should show plus button', async () => {
-        const component = await selectOption(option);
+        await selectOption(option);
 
         expect(screen.queryByTitle('sectionPlusButton')).toBeInTheDocument();
       });
       it('should not show minus button by default', async () => {
-        const component = await selectOption(option);
+        await selectOption(option);
 
         expect(
           screen.queryByTitle('sectionMinusButton'),
@@ -173,7 +173,7 @@ describe('ResumeSectionComponent', () => {
         expect(saveSpy).toHaveBeenCalledTimes(1);
       });
       it('should show minus button after adding', async () => {
-        const component = await selectOption(option);
+        await selectOption(option);
 
         const plusButton = screen.queryByTitle('sectionPlusButton');
         fireEvent.click(plusButton);
@@ -197,7 +197,7 @@ describe('ResumeSectionComponent', () => {
         const component = await selectOption(option);
         const deleteSpy = jest.spyOn(
           component.fixture.componentInstance,
-          'queueDelete',
+          'queueDeleteRecursive',
         );
 
         const plusButton = screen.queryByTitle('sectionPlusButton');

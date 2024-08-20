@@ -16,12 +16,12 @@
           <app-section-list [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
         }
         @case (SectionDisplayType.Paragraph) {
-          <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+          <app-section-paragraph [node]="section.children[0]" (onSave)="queueSave($event)" />
         }
         @case (SectionDisplayType.Education) {
           @for (child of section.children; track $index) {
             <div class="section-item">
-              <app-section-education [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+              <app-section-education [node]="child" (onSave)="queueSave($event)" />
               @if (section.children.length > 1) {
                 <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
               }
@@ -38,7 +38,7 @@
         @case (SectionDisplayType.WorkExperience) {
           @for (child of section.children; track $index) {
             <div class="section-item">
-              <app-section-work-experience [node]="child" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+              <app-section-work-experience [node]="child" (onSave)="queueSave($event)" />
               @if (section.children.length > 1) {
                 <app-button title="sectionMinusButton" (click)="RemoveItem($index)" ignoreClick>&nbsp;&mdash;&nbsp;</app-button>
               }
