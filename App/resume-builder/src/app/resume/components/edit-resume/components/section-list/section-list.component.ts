@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -19,11 +19,11 @@ import { UpsertSignal } from '../upsert-signal/upsert-signal';
   templateUrl: './section-list.component.html',
   styleUrl: './section-list.component.scss',
 })
-export class SectionListComponent extends UpsertSignal implements OnInit {
+export class SectionListComponent extends UpsertSignal implements OnChanges {
   @Input() node: ResumeTreeNode;
   form: FormArray<FormControl<string>>;
 
-  ngOnInit() {
+  ngOnChanges() {
     this.form = new FormArray([]);
     if (!this.node.children.length) this.AddListItem();
     else {

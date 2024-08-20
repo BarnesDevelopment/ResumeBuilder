@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, output } from '@angular/core';
+import { Component, Input, OnChanges, output } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -31,12 +31,12 @@ import { ButtonComponent } from '../../../../../common/button/button.component';
   templateUrl: './resume-section.component.html',
   styleUrl: './resume-section.component.scss',
 })
-export class ResumeSectionComponent extends UpsertSignal implements OnInit {
+export class ResumeSectionComponent extends UpsertSignal implements OnChanges {
   @Input() section: ResumeTreeNode;
 
   form: FormGroup;
 
-  ngOnInit() {
+  ngOnChanges() {
     this.form = new FormGroup({
       name: new FormControl(this.section.content),
       type: new FormControl(''),

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { ResumeTreeNode } from '../../../../../models/Resume';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { UpsertSignal } from '../upsert-signal/upsert-signal';
@@ -10,12 +10,15 @@ import { UpsertSignal } from '../upsert-signal/upsert-signal';
   templateUrl: './section-paragraph.component.html',
   styleUrl: './section-paragraph.component.scss',
 })
-export class SectionParagraphComponent extends UpsertSignal implements OnInit {
+export class SectionParagraphComponent
+  extends UpsertSignal
+  implements OnChanges
+{
   @Input() node: ResumeTreeNode;
 
   form: FormGroup;
 
-  ngOnInit() {
+  ngOnChanges() {
     this.form = new FormGroup({
       paragraph: new FormControl(this.node.content),
     });

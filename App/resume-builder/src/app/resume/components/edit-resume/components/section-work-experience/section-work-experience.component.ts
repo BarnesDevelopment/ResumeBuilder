@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -24,13 +24,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class SectionWorkExperienceComponent
   extends UpsertSignal
-  implements OnInit
+  implements OnChanges
 {
   @Input() node: ResumeTreeNode;
   form: FormGroup;
   loading: boolean = true;
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     if (!this.node.children.length) {
       this.CreateChildren();
       this.node.children.forEach(child => {

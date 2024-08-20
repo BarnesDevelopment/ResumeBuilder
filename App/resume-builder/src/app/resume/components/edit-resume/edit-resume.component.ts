@@ -1,4 +1,11 @@
-import { Component, OnInit, QueryList, ViewChildren } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  QueryList,
+  Signal,
+  signal,
+  ViewChildren,
+} from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -69,7 +76,6 @@ export class EditResumeComponent implements OnInit {
     this.platform = navigator.platform;
     this.service.getResume(this.router.url.split('/')[2]).subscribe(res => {
       this.resume = res;
-      console.log({ res });
 
       this.refreshPreview();
 
@@ -132,11 +138,6 @@ export class EditResumeComponent implements OnInit {
   }
 
   //region Section
-  sections(): ResumeTreeNode[] {
-    return this.resume.children.filter(
-      node => node.nodeType === NodeType.Section,
-    );
-  }
 
   addSection(): void {
     const index = this.resume.children.length;
@@ -144,6 +145,23 @@ export class EditResumeComponent implements OnInit {
     this.resume.children.push(
       newResumeTreeNode(NodeType.Section, index, this.resume),
     );
+  }
+
+  removeSection($index: number) {
+    console.log({
+      index: $index,
+      children: this.resume.children[$index].id,
+    });
+    this.queueDelete(this.resume.children[$index].id);
+    this.resume.children = this.resume.children.filter((_, i) => i !== $index);
+    this.reorderChildren();
+  }
+
+  reorderChildren() {
+    this.resume.children.forEach((child, index) => {
+      child.order = index;
+      this.queueSave(child);
+    });
   }
 
   //endregion
@@ -188,20 +206,4 @@ export class EditResumeComponent implements OnInit {
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
   protected readonly SectionDisplayType = SectionDisplayType;
-
-  removeSection($index: number) {
-    console.log('Removing section at index: ' + $index);
-    //TODO: something is broken here
-    this.queueDelete(this.resume.children[$index + 1].id);
-    console.log(this.resume.children.splice($index + 1, 1));
-    this.ReorderChildren();
-  }
-
-  ReorderChildren() {
-    this.resume.children.forEach((child, index) => {
-      child.order = index;
-      this.queueSave(child);
-    });
-    console.log({ children: this.resume.children });
-  }
 }

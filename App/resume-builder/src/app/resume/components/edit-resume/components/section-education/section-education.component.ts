@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import {
   newResumeTreeNode,
   NodeType,
@@ -15,12 +15,15 @@ import { InputComponent } from '../../../../../common/input/input.component';
   templateUrl: './section-education.component.html',
   styleUrl: './section-education.component.scss',
 })
-export class SectionEducationComponent extends UpsertSignal implements OnInit {
+export class SectionEducationComponent
+  extends UpsertSignal
+  implements OnChanges
+{
   @Input() node: ResumeTreeNode;
 
   form: FormGroup;
 
-  ngOnInit() {
+  ngOnChanges() {
     if (!this.node.children.length) {
       this.CreateChildren();
       this.node.children.forEach(child => {
