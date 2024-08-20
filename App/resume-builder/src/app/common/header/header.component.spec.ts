@@ -1,8 +1,9 @@
 import { HeaderComponent } from './header.component';
-import { renderRootComponent } from '../RenderRootComponent';
 import { User } from '../../models/User';
-import { fireEvent, screen } from '@testing-library/angular';
+import { within } from '@testing-library/angular';
 import { Router } from '@angular/router';
+import { OAuthService } from 'angular-oauth2-oidc';
+import { renderRootComponent, fireEvent, screen } from '../testing-imports';
 
 describe('HeaderComponent', () => {
   const user: User = {
@@ -40,35 +41,46 @@ describe('HeaderComponent', () => {
       expect(button).toBeTruthy();
     });
 
-    it('should have correct login href', async () => {
+    it('should call oauth login method', async () => {
+      const spy = jest.spyOn(MockOAuthService.prototype, 'initCodeFlow');
       await render();
       const button = screen.getByTitle('login');
-      expect(button.getAttribute('href')).toBe('/login');
+      fireEvent.click(button);
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     it('should have correct login button text', async () => {
       await render();
       const button = screen.getByTitle('login');
-      expect(button.getAttribute('text')).toBe('Login');
+      expect(within(button).queryByText('Login')).toBeInTheDocument();
     });
   });
 
   describe('User', () => {
+    beforeEach(() => {
+      jest
+        .spyOn(MockOAuthService.prototype, 'getIdentityClaims')
+        .mockReturnValue({ name: 'full name' });
+      jest
+        .spyOn(MockOAuthService.prototype, 'getIdToken')
+        .mockReturnValue('fakeIdToken');
+    });
+
     it('should display username if user is not null', async () => {
-      await render(user);
+      await render();
       expect(screen.getByText('full name')).toBeTruthy();
     });
 
     describe('User Panel', () => {
       it('should show user panel when toggle is clicked', async () => {
-        await render(user);
+        await render();
         const userButton = screen.getByText('full name');
         fireEvent.click(userButton);
-        expect(screen.getByTitle('userPanel')).toBeTruthy();
+        expect(screen.queryByTitle('userPanel')).toBeInTheDocument();
       });
 
       it('should hide user panel when toggle is clicked again', async () => {
-        await render(user);
+        await render();
         const userButton = screen.getByText('full name');
         fireEvent.click(userButton);
         fireEvent.click(userButton);
@@ -76,20 +88,20 @@ describe('HeaderComponent', () => {
       });
 
       it('should hide user panel by default', async () => {
-        await render(user);
+        await render();
         expect(screen.queryByTitle('userPanel')).toBeFalsy();
       });
 
       describe('Panel Rows', () => {
         it('should show account button', async () => {
-          await render(user);
+          await render();
           const userButton = screen.getByText('full name');
           fireEvent.click(userButton);
           expect(screen.getByText('Account')).toBeTruthy();
         });
 
         it('should goto account page when account button is clicked', async () => {
-          await render(user);
+          await render();
           const userButton = screen.getByText('full name');
           fireEvent.click(userButton);
           const button = screen.getByText('Account');
@@ -98,21 +110,41 @@ describe('HeaderComponent', () => {
           expect(router).toHaveBeenCalledWith(['/account']);
         });
 
-        it('should show logout button', async () => {
-          await render(user);
+        it('should call oauth logout when logout button clicked', async () => {
+          const spy = jest.spyOn(MockOAuthService.prototype, 'logOut');
+          await render();
           const userButton = screen.getByText('full name');
           fireEvent.click(userButton);
-          expect(screen.getByText('Logout')).toBeTruthy();
+          fireEvent.click(screen.getByText('Logout'));
+
+          expect(spy).toHaveBeenCalledTimes(1);
         });
       });
     });
   });
 });
 
-const render = async (user: User = null) => {
+const render = async () => {
   return await renderRootComponent(HeaderComponent, {
-    componentProperties: {
-      user: user,
-    },
+    providers: [
+      {
+        provide: OAuthService,
+        useClass: MockOAuthService,
+      },
+    ],
   });
 };
+
+class MockOAuthService {
+  getIdentityClaims() {
+    return null;
+  }
+
+  getIdToken() {
+    return null;
+  }
+
+  initCodeFlow() {}
+
+  logOut() {}
+}

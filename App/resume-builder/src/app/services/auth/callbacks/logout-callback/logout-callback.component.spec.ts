@@ -8,7 +8,7 @@ describe('LogoutCallbackComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [LogoutCallbackComponent]
+      providers: [LogoutCallbackComponent],
     });
     fixture = TestBed.createComponent(LogoutCallbackComponent);
     component = fixture.componentInstance;

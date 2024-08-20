@@ -1,342 +1,59 @@
 @if (loading) {
-  <div
-    class="spinner"
-    >
+  <div class="spinner">
     <mat-spinner></mat-spinner>
   </div>
-}
-@if (!loading) {
-  <div
-    (keydown)="onKeyDown($event)"
-    tabindex="0">
+} @else {
+  <div (keydown)="onKeyDown($event)">
     <form [formGroup]="form">
       <app-input formControlName="title">Title</app-input>
       <app-input formControlName="comments">Comments</app-input>
-      <div class="title division">
-        <app-input formControlName="name">Name</app-input>
-        <app-input
-          formControlName="email"
-          errorMessage="Incorrect pattern"
-          >Email</app-input
-          >
-          <app-input
-            formControlName="phone"
-            errorMessage="Incorrect pattern"
-            >Phone</app-input
-            >
-            @if (title().children.length > 2) {
-              <div
-                class="add-remove-row"
-                >
-                <app-input formControlName="website">Website</app-input>
-                <app-button
-                  [borderStyle]="BorderStyle.Dark"
-                  [buttonStyle]="ButtonStyle.Primary"
-                  ignoreClick
-                  (click)="removeWebsite()"
-                  >&nbsp;&mdash;&nbsp;</app-button
-                  >
-                </div>
-              }
-              <div class="add-website-button">
-                @if (title().children.length == 2) {
-                  <app-button
-                    [borderStyle]="BorderStyle.Dark"
-                    [buttonStyle]="ButtonStyle.Secondary"
-                    ignoreClick
-                    (click)="addWebsite()"
-                    >Add Website</app-button
-                    >
-                  }
-                </div>
-              </div>
-              @for (section of sections(); track section) {
-                <div
-                  class="section division"
-                  >
-                  <app-input formControlName="section{{ section.order }}title">Section Title</app-input>
-                  <div class="select">
-                    <label for="section{{ section.order }}type">Section Type:</label>
-                    <select
-                      id="section{{ section.order }}type"
-                      formControlName="section{{ section.order }}type"
-                      [className]="form.controls['section' + section.order + 'type'].invalid && form.controls['section' + section.order + 'type'].touched ? 'invalid' : ''"
-                      (change)="sectionTypeChanged(section)">
-                      <option></option>
-                      <option [value]="SectionDisplayType.List">
-                        {{ SectionDisplayType.List }}
-                      </option>
-                      <option [value]="SectionDisplayType.Paragraph">
-                        {{ SectionDisplayType.Paragraph }}
-                      </option>
-                      <option [value]="SectionDisplayType.Education">
-                        {{ SectionDisplayType.Education }}
-                      </option>
-                      <option [value]="SectionDisplayType.WorkExperience">
-                        {{ SectionDisplayType.WorkExperience }}
-                      </option>
-                    </select>
-                  </div>
-                  <div class="page-break-check">
-                    <label for="section{{ section.order }}pagebreak">Page Break After:</label>
-                    <input
-                      class="checkbox"
-                      type="checkbox"
-                      formControlName="section{{ section.order }}pagebreak"
-                      title="Page Break" />
-                    </div>
-                    @if (form.controls['section' + section.order + 'type'].invalid && form.controls['section' + section.order + 'type'].touched) {
-                      <div
-                        class="error"
-                        >
-                        <span>Type is required.</span>
-                      </div>
-                    }
-                    @if (form.controls['section' + section.order + 'type'].value == SectionDisplayType.List) {
-                      <div
-                        class="division"
-                        style="padding-top: 0.5rem">
-                        @for (item of section.children[0].children; track item) {
-                          <div
-                            class="add-remove-row"
-                            >
-                            <app-input formControlName="section{{ section.order }}listItem{{ item.order }}">List Item</app-input>
-                            @if (item.order == section.children[0].children.length - 1 && item.order > 0) {
-                              <app-button
-                                [borderStyle]="BorderStyle.Dark"
-                                [buttonStyle]="ButtonStyle.Primary"
-                                ignoreClick
-                                (click)="removeListItem(section.order, section.children[0])"
-                                >&nbsp;&mdash;&nbsp;</app-button
-                                >
-                            }
-                            <app-button
-                              [borderStyle]="BorderStyle.Dark"
-                              [buttonStyle]="ButtonStyle.Primary"
-                              ignoreClick
-                              (click)="addListItem(section.order, section.children[0])"
-                              >&nbsp;+&nbsp;</app-button
-                              >
-                            </div>
-                          }
-                        </div>
-                      }
-                      @if (form.controls['section' + section.order + 'type'].value == SectionDisplayType.Paragraph) {
-                        <div
-                          class="division"
-                          >
-                          <div class="textarea">
-                            <label for="section{{ section.order }}paragraph">Paragraph:</label>
-                            <textarea
-                              id="section{{ section.order }}paragraph"
-                              formControlName="section{{ section.order }}paragraph"
-                            placeholder="Paragraph text"></textarea>
-                          </div>
-                        </div>
-                      }
-                      @if (form.controls['section' + section.order + 'type'].value == SectionDisplayType.Education) {
-                        <div
-                          class="education division"
-                          >
-                          @for (education of section.children; track education) {
-                            <div
-                              class="school">
-                              <div class="row">
-                                <div>
-                                  <app-input formControlName="section{{ section.order }}education{{ education.order }}degree">Degree</app-input>
-                                </div>
-                                @if (education.order > 0 && education.order == section.children.length - 1) {
-                                  <app-button
-                                    ignoreClick
-                                    (click)="removeEducation(section)"
-                                    [borderStyle]="BorderStyle.Dark"
-                                    [buttonStyle]="ButtonStyle.Primary"
-                                    >&nbsp;&mdash;&nbsp;</app-button
-                                    >
-                                  }
-                                  @if (education.order == section.children.length - 1) {
-                                    <app-button
-                                      ignoreClick
-                                      (click)="sectionAddEducationForm(section)"
-                                      [borderStyle]="BorderStyle.Dark"
-                                      [buttonStyle]="ButtonStyle.Primary"
-                                      >&nbsp;+&nbsp;</app-button
-                                      >
-                                    }
-                                  </div>
-                                  <div class="row">
-                                    <div>
-                                      <app-input formControlName="section{{ section.order }}education{{ education.order }}major">Major</app-input>
-                                    </div>
-                                    <div>
-                                      <app-input formControlName="section{{ section.order }}education{{ education.order }}minor">Minor</app-input>
-                                    </div>
-                                  </div>
-                                  <div class="row">
-                                    <div>
-                                      <app-input formControlName="section{{ section.order }}education{{ education.order }}school">School</app-input>
-                                    </div>
-                                    <div>
-                                      <app-input
-                                        formControlName="section{{ section.order }}education{{ education.order }}year"
-                                        errorMessage="A valid year must be entered"
-                                        >Graduation Year</app-input
-                                        >
-                                      </div>
-                                    </div>
-                                    <div class="row">
-                                      <div>
-                                        <app-input formControlName="section{{ section.order }}education{{ education.order }}city">City</app-input>
-                                      </div>
-                                      <div>
-                                        <app-input
-                                          formControlName="section{{ section.order }}education{{ education.order }}state"
-                                          errorMessage="A valid two character state code must be entered"
-                                          >State</app-input
-                                          >
-                                        </div>
-                                      </div>
-                                    </div>
-                                  }
-                                </div>
-                              }
-                              @if (form.controls['section' + section.order + 'type'].value == SectionDisplayType.WorkExperience) {
-                                <div
-                                  class="work division"
-                                  >
-                                  @for (job of section.children; track job) {
-                                    <div
-                                      class="job"
-                                      >
-                                      <div class="row page-break-check">
-                                        <label for="section{{ section.order }}work{{ job.order }}pagebreak">Page Break After:</label>
-                                        <input
-                                          class="checkbox"
-                                          type="checkbox"
-                                          formControlName="section{{ section.order }}work{{ job.order }}pagebreak"
-                                          title="Page Break" />
-                                        </div>
-                                        <div class="row">
-                                          <app-input formControlName="section{{ section.order }}work{{ job.order }}title">Job Title</app-input>
-                                          <app-input formControlName="section{{ section.order }}work{{ job.order }}employer">Employer</app-input>
-                                        </div>
-                                        <div class="row">
-                                          <app-input formControlName="section{{ section.order }}work{{ job.order }}city">City</app-input>
-                                          <app-input
-                                            formControlName="section{{ section.order }}work{{ job.order }}state"
-                                            errorMessage="A valid two character state code must be entered"
-                                            >State</app-input
-                                            >
-                                          </div>
-                                          <div class="row">
-                                            <app-input
-                                              formControlName="section{{ section.order }}work{{ job.order }}start"
-                                              errorMessage="A valid mm-yyyy must be entered."
-                                              >Start Date</app-input
-                                              >
-                                              <app-input
-                                                formControlName="section{{ section.order }}work{{ job.order }}end"
-                                                errorMessage="A valid mm-yyyy or 'Present' must be entered."
-                                                >End Date</app-input
-                                                >
-                                              </div>
-                                              @if (job.children.length < 7) {
-                                                <div
-                                                  class="row"
-                                                  >
-                                                  <app-button
-                                                    ignoreClick
-                                                    (click)="createResponsibilities(section.order, job)"
-                                                    [borderStyle]="BorderStyle.Dark"
-                                                    [buttonStyle]="ButtonStyle.Secondary"
-                                                    >+ Add Responsibilities</app-button
-                                                    >
-                                                  </div>
-                                                }
-                                                @if (job.children.length == 7) {
-                                                  <div
-                                                    class="row responsibilities"
-                                                    >
-                                                    <span style="margin-top: 1rem">Responsibilities:</span>
-                                                    <div class="column">
-                                                      @for (responsibility of job.children[6].children; track responsibility) {
-                                                        <div
-                                                          class="row"
-                                                          >
-                                                          <app-input
-                                                            noTitle
-                                                          formControlName="section{{ section.order }}work{{ job.order }}responsibility{{ responsibility.order }}"></app-input>
-                                                          @if (responsibility.order == job.children[6].children.length - 1) {
-                                                            <app-button
-                                                              ignoreClick
-                                                              (click)="addResponsibilities(section.order, job)"
-                                                              [borderStyle]="BorderStyle.Dark"
-                                                              [buttonStyle]="ButtonStyle.Primary"
-                                                              >&nbsp;+&nbsp;</app-button
-                                                              >
-                                                          }
-                                                          @if (responsibility.order >= 0 && responsibility.order == job.children[6].children.length - 1) {
-                                                            <app-button
-                                                              ignoreClick
-                                                              (click)="removeResponsibilities(section.order, job)"
-                                                              [borderStyle]="BorderStyle.Dark"
-                                                              [buttonStyle]="ButtonStyle.Primary"
-                                                              >&nbsp;&mdash;&nbsp;</app-button
-                                                              >
-                                                            }
-                                                          </div>
-                                                        }
-                                                      </div>
-                                                    </div>
-                                                  }
-                                                  <div class="row add-remove-row">
-                                                    @if (job.order == section.children.length - 1) {
-                                                      <app-button
-                                                        ignoreClick
-                                                        (click)="sectionAddWorkExperienceForm(section)"
-                                                        [borderStyle]="BorderStyle.Dark"
-                                                        [buttonStyle]="ButtonStyle.Primary"
-                                                        >&nbsp;+&nbsp;</app-button
-                                                        >
-                                                      }
-                                                      @if (job.order > 0 && job.order == section.children.length - 1) {
-                                                        <app-button
-                                                          ignoreClick
-                                                          (click)="removeWorkExperience(section)"
-                                                          [borderStyle]="BorderStyle.Dark"
-                                                          [buttonStyle]="ButtonStyle.Primary"
-                                                          >&nbsp;&mdash;&nbsp;</app-button
-                                                          >
-                                                        }
-                                                      </div>
-                                                    </div>
-                                                  }
-                                                </div>
-                                              }
-                                            </div>
-                                          }
-                                          <div class="button">
-                                            <app-button
-                                              ignoreClick
-                                              [buttonStyle]="ButtonStyle.Secondary"
-                                              [borderStyle]="BorderStyle.Dark"
-                                              (click)="addSection()"
-                                              >Add Section</app-button
-                                              >
-                                            </div>
-                                            <div class="button save">
-                                              <app-button
-                                                ignoreClick
-                                                [buttonStyle]="ButtonStyle.Primary"
-                                                [borderStyle]="BorderStyle.Dark"
-                                                (click)="save()"
-                                                >Save</app-button
-                                                >
-                                              </div>
-                                            </form>
-                                            <ngx-extended-pdf-viewer
-                                              [src]="pdfSource"
-                                              [height]="'1000px'"
-                                            [textLayer]="true"></ngx-extended-pdf-viewer>
-                                          </div>
-                                        }
+      <app-personal-info [node]="resume.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+
+      @for (section of resume.children; track $index) {
+        @if ($index) {
+          <div class="section-item" data-testid="section">
+            <app-resume-section
+              [section]="resume.children[$index]"
+              (onSave)="queueSave($event)"
+              (onDelete)="queueDelete($event)"
+            />
+            <span>{{ section.id }}</span>
+            <div class="button">
+              <app-button
+                class="remove"
+                ignoreClick
+                [buttonStyle]="ButtonStyle.Primary"
+                [borderStyle]="BorderStyle.Dark"
+                (click)="removeSection($index)"
+              >Remove Section
+              </app-button>
+            </div>
+          </div>
+        }
+      }
+
+      <div class="button">
+        <app-button
+          ignoreClick
+          [buttonStyle]="ButtonStyle.Secondary"
+          [borderStyle]="BorderStyle.Dark"
+          (click)="addSection()"
+        >Add Section
+        </app-button>
+      </div>
+      <div class="button save">
+        <app-button
+          ignoreClick
+          [buttonStyle]="ButtonStyle.Primary"
+          [borderStyle]="BorderStyle.Dark"
+          (click)="save()"
+        >Save
+        </app-button>
+      </div>
+    </form>
+    <ngx-extended-pdf-viewer
+      [src]="pdfSource"
+      [height]="'1000px'"
+      [textLayer]="true"></ngx-extended-pdf-viewer>
+  </div>
+}

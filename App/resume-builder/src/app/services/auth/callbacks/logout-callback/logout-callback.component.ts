@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-logout-callback',
@@ -8,5 +7,5 @@ import { Router } from '@angular/router';
   standalone: true,
 })
 export class LogoutCallbackComponent {
-  constructor(private readonly _router: Router) {}
+  constructor() {}
 }

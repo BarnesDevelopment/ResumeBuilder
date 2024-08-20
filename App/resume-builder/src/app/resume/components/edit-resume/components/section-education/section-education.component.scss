@@ -1,0 +1,17 @@
+@import "../../../../../../variables";
+
+.education {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0 1rem 2rem;
+
+  .row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    app-button {
+      margin: 0 0 0 1rem;
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.responsibilities {
+  display: flex;
+  flex-direction: row;
+
+  .responsibilities-header {
+    font-size: 1rem;
+    position: absolute;
+    margin-left: 3rem;
+    margin-top: 0.5rem;
+  }
+}
+
+.work-experience {
+  padding: 1rem 0 1rem 2rem;
+}

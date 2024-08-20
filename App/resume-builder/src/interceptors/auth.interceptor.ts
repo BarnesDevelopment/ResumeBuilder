@@ -33,7 +33,6 @@ export class AuthInterceptor implements HttpInterceptor {
         error: error => {
           const respError = error as HttpErrorResponse;
           if (respError.status === 401 || respError.status === 403) {
-            debugger;
             this._router.navigate(['/unauthorized']);
           }
         },

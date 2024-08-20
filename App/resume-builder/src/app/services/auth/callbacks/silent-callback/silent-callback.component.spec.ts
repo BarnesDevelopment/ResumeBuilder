@@ -8,7 +8,7 @@ describe('SilentCallbackComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [SilentCallbackComponent]
+      providers: [SilentCallbackComponent],
     });
     fixture = TestBed.createComponent(SilentCallbackComponent);
     component = fixture.componentInstance;
