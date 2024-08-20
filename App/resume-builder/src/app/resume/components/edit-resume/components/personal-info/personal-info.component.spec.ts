@@ -181,7 +181,77 @@ describe('PersonalInfoComponent', () => {
     });
   });
   //TODO: input pattern validation
-  describe('Save', () => {});
+  describe('Save', () => {
+    it('should save name, email, and phone', async () => {
+      const component = await render(node);
+
+      const saveSpy = jest.spyOn(
+        component.fixture.componentInstance.onSave,
+        'emit',
+      );
+
+      const nameInput = screen.getByTitle('name') as HTMLInputElement;
+      const emailInput = screen.getByTitle('email') as HTMLInputElement;
+      const phoneInput = screen.getByTitle('phone') as HTMLInputElement;
+
+      fireEvent.input(nameInput, { target: { value: 'New Name' } });
+      fireEvent.input(emailInput, { target: { value: 'test@email.com' } });
+      fireEvent.input(phoneInput, { target: { value: '098-765-4321' } });
+
+      expect(saveSpy).toHaveBeenCalledTimes(3);
+    });
+
+    it('should save website', async () => {
+      node.children.push(
+        newResumeTreeNode(NodeType.ListItem, 2, node, 'https://mywebsite.dev'),
+      );
+      const component = await render(node);
+
+      const saveSpy = jest.spyOn(
+        component.fixture.componentInstance.onSave,
+        'emit',
+      );
+
+      const websiteInput = screen.getByTitle('website') as HTMLInputElement;
+
+      fireEvent.input(websiteInput, {
+        target: { value: 'https://newwebsite.dev' },
+      });
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should save website on creation', async () => {
+      const component = await render(node);
+
+      const saveSpy = jest.spyOn(
+        component.fixture.componentInstance.onSave,
+        'emit',
+      );
+
+      fireEvent.click(screen.queryByText('Add Website'));
+
+      component.detectChanges();
+
+      expect(saveSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('should emit delete website on deletion', async () => {
+      node.children.push(
+        newResumeTreeNode(NodeType.ListItem, 2, node, 'https://mywebsite.dev'),
+      );
+      const component = await render(node);
+
+      const deleteSpy = jest.spyOn(
+        component.fixture.componentInstance.onDelete,
+        'emit',
+      );
+
+      fireEvent.click(screen.getByTitle('minusButton'));
+
+      expect(deleteSpy).toHaveBeenCalledTimes(1);
+    });
+  });
 });
 
 const render = async (node: ResumeTreeNode) => {

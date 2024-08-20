@@ -11,6 +11,7 @@ import {
   ButtonComponent,
   ButtonStyle,
 } from '../../../../../common/button/button.component';
+import { UpsertSignal } from '../upsert-signal/upsert-signal';
 
 @Component({
   selector: 'app-personal-info',
@@ -19,7 +20,7 @@ import {
   templateUrl: './personal-info.component.html',
   styleUrl: './personal-info.component.scss',
 })
-export class PersonalInfoComponent implements OnInit {
+export class PersonalInfoComponent extends UpsertSignal implements OnInit {
   @Input() node: ResumeTreeNode;
   form: FormGroup;
 
@@ -32,12 +33,15 @@ export class PersonalInfoComponent implements OnInit {
 
     this.form.controls['name'].valueChanges.subscribe(() => {
       this.node.content = this.form.controls['name'].value;
+      this.queueSave(this.node);
     });
     this.form.controls['email'].valueChanges.subscribe(() => {
       this.node.children[0].content = this.form.controls['email'].value;
+      this.queueSave(this.node.children[0]);
     });
     this.form.controls['phone'].valueChanges.subscribe(() => {
       this.node.children[1].content = this.form.controls['phone'].value;
+      this.queueSave(this.node.children[1]);
     });
 
     if (this.node.children.length > 2) {
@@ -58,12 +62,16 @@ export class PersonalInfoComponent implements OnInit {
 
     this.form.get('website').valueChanges.subscribe(() => {
       this.node.children[2].content = this.form.get('website').value;
+      this.queueSave(this.node.children[2]);
     });
+
+    this.queueSave(this.node.children[2]);
   }
 
   RemoveWebsite() {
     this.form.removeControl('website');
-    this.node.children.splice(2, 1);
+    const node = this.node.children.splice(2, 1);
+    this.queueDelete(node[0].id);
   }
 
   protected readonly BorderStyle = BorderStyle;
