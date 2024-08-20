@@ -1,7 +1,4 @@
-import {
-  newResumeTreeNode,
-  SectionDisplayType,
-} from '../../../../../models/Resume';
+import { SectionDisplayType } from '../../../../../models/Resume';
 import { ResumeSectionComponent } from './resume-section.component';
 import '@testing-library/jest-dom';
 import { SectionListComponent } from '../section-list/section-list.component';
