@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.isLoggedIn) this.getResumes();
+    if (this.isLoggedIn) this.getResumes(); //TODO: Doesnt load resumes on initial login
   }
 
   getResumes() {
