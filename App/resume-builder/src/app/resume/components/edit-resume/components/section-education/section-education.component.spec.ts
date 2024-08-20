@@ -41,7 +41,7 @@ describe('SectionEducationComponent', () => {
     fixture.componentInstance.node.children = [];
     const onSave = jest.spyOn(fixture.componentInstance.onSave, 'emit');
 
-    fixture.componentInstance.ngOnInit();
+    fixture.componentInstance.ngOnChanges();
 
     expect(onSave).toHaveBeenCalledTimes(7);
   });
@@ -49,7 +49,7 @@ describe('SectionEducationComponent', () => {
     const { fixture } = await render(node);
     const onSave = jest.spyOn(fixture.componentInstance.onSave, 'emit');
 
-    fixture.componentInstance.ngOnInit();
+    fixture.componentInstance.ngOnChanges();
 
     expect(onSave).toHaveBeenCalledTimes(0);
   });

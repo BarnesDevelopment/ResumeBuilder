@@ -225,7 +225,7 @@ describe('SectionListComponent', () => {
       const { fixture } = await render(rootNode);
       saveSpy = jest.spyOn(fixture.componentInstance.onSave, 'emit');
       fixture.componentInstance.node.children = [];
-      fixture.componentInstance.ngOnInit();
+      fixture.componentInstance.ngOnChanges();
 
       expect(saveSpy).toHaveBeenCalledTimes(1);
       const node = saveSpy.mock.calls[0][0];
