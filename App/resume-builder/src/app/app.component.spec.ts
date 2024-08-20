@@ -13,10 +13,9 @@ describe('AppComponent', () => {
       MockOAuthService.prototype,
       'setupAutomaticSilentRefresh',
     );
-    load = jest.spyOn(
-      MockOAuthService.prototype,
-      'loadDiscoveryDocumentAndTryLogin',
-    );
+    load = jest
+      .spyOn(MockOAuthService.prototype, 'loadDiscoveryDocumentAndTryLogin')
+      .mockReturnValue(Promise.resolve());
     await renderRootComponent(AppComponent, {
       providers: [{ provide: OAuthService, useClass: MockOAuthService }],
     });
@@ -25,7 +24,7 @@ describe('AppComponent', () => {
   it('should setup oauth', () => {
     expect(configure).toBeCalledWith({
       issuer: 'https://auth.barnes7619.com/realms/ResumeBuilder',
-      redirectUri: 'https://localhost:4200/',
+      redirectUri: 'https://localhost:4200/login-callback',
       postLogoutRedirectUri: 'https://localhost:4200/',
       silentRefreshRedirectUri: 'https://localhost:4200/silent-callback',
       clientId: 'resume-builder',
@@ -42,6 +41,10 @@ describe('AppComponent', () => {
 
 class MockOAuthService {
   configure() {}
+
   setupAutomaticSilentRefresh() {}
-  loadDiscoveryDocumentAndTryLogin() {}
+
+  loadDiscoveryDocumentAndTryLogin(): Promise<any> {
+    return Promise.resolve();
+  }
 }
