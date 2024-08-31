@@ -7,31 +7,43 @@
     <form [formGroup]="form">
       <app-input formControlName="title">Title</app-input>
       <app-input formControlName="comments">Comments</app-input>
-      <app-personal-info [node]="resume.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)" />
+      <app-personal-info [node]="resume.children[0]" (onSave)="queueSave($event)" (onDelete)="queueDelete($event)"/>
 
-      @for (section of resume.children; track $index) {
-        @if ($index) {
-          <div class="section-item" data-testid="section">
-            <app-resume-section
-              [section]="resume.children[$index]"
-              (onSave)="queueSave($event)"
-              (onDelete)="queueDelete($event)"
-            />
-            <span>{{ section.id }}</span>
-            <div class="button">
-              <app-button
-                class="remove"
-                ignoreClick
-                [buttonStyle]="ButtonStyle.Primary"
-                [borderStyle]="BorderStyle.Dark"
-                (click)="removeSection($index)"
-              >Remove Section
-              </app-button>
-            </div>
-          </div>
-        }
-      }
+      <div class="mx-4">
+        <mat-accordion>
+          @for (section of resume.children; track $index) {
+            @if ($index) {
+              <div class="section-item" data-testid="section">
 
+
+                <mat-expansion-panel>
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      {{ resume.children[$index].content }} - {{ resume.children[$index]?.children[0]?.nodeType ?? 'No type' }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+                  <app-resume-section
+                    [section]="resume.children[$index]"
+                    (onSave)="queueSave($event)"
+                    (onDelete)="queueDelete($event)"
+                  />
+                  <div class="button">
+                    <app-button
+                      class="remove"
+                      ignoreClick
+                      [buttonStyle]="ButtonStyle.Primary"
+                      [borderStyle]="BorderStyle.Dark"
+                      (click)="removeSection($index)"
+                    >Remove Section
+                    </app-button>
+                  </div>
+                </mat-expansion-panel>
+
+              </div>
+            }
+          }
+        </mat-accordion>
+      </div>
       <div class="button">
         <app-button
           ignoreClick

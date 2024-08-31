@@ -27,6 +27,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResumeSectionComponent } from './components/resume-section/resume-section.component';
 import { PersonalInfoComponent } from './components/personal-info/personal-info.component';
 import { concat, Observable, toArray } from 'rxjs';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @Component({
   selector: 'app-edit-resume',
@@ -42,6 +43,7 @@ import { concat, Observable, toArray } from 'rxjs';
     NgxExtendedPdfViewerModule,
     ResumeSectionComponent,
     PersonalInfoComponent,
+    MatExpansionModule,
   ],
 })
 export class EditResumeComponent implements OnInit {
