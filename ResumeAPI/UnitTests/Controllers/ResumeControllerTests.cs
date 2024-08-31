@@ -174,9 +174,9 @@ public class ResumeControllerTests
     _userValidator.Setup(x => x.GetUserId(It.IsAny<HttpContext>())).Returns(userId);
     _orchestrator.Setup(x => x.UpsertNode(resume, userId)).ReturnsAsync(resume);
 
-    var actual = (await _controller.UpsertNode(resume)).GetObject();
+    var actual = await _controller.UpsertNode(new[] { resume });
 
-    actual.Should().BeEquivalentTo(resume);
+    actual.Should().BeOfType<NoContentResult>();
   }
 
   [Fact]
@@ -190,11 +190,11 @@ public class ResumeControllerTests
       HttpContext = new DefaultHttpContext()
     };
 
-    _userValidator.Setup(x => x.Validate(It.IsAny<HttpContext>(), id)).ReturnsAsync(UserValidationResult.Invalid);
+    _userValidator.Setup(x => x.ValidateUser(It.IsAny<HttpContext>())).ReturnsAsync(UserValidationResult.Invalid);
 
-    var actual = await _controller.UpsertNode(resume);
+    var actual = await _controller.UpsertNode(new[] { resume });
 
-    actual.Result.Should().BeOfType<UnauthorizedResult>();
+    actual.Should().BeOfType<UnauthorizedResult>();
   }
 
   [Fact]
@@ -213,10 +213,10 @@ public class ResumeControllerTests
     _userValidator.Setup(x => x.GetUserId(It.IsAny<HttpContext>())).Returns(userId);
     _orchestrator.Setup(x => x.UpsertNode(resume, userId)).ThrowsAsync(new Exception("some error"));
 
-    var actual = await _controller.UpsertNode(resume);
+    var actual = await _controller.UpsertNode(new[] { resume });
 
-    ((ObjectResult)actual.Result!).Value.Should().BeOfType<ProblemDetails>();
-    ((ProblemDetails)((ObjectResult)actual.Result!).Value!).Detail.Should().Be("some error");
+    ((ObjectResult)actual!).Value.Should().BeOfType<ProblemDetails>();
+    ((ProblemDetails)((ObjectResult)actual!).Value!).Detail.Should().Be("some error");
   }
 
   #endregion
