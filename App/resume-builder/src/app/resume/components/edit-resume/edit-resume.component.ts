@@ -94,10 +94,9 @@ export class EditResumeComponent implements OnInit {
     this.saves = this.saves
       .filter(node => !this.deletes.includes(node.id))
       .sort(this.sortSaves());
-    apiCalls.push(
-      ...this.deletes.map(id => this.service.deleteNode(id)),
-      ...this.saves.map(node => this.service.updateResume(node)),
-    );
+    apiCalls.push(...this.deletes.map(id => this.service.deleteNode(id)));
+    if (this.saves.length > 0)
+      apiCalls.push(this.service.updateResume(this.saves));
 
     if (apiCalls.length === 0) return;
 
@@ -109,7 +108,6 @@ export class EditResumeComponent implements OnInit {
           this.deletes = [];
           this.toaster.success('Resume saved successfully', 'Saved');
           this.refreshPreview();
-          console.log('Resume saved successfully');
         },
         error: error => {
           this.toaster.error('Error saving resume: ' + error, 'Error');

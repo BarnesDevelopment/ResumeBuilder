@@ -255,9 +255,8 @@ describe('EditResumeComponent', () => {
       const saveButton = screen.getByText('Save');
       saveButton.click();
 
-      expect(updateSpy).toHaveBeenCalledTimes(2);
-      expect(updateSpy).toHaveBeenCalledWith(saves[0]);
-      expect(updateSpy).toHaveBeenCalledWith(saves[1]);
+      expect(updateSpy).toHaveBeenCalledTimes(1);
+      expect(updateSpy).toHaveBeenCalledWith([saves[0], saves[1]]);
     });
     it('should run all deletes', async () => {
       const deletes = [Guid.create(), Guid.create()];
@@ -287,7 +286,7 @@ describe('EditResumeComponent', () => {
       saveButton.click();
 
       expect(updateSpy).toHaveBeenCalledTimes(1);
-      expect(updateSpy).toHaveBeenCalledWith(saves[1]);
+      expect(updateSpy).toHaveBeenCalledWith([saves[1]]);
       expect(deleteSpy).toHaveBeenCalledTimes(2);
       expect(deleteSpy).toHaveBeenCalledWith(deletes[0]);
       expect(deleteSpy).toHaveBeenCalledWith(deletes[1]);
@@ -381,9 +380,11 @@ describe('EditResumeComponent', () => {
       const saveButton = screen.getByText('Save');
       saveButton.click();
 
-      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[1]);
-      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[0]);
-      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[2]);
+      const updateCalls = updateSpy.mock.calls[0][0];
+      expect(updateCalls.length).toBe(3);
+      expect(updateCalls[0]).toBe(saves[1]);
+      expect(updateCalls[1]).toBe(saves[0]);
+      expect(updateCalls[2]).toBe(saves[2]);
     });
     it('should save in order of depth', async () => {
       const saves = [
@@ -403,9 +404,11 @@ describe('EditResumeComponent', () => {
       const saveButton = screen.getByText('Save');
       saveButton.click();
 
-      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[2]);
-      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[0]);
-      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[1]);
+      const updateCalls = updateSpy.mock.calls[0][0];
+      expect(updateCalls.length).toBe(3);
+      expect(updateCalls[0]).toBe(saves[2]);
+      expect(updateCalls[1]).toBe(saves[0]);
+      expect(updateCalls[2]).toBe(saves[1]);
     });
     it('should save by depth and then order', async () => {
       const saves = [
@@ -432,11 +435,13 @@ describe('EditResumeComponent', () => {
       const saveButton = screen.getByText('Save');
       saveButton.click();
 
-      expect(updateSpy).toHaveBeenNthCalledWith(1, saves[3]);
-      expect(updateSpy).toHaveBeenNthCalledWith(2, saves[4]);
-      expect(updateSpy).toHaveBeenNthCalledWith(3, saves[1]);
-      expect(updateSpy).toHaveBeenNthCalledWith(4, saves[0]);
-      expect(updateSpy).toHaveBeenNthCalledWith(5, saves[2]);
+      const updateCalls = updateSpy.mock.calls[0][0];
+      expect(updateCalls.length).toBe(5);
+      expect(updateCalls[0]).toBe(saves[3]);
+      expect(updateCalls[1]).toBe(saves[4]);
+      expect(updateCalls[2]).toBe(saves[1]);
+      expect(updateCalls[3]).toBe(saves[0]);
+      expect(updateCalls[4]).toBe(saves[2]);
     });
   });
 });
