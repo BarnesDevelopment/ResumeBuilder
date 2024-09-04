@@ -331,14 +331,11 @@ public class ResumeController : ControllerBase
 
   [HttpPost("upsert")]
   [Authorize("User")]
-  public async Task<ActionResult<ResumeTreeNode>> UpsertNode([FromBody] ResumeTreeNode resume)
+  public async Task<IActionResult> UpsertNode([FromBody] ResumeTreeNode[] resume)
   {
     try
     {
       var valid = await _validator.ValidateUser(HttpContext);
-      var userId = _validator.GetUserId(HttpContext);
-      if (resume.UserId != Guid.Empty)
-        valid = await _validator.ValidateResource(userId, resume.ParentId ?? resume.Id);
       switch (valid)
       {
         case UserValidationResult.Invalid:
@@ -347,7 +344,35 @@ public class ResumeController : ControllerBase
           return NotFound("Resource not found");
       }
 
-      return Ok(await _orchestrator.UpsertNode(resume, userId));
+      var userId = _validator.GetUserId(HttpContext);
+
+      try
+      {
+        foreach (var node in resume)
+        {
+          if (node.UserId != Guid.Empty)
+            valid = await _validator.ValidateResource(userId, node.ParentId ?? node.Id);
+          switch (valid)
+          {
+            case UserValidationResult.Invalid:
+              throw new UnauthorizedAccessException();
+            case UserValidationResult.NotFound:
+              throw new KeyNotFoundException();
+          }
+
+          await _orchestrator.UpsertNode(node, userId);
+        }
+      }
+      catch (UnauthorizedAccessException)
+      {
+        return Unauthorized();
+      }
+      catch (KeyNotFoundException)
+      {
+        return NotFound("Resource not found");
+      }
+
+      return NoContent();
     }
     catch (Exception e)
     {

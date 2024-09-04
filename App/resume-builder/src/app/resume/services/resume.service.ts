@@ -29,10 +29,10 @@ export class ResumeService {
     );
   }
 
-  public updateResume(resume: ResumeTreeNode): Observable<ResumeTreeNode> {
-    return this.http.post<ResumeTreeNode>(
+  public updateResume(resumes: ResumeTreeNode[]): Observable<void> {
+    return this.http.post<void>(
       `${this.env.apiBasePath}/resume/upsert`,
-      duplicateTreeNode(resume),
+      resumes.map(duplicateTreeNode),
     );
   }
 
