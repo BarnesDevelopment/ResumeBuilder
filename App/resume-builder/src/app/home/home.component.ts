@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   BorderStyle,
   ButtonStyle,
@@ -18,19 +18,16 @@ import { LoginSplashScreenComponent } from '../common/login-splash-screen/login-
   imports: [LoginSplashScreenComponent, MatCardModule, ButtonComponent],
 })
 export class HomeComponent implements OnInit {
+  private readonly service = inject(ResumeService);
+  private readonly oauthService = inject(OAuthService);
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
   isLoading = true;
   resumes: ResumeHeader[] = [];
   next: number = 0;
 
-  constructor(
-    private service: ResumeService,
-    private oauthService: OAuthService,
-  ) {}
-
   ngOnInit(): void {
-    if (this.isLoggedIn) this.getResumes(); //TODO: Doesnt load resumes on initial login
+    if (this.isLoggedIn) this.getResumes();
   }
 
   getResumes() {
@@ -43,5 +40,11 @@ export class HomeComponent implements OnInit {
 
   get isLoggedIn() {
     return this.oauthService.getIdToken();
+  }
+
+  queueDelete(resume: ResumeHeader) {
+    this.service.deleteNode(resume.id).subscribe(() => {
+      this.resumes = this.resumes.filter(r => r.id !== resume.id);
+    });
   }
 }
