@@ -1,23 +1,28 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ResumeService } from '../../services/resume.service';
-import { ResumeTreeNode, NodeType } from '../../../models/Resume';
+import { NodeType, ResumeTreeNode } from '../../../models/Resume';
 import { Guid } from 'guid-typescript';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BorderStyle, ButtonStyle, ButtonComponent } from '../../../common/button/button.component';
+import {
+  BorderStyle,
+  ButtonComponent,
+  ButtonStyle,
+} from '../../../common/button/button.component';
 import { InputComponent } from '../../../common/input/input.component';
 
 @Component({
-    selector: 'app-create-resume',
-    templateUrl: './create-resume.component.html',
-    styleUrls: ['./create-resume.component.scss'],
-    standalone: true,
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        InputComponent,
-        ButtonComponent,
-    ],
+  selector: 'app-create-resume',
+  templateUrl: './create-resume.component.html',
+  styleUrls: ['./create-resume.component.scss'],
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, InputComponent, ButtonComponent],
 })
 export class CreateResumeComponent {
   phonePattern =
@@ -115,8 +120,9 @@ export class CreateResumeComponent {
         });
       }
 
-      this.service.updateResume(resume).subscribe(res => {
-        this.router.navigate(['/edit', res.id]);
+      this.service.updateResume([resume]).subscribe(() => {
+        console.log('Resume created');
+        this.router.navigate(['dashboard']);
       });
     });
   }
