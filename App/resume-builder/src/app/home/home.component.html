@@ -10,7 +10,7 @@
     @for (x of [0, 0, 0, 0, 0]; track x) {
       <mat-card
         class="card dumb"
-        >
+      >
         <div class="title"></div>
         @for (y of [0, 0, 0]; track y) {
           <div
@@ -25,11 +25,11 @@
 @if (!isLoading && isLoggedIn) {
   <div
     class="card-row"
-    >
+  >
     @for (x of resumes; track x) {
       <mat-card
         class="card"
-        >
+      >
         <div class="title">
           <h3>{{ x.content }}</h3>
         </div>
@@ -41,24 +41,34 @@
             [borderStyle]="BorderStyle.Dark"
             [buttonStyle]="ButtonStyle.Primary"
             href="/edit/{{ x.id }}"
-            >Edit</app-button
-            >
-          </div>
-        </mat-card>
-      }
-      <mat-card class="card new">
-        <div class="title">
-          <h3>Create Resume</h3>
-        </div>
-        <div class="button">
+          >Edit
+          </app-button
+          >
           <app-button
             [borderStyle]="BorderStyle.Dark"
-            [buttonStyle]="ButtonStyle.Primary"
-            href="/create"
-            [queryParams]="{ next }"
-            >Create</app-button
-            >
-          </div>
-        </mat-card>
-      </div>
+            [buttonStyle]="ButtonStyle.Secondary"
+            ignoreClick
+            (click)="queueDelete(x)"
+          >Delete
+          </app-button
+          >
+        </div>
+      </mat-card>
     }
+    <mat-card class="card new">
+      <div class="title">
+        <h3>Create Resume</h3>
+      </div>
+      <div class="button">
+        <app-button
+          [borderStyle]="BorderStyle.Dark"
+          [buttonStyle]="ButtonStyle.Primary"
+          href="/create"
+          [queryParams]="{ next }"
+        >Create
+        </app-button
+        >
+      </div>
+    </mat-card>
+  </div>
+}

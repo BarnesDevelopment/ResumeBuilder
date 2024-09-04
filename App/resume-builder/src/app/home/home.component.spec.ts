@@ -1,20 +1,23 @@
 import { HomeComponent } from './home.component';
 import { renderRootComponent, screen, Guid } from '../common/testing-imports';
-import { ResumeHeader } from '../models/Resume';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ResumeService } from '../resume/services/resume.service';
 import { of } from 'rxjs';
+import { fireEvent } from '@testing-library/angular';
 
 describe('HomeComponent', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
   describe('Logged In', () => {
-    let resumeServiceSpy;
+    let resumeServiceSpy, deleteSpy;
     beforeEach(() => {
       resumeServiceSpy = jest
         .spyOn(ResumeService.prototype, 'getResumes')
         .mockReturnValue(of([]));
+      deleteSpy = jest
+        .spyOn(ResumeService.prototype, 'deleteNode')
+        .mockReturnValue(of(true));
       jest
         .spyOn(MockOauthService.prototype, 'getIdToken')
         .mockReturnValue('fakeIdToken');
@@ -23,7 +26,33 @@ describe('HomeComponent', () => {
       await render();
       expect(screen.getByText('Create Resume')).toBeTruthy();
     });
+    it('should delete resume', async () => {
+      resumeServiceSpy.mockReturnValue(
+        of([
+          {
+            content: 'Resume 1',
+            comments: 'This is my first resume',
+            id: Guid.create(),
+          },
+          {
+            content: 'Resume 2',
+            comments: 'This is my second resume',
+            id: Guid.create(),
+          },
+          {
+            content: 'Resume 3',
+            comments: 'This is my third resume',
+            id: Guid.create(),
+          },
+        ]),
+      );
+      await render();
 
+      fireEvent.click(screen.getAllByText('Delete')[0]);
+
+      expect(screen.queryByText('Resume 1')).toBeFalsy();
+      expect(deleteSpy).toHaveBeenCalled();
+    });
     it('should show resume cards', async () => {
       resumeServiceSpy.mockReturnValue(
         of([
