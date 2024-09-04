@@ -122,7 +122,7 @@ export class CreateResumeComponent {
 
       this.service.updateResume([resume]).subscribe(() => {
         console.log('Resume created');
-        this.router.navigate(['dashboard']);
+        this.router.navigate(['/']);
       });
     });
   }
