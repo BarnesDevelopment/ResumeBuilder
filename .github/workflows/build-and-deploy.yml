@@ -13,9 +13,6 @@ jobs:
         version: [ 'tag', 'latest' ]
         container: [ 'Api', 'App' ]
     runs-on: ubuntu-latest
-    env:
-      CONTAINER_NAME: ${{ matrix.container }}
-      VERSION: ${{ matrix.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,7 +61,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build
-        run: docker build -t ghcr.io/barnesdevelopment/${{ steps.container.name }}:${{ steps.version.version}} ./${{ matrix.container }}.Dockerfile
+        run: docker build -t ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}} ./${{ matrix.container }}.Dockerfile
 
       - name: Push
-        run: docker push ghcr.io/barnesdevelopment/${{ steps.container.name }}:${{ steps.version.version}}
+        run: docker push ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}}
