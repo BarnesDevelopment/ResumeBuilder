@@ -26,6 +26,9 @@ public class ResumeController : ControllerBase
   }
 
   [HttpGet("build/{id:guid}")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize("User")]
   public async Task<IActionResult> BuildPdfFromGuid(Guid id)
   {
@@ -35,7 +38,7 @@ public class ResumeController : ControllerBase
       switch (valid)
       {
         case UserValidationResult.Invalid:
-          return Unauthorized();
+          return Forbid();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
         case UserValidationResult.Valid:
@@ -66,6 +69,7 @@ public class ResumeController : ControllerBase
   }
 
   [HttpPost("build")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
   [Authorize("User")]
   public IActionResult BuildPdf([FromBody] Resume resume)
   {
@@ -83,13 +87,15 @@ public class ResumeController : ControllerBase
   }
 
   [HttpGet("get-all")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<ResumeTreeNode>))]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
   [Authorize("User")]
   public async Task<ActionResult<IEnumerable<ResumeTreeNode>>> GetAllResumes()
   {
     try
     {
       var user = await _validator.ValidateUser(HttpContext);
-      if (user != UserValidationResult.Valid) return Unauthorized();
+      if (user != UserValidationResult.Valid) return Forbid();
       return Ok(await _orchestrator.GetTopLevelResumes(_validator.GetUserId(HttpContext)));
     }
     catch (Exception e)
@@ -100,6 +106,9 @@ public class ResumeController : ControllerBase
   }
 
   [HttpGet("get/{id:guid}")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResumeTreeNode))]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize("User")]
   public async Task<ActionResult<ResumeTreeNode>> GetResumeById(Guid id)
   {
@@ -109,7 +118,7 @@ public class ResumeController : ControllerBase
       switch (valid)
       {
         case UserValidationResult.Invalid:
-          return Unauthorized();
+          return Forbid();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
         case UserValidationResult.Valid:
@@ -129,6 +138,9 @@ public class ResumeController : ControllerBase
   }
 
   [HttpPost("upsert")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize("User")]
   public async Task<IActionResult> UpsertNode([FromBody] ResumeTreeNode[] resume)
   {
@@ -222,6 +234,9 @@ public class ResumeController : ControllerBase
   #region Testing
 
   [HttpGet("build-test/{id:guid}")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContentResult))]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  [ProducesResponseType(StatusCodes.Status404NotFound)]
   [Authorize("User")]
   public async Task<IActionResult> BuildPdfTest(Guid id)
   {
@@ -231,7 +246,7 @@ public class ResumeController : ControllerBase
       switch (valid)
       {
         case UserValidationResult.Invalid:
-          return Unauthorized();
+          return Forbid();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
         case UserValidationResult.Valid:
@@ -252,6 +267,7 @@ public class ResumeController : ControllerBase
 
 
   [HttpGet("build-test")]
+  [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ContentResult))]
   public IActionResult BuildPdfTest()
   {
     var resume = new Resume

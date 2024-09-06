@@ -74,7 +74,7 @@ public class ResumeControllerTests
 
     var actual = await _controller.GetResumeById(id);
 
-    actual.Result.Should().BeOfType<UnauthorizedResult>();
+    actual.Result.Should().BeOfType<ForbidResult>();
   }
 
   [Fact]
@@ -132,7 +132,7 @@ public class ResumeControllerTests
 
     var actual = await _controller.GetAllResumes();
 
-    actual.Result.Should().BeOfType<UnauthorizedResult>();
+    actual.Result.Should().BeOfType<ForbidResult>();
   }
 
   [Fact]
