@@ -1,4 +1,3 @@
-using System.Net;
 using System.Security.Claims;
 using ResumeAPI.Database;
 
@@ -16,8 +15,8 @@ public interface IUserValidator
 
 public class UserValidator : IUserValidator
 {
-  private readonly IUserData _userDb;
   private readonly IResumeTree _resumeDb;
+  private readonly IUserData _userDb;
 
   public UserValidator(IUserData userDb, IResumeTree resumeDb)
   {
@@ -63,6 +62,7 @@ public class UserValidator : IUserValidator
 
 public enum UserValidationResult
 {
+  Tilt,
   Valid,
   Invalid,
   NotFound

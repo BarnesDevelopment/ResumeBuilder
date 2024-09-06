@@ -1,5 +1,4 @@
 using ResumeAPI.Database;
-using ResumeAPI.Models;
 using ResumeAPI.Services;
 
 namespace ResumeAPI.Orchestrator;
