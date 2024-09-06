@@ -16,8 +16,8 @@ jobs:
       - name: Split Version Tag
         env:
           VERSION: ${{ github.ref_name }}
-          id: split
-          run: echo "::set-output name=major::$(echo $VERSION | cut -d. -f1)"
+        id: split
+        run: echo "::set-output name=major::$(echo $VERSION | cut -d. -f1)"
 
       - name: Replace Version
         uses: jacobtomlinson/gha-find-replace@v3
