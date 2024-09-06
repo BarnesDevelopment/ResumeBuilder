@@ -1,5 +1,8 @@
 SHELL=bash
 
+docker:
+	docker compose up -d --force-recreate --pull always
+
 docker-build:
 ifdef v
 	docker build -t ghcr.io/barnesdevelopment/resume-api:$(v) .
