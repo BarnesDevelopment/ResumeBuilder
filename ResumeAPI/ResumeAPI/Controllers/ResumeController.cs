@@ -130,7 +130,7 @@ public class ResumeController : ControllerBase
       switch (valid)
       {
         case UserValidationResult.Invalid:
-          return Unauthorized();
+          return Forbid();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
       }
@@ -156,7 +156,7 @@ public class ResumeController : ControllerBase
       }
       catch (UnauthorizedAccessException)
       {
-        return Unauthorized();
+        return Forbid();
       }
       catch (KeyNotFoundException)
       {

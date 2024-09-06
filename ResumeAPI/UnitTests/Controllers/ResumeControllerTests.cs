@@ -159,19 +159,20 @@ public class ResumeControllerTests
   #region UpdateNode
 
   [Fact]
-  public async Task UpdateNode_ReturnsUpdatedResume()
+  public async Task UpdateNode_ReturnsNoContent()
   {
     var id = Guid.NewGuid();
     var userId = Guid.NewGuid();
-    var resume = new ResumeTreeNode { Id = id };
+    var resume = new ResumeTreeNode { Id = id, UserId = userId };
 
     _controller.ControllerContext = new ControllerContext
     {
       HttpContext = new DefaultHttpContext()
     };
 
-    _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
+    _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(UserValidationResult.Valid);
     _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
+    _userValidator.ValidateResource(userId, id).Returns(UserValidationResult.Valid);
     _orchestrator.UpsertNode(resume, userId).Returns(resume);
 
     var actual = await _controller.UpsertNode(new[] { resume });
@@ -179,22 +180,28 @@ public class ResumeControllerTests
     actual.Should().BeOfType<NoContentResult>();
   }
 
-  [Fact]
-  public async Task UpdateNode_ReturnsUnauthorized()
+  [Theory]
+  [InlineData(UserValidationResult.Valid)]
+  [InlineData(UserValidationResult.Invalid)]
+  public async Task UpdateNode_InvalidUser_ReturnsForbidden(UserValidationResult result)
   {
     var id = Guid.NewGuid();
-    var resume = new ResumeTreeNode { Id = id };
+    var resume = new ResumeTreeNode
+    {
+      Id = id, UserId = Guid.NewGuid()
+    };
 
     _controller.ControllerContext = new ControllerContext
     {
       HttpContext = new DefaultHttpContext()
     };
 
-    _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(UserValidationResult.Invalid);
+    _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(result);
+    _userValidator.ValidateResource(Arg.Any<Guid>(), id).Returns(UserValidationResult.Invalid);
 
     var actual = await _controller.UpsertNode(new[] { resume });
 
-    actual.Should().BeOfType<UnauthorizedResult>();
+    actual.Should().BeOfType<ForbidResult>();
   }
 
   [Fact]
@@ -209,8 +216,9 @@ public class ResumeControllerTests
       HttpContext = new DefaultHttpContext()
     };
 
-    _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
+    _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(UserValidationResult.Valid);
     _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
+    _userValidator.ValidateResource(userId, id).Returns(UserValidationResult.Valid);
     _orchestrator.UpsertNode(resume, userId).Throws(new Exception("some error"));
 
     var actual = await _controller.UpsertNode(new[] { resume });
