@@ -8,10 +8,35 @@ permissions: write-all
 jobs:
   build-and-deploy:
     name: Build and Deploy
+    strategy:
+      matrix:
+        version: [ 'tag', 'latest' ]
+        container: [ 'Api', 'App' ]
     runs-on: ubuntu-latest
+    env:
+      CONTAINER_NAME: ${{ matrix.container }}
+      VERSION: ${{ matrix.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set Container Name
+        id: container
+        run: |
+          if [ $CONTAINER_NAME == 'Api' ]; then
+            echo "container=resume-api" >> $GITHUB_OUTPUT
+          else
+            echo "container=resume-app" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set Version
+        id: version
+        run: |
+          if [ $VERSION == 'tag' ]; then
+            echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=latest" >> $GITHUB_OUTPUT
+          fi
 
       - name: Split Version Tag
         env:
@@ -19,22 +44,27 @@ jobs:
         id: split
         run: echo "::set-output name=major::$(echo $VERSION | cut -d. -f1)"
 
-      - name: Replace Version
+      - name: Replace Version (Api)
+        if: ${{ matrix.container == 'Api' }}
         uses: jacobtomlinson/gha-find-replace@v3
         with:
           include: '**/Startup.cs'
           find: 'v1'
           replace: 'v${{ steps.split.outputs.major }}'
 
+      - name: Replace Version (App)
+        if: ${{ matrix.container == 'App' }}
+        uses: jacobtomlinson/gha-find-replace@v3
+        with:
+          include: './App/resume-builder/package*.json'
+          find: '"version": "0.0.0",'
+          replace: '"version": "v${{ github.ref_name }}",'
+
       - name: Docker Login
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build
-        run: |
-          docker build -t ghcr.io/barnesdevelopment/resume-api:latest .
-          docker build -t ghcr.io/barnesdevelopment/resume-api:${{github.ref_name}} .
+        run: docker build -t ghcr.io/barnesdevelopment/${{ steps.container.name }}:${{ steps.version.version}} ./${{ matrix.container }}.Dockerfile
 
       - name: Push
-        run: |
-          docker push ghcr.io/barnesdevelopment/resume-api:latest
-          docker push ghcr.io/barnesdevelopment/resume-api:${{github.ref_name}}
+        run: docker push ghcr.io/barnesdevelopment/${{ steps.container.name }}:${{ steps.version.version}}
