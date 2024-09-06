@@ -78,6 +78,127 @@ public class ResumeController : ControllerBase
     }
   }
 
+  [HttpGet("get-all")]
+  [Authorize("User")]
+  public async Task<ActionResult<IEnumerable<ResumeTreeNode>>> GetAllResumes()
+  {
+    try
+    {
+      var user = await _validator.ValidateUser(HttpContext);
+      if (user != UserValidationResult.Valid) return Unauthorized();
+      return Ok(await _orchestrator.GetTopLevelResumes(_validator.GetUserId(HttpContext)));
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "{Message}", e.Message);
+      return Problem(e.Message);
+    }
+  }
+
+  [HttpGet("get/{id:guid}")]
+  [Authorize("User")]
+  public async Task<ActionResult<ResumeTreeNode>> GetResumeById(Guid id)
+  {
+    try
+    {
+      var valid = await _validator.Validate(HttpContext, id);
+      switch (valid)
+      {
+        case UserValidationResult.Invalid:
+          return Unauthorized();
+        case UserValidationResult.NotFound:
+          return NotFound("Resource not found");
+      }
+
+      var resume = await _orchestrator.GetResumeTree(id);
+      return Ok(resume);
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "{Message}", e.Message);
+      return Problem(e.Message);
+    }
+  }
+
+  [HttpPost("upsert")]
+  [Authorize("User")]
+  public async Task<IActionResult> UpsertNode([FromBody] ResumeTreeNode[] resume)
+  {
+    try
+    {
+      var valid = await _validator.ValidateUser(HttpContext);
+      switch (valid)
+      {
+        case UserValidationResult.Invalid:
+          return Unauthorized();
+        case UserValidationResult.NotFound:
+          return NotFound("Resource not found");
+      }
+
+      var userId = _validator.GetUserId(HttpContext);
+
+      try
+      {
+        foreach (var node in resume)
+        {
+          if (node.UserId != Guid.Empty)
+            valid = await _validator.ValidateResource(userId, node.ParentId ?? node.Id);
+          switch (valid)
+          {
+            case UserValidationResult.Invalid:
+              throw new UnauthorizedAccessException();
+            case UserValidationResult.NotFound:
+              throw new KeyNotFoundException();
+          }
+
+          await _orchestrator.UpsertNode(node, userId);
+        }
+      }
+      catch (UnauthorizedAccessException)
+      {
+        return Unauthorized();
+      }
+      catch (KeyNotFoundException)
+      {
+        return NotFound("Resource not found");
+      }
+
+      return NoContent();
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "{Message}", e.Message);
+      return Problem(e.Message);
+    }
+  }
+
+  [HttpDelete("delete/{id:guid}")]
+  [ProducesResponseType(StatusCodes.Status204NoContent)]
+  [ProducesResponseType(StatusCodes.Status403Forbidden)]
+  [Authorize("User")]
+  public async Task<ActionResult> DeleteNode(Guid id)
+  {
+    try
+    {
+      var valid = await _validator.Validate(HttpContext, id);
+      switch (valid)
+      {
+        case UserValidationResult.Invalid:
+          return Forbid();
+        case UserValidationResult.NotFound:
+          return NoContent();
+      }
+
+      await _orchestrator.DeleteNode(id);
+      return NoContent();
+    }
+    catch (Exception e)
+    {
+      _logger.LogError(e, "{Message}", e.Message);
+      return Problem(e.Message);
+    }
+  }
+
   #region Testing
 
   [HttpGet("build-test/{id:guid}")]
@@ -100,7 +221,7 @@ public class ResumeController : ControllerBase
     }
     catch (Exception e)
     {
-      _logger.LogError(e.Message);
+      _logger.LogError(e, "{Message}", e.Message);
       return Problem(e.Message);
     }
   }
@@ -286,122 +407,4 @@ public class ResumeController : ControllerBase
   }
 
   #endregion
-
-  [HttpGet("get-all")]
-  [Authorize("User")]
-  public async Task<ActionResult<IEnumerable<ResumeTreeNode>>> GetAllResumes()
-  {
-    try
-    {
-      var user = await _validator.ValidateUser(HttpContext);
-      if (user != UserValidationResult.Valid) return Unauthorized();
-      return Ok(await _orchestrator.GetTopLevelResumes(_validator.GetUserId(HttpContext)));
-    }
-    catch (Exception e)
-    {
-      _logger.LogError(e, "{Message}", e.Message);
-      return Problem(e.Message);
-    }
-  }
-
-  [HttpGet("get/{id:guid}")]
-  [Authorize("User")]
-  public async Task<ActionResult<ResumeTreeNode>> GetResumeById(Guid id)
-  {
-    try
-    {
-      var valid = await _validator.Validate(HttpContext, id);
-      switch (valid)
-      {
-        case UserValidationResult.Invalid:
-          return Unauthorized();
-        case UserValidationResult.NotFound:
-          return NotFound("Resource not found");
-      }
-
-      var resume = await _orchestrator.GetResumeTree(id);
-      return Ok(resume);
-    }
-    catch (Exception e)
-    {
-      _logger.LogError(e, "{Message}", e.Message);
-      return Problem(e.Message);
-    }
-  }
-
-  [HttpPost("upsert")]
-  [Authorize("User")]
-  public async Task<IActionResult> UpsertNode([FromBody] ResumeTreeNode[] resume)
-  {
-    try
-    {
-      var valid = await _validator.ValidateUser(HttpContext);
-      switch (valid)
-      {
-        case UserValidationResult.Invalid:
-          return Unauthorized();
-        case UserValidationResult.NotFound:
-          return NotFound("Resource not found");
-      }
-
-      var userId = _validator.GetUserId(HttpContext);
-
-      try
-      {
-        foreach (var node in resume)
-        {
-          if (node.UserId != Guid.Empty)
-            valid = await _validator.ValidateResource(userId, node.ParentId ?? node.Id);
-          switch (valid)
-          {
-            case UserValidationResult.Invalid:
-              throw new UnauthorizedAccessException();
-            case UserValidationResult.NotFound:
-              throw new KeyNotFoundException();
-          }
-
-          await _orchestrator.UpsertNode(node, userId);
-        }
-      }
-      catch (UnauthorizedAccessException)
-      {
-        return Unauthorized();
-      }
-      catch (KeyNotFoundException)
-      {
-        return NotFound("Resource not found");
-      }
-
-      return NoContent();
-    }
-    catch (Exception e)
-    {
-      _logger.LogError(e, "{Message}", e.Message);
-      return Problem(e.Message);
-    }
-  }
-
-  [HttpDelete("delete/{id:guid}")]
-  [Authorize("User")]
-  public async Task<ActionResult> DeleteNode(Guid id)
-  {
-    try
-    {
-      var valid = await _validator.Validate(HttpContext, id);
-      switch (valid)
-      {
-        case UserValidationResult.Invalid:
-          return Unauthorized();
-        case UserValidationResult.NotFound:
-          return NotFound("Resource not found");
-      }
-
-      return Accepted(await _orchestrator.DeleteNode(id));
-    }
-    catch (Exception e)
-    {
-      _logger.LogError(e, "{Message}", e.Message);
-      return Problem(e.Message);
-    }
-  }
 }
