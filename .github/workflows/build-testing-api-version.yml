@@ -1,7 +1,7 @@
 on:
   push:
     paths:
-      - '**/ResumeApi/**'
+      - '**/ResumeAPI/**'
 
 jobs:
   build-test-api:
