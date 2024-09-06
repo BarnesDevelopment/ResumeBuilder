@@ -38,6 +38,10 @@ public class ResumeController : ControllerBase
           return Unauthorized();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
+        case UserValidationResult.Valid:
+          break;
+        default:
+          throw new TiltedException();
       }
 
       var stream = new MemoryStream();
@@ -108,6 +112,10 @@ public class ResumeController : ControllerBase
           return Unauthorized();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
+        case UserValidationResult.Valid:
+          break;
+        default:
+          throw new TiltedException();
       }
 
       var resume = await _orchestrator.GetResumeTree(id);
@@ -133,6 +141,10 @@ public class ResumeController : ControllerBase
           return Forbid();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
+        case UserValidationResult.Valid:
+          break;
+        default:
+          throw new TiltedException();
       }
 
       var userId = _validator.GetUserId(HttpContext);
@@ -149,6 +161,10 @@ public class ResumeController : ControllerBase
               throw new UnauthorizedAccessException();
             case UserValidationResult.NotFound:
               throw new KeyNotFoundException();
+            case UserValidationResult.Valid:
+              break;
+            default:
+              throw new TiltedException();
           }
 
           await _orchestrator.UpsertNode(node, userId);
@@ -187,6 +203,10 @@ public class ResumeController : ControllerBase
           return Forbid();
         case UserValidationResult.NotFound:
           return NoContent();
+        case UserValidationResult.Valid:
+          break;
+        default:
+          throw new TiltedException();
       }
 
       await _orchestrator.DeleteNode(id);
@@ -214,6 +234,10 @@ public class ResumeController : ControllerBase
           return Unauthorized();
         case UserValidationResult.NotFound:
           return NotFound("Resource not found");
+        case UserValidationResult.Valid:
+          break;
+        default:
+          throw new TiltedException();
       }
 
       var resume = _orchestrator.GetResumeTree(id).Result;
