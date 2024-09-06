@@ -3,6 +3,8 @@ on:
     paths:
       - '**/ResumeAPI/**'
 
+permissions: write-all
+
 jobs:
   build-test-api:
     name: Deploy Development API Build
