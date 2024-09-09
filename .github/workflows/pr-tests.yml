@@ -3,7 +3,7 @@ on:
 
 jobs:
   test:
-    runs-on: [ self-hosted, containerd ]
+    runs-on: [ self-hosted ]
     steps:
       - run: whoami
   angular-tests:
