@@ -6,8 +6,8 @@ on:
 permissions: write-all
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  build:
+    name: Build
     strategy:
       matrix:
         version: [ 'tag', 'latest' ]
@@ -65,3 +65,16 @@ jobs:
 
       - name: Push
         run: docker push ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}}
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: [ containerd, self-hosted ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Move Docker Compose
+        run: scp ./production.docker-compose.yml webhost:~/apps/resume-builder/docker-compose.yml
+
+      - name: Docker Compose Up
+        run: ssh webhost "cd ~/apps/resume-builder && docker-compose up -d"

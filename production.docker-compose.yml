@@ -1,0 +1,67 @@
+version: "3.8"
+services:
+  app:
+    image: ghcr.io/barnesdevelopment/resume-app:latest
+    ports:
+      - "8266:80"
+    networks:
+      - api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resume-app.rule=Host(`resume-builder.barnes-development.com`)"
+      - "traefik.http.routers.resume-app.entrypoints=websecure"
+      - "traefik.http.routers.resume-app.service=resume-app-svc"
+      - "traefik.http.services.resume-app-svc.loadbalancer.server.port=8266"
+
+  api:
+    env_file:
+      - .env
+    image: ghcr.io/barnesdevelopment/resume-api:latest
+    depends_on:
+      - db
+    #    ports:
+    #      - "8080:80"
+    #    expose:
+    #      - "80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    networks:
+      - api
+
+  db:
+    image: postgres:16.0-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: resumedb211898
+      POSTGRES_USER: resumeApi
+      POSTGRES_DB: ResumeDb
+    #    ports:
+    #      - "5432:5432"
+    #    expose:
+    #      - "5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U resumeApi -d ResumeDb" ]
+      interval: 5s
+      timeout: 2s
+    networks:
+      - api
+
+  flyway:
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://db:5432/ResumeDb -user=resumeApi -password=resumedb211898 -connectRetries=60 migrate
+    volumes:
+      - ./Db/Sql:/flyway/sql
+    depends_on:
+      - db
+    networks:
+      - api
+
+volumes:
+  db-data:
+
+networks:
+  api:
