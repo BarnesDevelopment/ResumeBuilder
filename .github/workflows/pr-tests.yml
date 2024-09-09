@@ -2,6 +2,10 @@ on:
   pull_request:
 
 jobs:
+  test:
+    runs-on: container-host-1
+    steps:
+      - run: whoami
   angular-tests:
     name: Angular Tests
     runs-on: ubuntu-latest
