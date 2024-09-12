@@ -2,8 +2,6 @@ FROM node:alpine AS builder
 
 WORKDIR /usr/src/app
 
-COPY ./App/resume-builder/package-lock.json package-lock.json ./
-
 COPY ./App/resume-builder/ .
 
 RUN npm ci && npm run build --prod
