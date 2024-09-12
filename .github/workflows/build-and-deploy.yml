@@ -83,4 +83,4 @@ jobs:
           scp ./production.docker-compose.yml webhost:~/apps/resume-builder/docker-compose.yml
 
       - name: Docker Compose Up
-        run: ssh webhost "cd ~/apps/resume-builder && docker-compose up -d"
+        run: ssh webhost "cd ~/apps/resume-builder && docker compose up -d"
