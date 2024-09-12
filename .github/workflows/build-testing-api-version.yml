@@ -18,7 +18,7 @@ jobs:
 
       - name: Build
         run: |
-          docker build -t ghcr.io/barnesdevelopment/resume-api:test .
+          docker build -t ghcr.io/barnesdevelopment/resume-api:test -f ./Api.Dockerfile .
 
       - name: Push
         run: |
