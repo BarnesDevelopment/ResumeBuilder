@@ -70,7 +70,7 @@ jobs:
 
   deploy:
     name: Deploy
-    #    needs: build
+    needs: build
     runs-on: [ containerd, self-hosted ]
     steps:
       - uses: actions/checkout@v4
