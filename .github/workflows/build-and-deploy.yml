@@ -20,7 +20,7 @@ jobs:
       - name: Set Container Name
         id: container
         run: |
-          if [ $CONTAINER_NAME == 'Api' ]; then
+          if [ $CONTAINER_NAME = 'Api' ]; then
             echo "container=resume-api" >> $GITHUB_OUTPUT
           else
             echo "container=resume-app" >> $GITHUB_OUTPUT
@@ -29,7 +29,7 @@ jobs:
       - name: Set Version
         id: version
         run: |
-          if [ $VERSION == 'tag' ]; then
+          if [ $VERSION = 'tag' ]; then
             echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
           else
             echo "version=latest" >> $GITHUB_OUTPUT
@@ -39,7 +39,7 @@ jobs:
         env:
           VERSION: ${{ github.ref_name }}
         id: split
-        run: echo "::set-output name=major::$(echo $VERSION | cut -d. -f1)"
+        run: echo "major=$(echo $VERSION | cut -d. -f1)" >> $GITHUB_OUTPUT
 
       - name: Replace Version (Api)
         if: ${{ matrix.container == 'Api' }}
@@ -61,7 +61,7 @@ jobs:
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build
-        run: docker build -t ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}} ./${{ matrix.container }}.Dockerfile
+        run: docker build -t ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}} -f ./${{ matrix.container }}.Dockerfile .
 
       - name: Push
         run: docker push ghcr.io/barnesdevelopment/${{ steps.container.outputs.name }}:${{ steps.version.outputs.version}}
