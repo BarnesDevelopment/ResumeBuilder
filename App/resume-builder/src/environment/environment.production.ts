@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiBasePath: 'http://localhost:8080',
-  domain: 'localhost',
+  apiBasePath: 'http://resume-api',
+  domain: 'resume-builder.barnes-development.com',
   loggedIn: false,
 };

@@ -15,6 +15,7 @@ services:
 
   api:
     image: ghcr.io/barnesdevelopment/resume-api:latest
+    container_name: resume-api
     depends_on:
       - db
     #    ports:
