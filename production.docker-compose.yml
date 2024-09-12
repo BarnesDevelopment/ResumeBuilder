@@ -4,8 +4,6 @@ services:
     image: ghcr.io/barnesdevelopment/resume-app:latest
     ports:
       - "8266:8080"
-    networks:
-      - api
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.resume-app.rule=Host(`resume-builder.barnes-development.com`)"
@@ -18,17 +16,22 @@ services:
     container_name: resume-api
     depends_on:
       - db
-    #    ports:
-    #      - "8080:80"
+    ports:
+      - "8265:80"
     #    expose:
     #      - "80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
-      - ASPNETCORE_URLS=https://+:443
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
     networks:
       - api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.resume-api.rule=Host(`resume-builder.barnes-development.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.resume-api.entrypoints=websecure"
+      - "traefik.http.routers.resume-api.service=resume-api-svc"
+      - "traefik.http.services.resume-api-svc.loadbalancer.server.port=8265"
 
   db:
     image: postgres:16.0-alpine
