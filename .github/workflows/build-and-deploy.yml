@@ -23,9 +23,9 @@ jobs:
         id: container
         run: |
           if [ "${{matrix.container}}" = "Api" ]; then
-            echo "container=resume-api" >> $GITHUB_OUTPUT
+            echo "name=resume-api" >> $GITHUB_OUTPUT
           else
-            echo "container=resume-app" >> $GITHUB_OUTPUT
+            echo "name=resume-app" >> $GITHUB_OUTPUT
           fi
 
       - name: Set Version
