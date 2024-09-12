@@ -14,8 +14,6 @@ services:
       - "traefik.http.services.resume-app-svc.loadbalancer.server.port=8266"
 
   api:
-    env_file:
-      - .env
     image: ghcr.io/barnesdevelopment/resume-api:latest
     depends_on:
       - db
