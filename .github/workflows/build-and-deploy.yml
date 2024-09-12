@@ -78,7 +78,9 @@ jobs:
           token: ${{ secrets.PAT }}
 
       - name: Move Docker Compose
-        run: scp ./production.docker-compose.yml webhost:~/apps/resume-builder/docker-compose.yml
+        run: |
+          ssh webhost "mkdir -p ~/apps/resume-builder"
+          scp ./production.docker-compose.yml webhost:~/apps/resume-builder/docker-compose.yml
 
       - name: Docker Compose Up
         run: ssh webhost "cd ~/apps/resume-builder && docker-compose up -d"
