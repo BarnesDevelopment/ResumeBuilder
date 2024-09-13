@@ -17,13 +17,13 @@ public class UserData : PostgreSqlContext, IUserData
   {
   }
 
-  public async Task<User> GetUser(Guid id)
+  public async Task<User?> GetUser(Guid id)
   {
     return (await Db.QueryAsync<User>($@"select 
                     id {nameof(User.Id)},
                     created_date {nameof(User.CreatedDate)}
                     from ResumeDb.Users where id = @id", new { id = id }))
-      .First();
+      .FirstOrDefault();
   }
 
   public async Task<Guid> CreateUser(Guid id)
