@@ -79,9 +79,9 @@ jobs:
 
       - name: Move Docker Compose
         run: |
-          ssh webhost "mkdir -p ~/apps/resume-builder"
+          ssh webhost "mkdir -p ~/apps/resume-builder && mkdir -p ~/apps/resume-builder/Db/Sql"
           scp ./production.docker-compose.yml webhost:~/apps/resume-builder/docker-compose.yml
-          scp ./Db/Sql/* webhost:~/apps/resume-builder/Db/Sql/
+          scp ./Db/Sql/* webhost:~/apps/resume-builder/Db/Sql
 
       - name: Docker Login
         run: ssh webhost "echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
