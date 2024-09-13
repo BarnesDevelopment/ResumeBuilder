@@ -122,10 +122,14 @@ public class Startup
   public void Configure(WebApplication app, IWebHostEnvironment env)
   {
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment()) app.UseDeveloperExceptionPage();
+    if (app.Environment.IsDevelopment()) {
+      app.UseDeveloperExceptionPage();
+      app.UseSwagger();
+      app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
+    }
 
-    app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
+
+
     app.UseStaticFiles();
     app.UseCors();
 

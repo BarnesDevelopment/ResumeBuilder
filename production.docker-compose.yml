@@ -28,7 +28,7 @@ services:
       - api
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.resume-api.rule=Host(`resume-builder.barnes-development.com`) && (PathPrefix(`/resume`) || PathPrefix(`/users`))"
+      - "traefik.http.routers.resume-api.rule=Host(`api.barnes-development.com`) && (PathPrefix(`/resume`) && !PathPrefix(`/resume/swagger`))"
       - "traefik.http.routers.resume-api.entrypoints=websecure"
       - "traefik.http.routers.resume-api.service=resume-api-svc"
       - "traefik.http.services.resume-api-svc.loadbalancer.server.port=8265"

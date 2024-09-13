@@ -6,7 +6,7 @@ using ResumeAPI.Services;
 namespace ResumeAPI.Controllers;
 
 [ApiController]
-[Route("users/")]
+[Route("resume/users/")]
 public class UserController : ControllerBase
 {
   private readonly ILogger<UserController> _logger;

@@ -1,17 +1,10 @@
 import { ResumeService } from './resume.service';
-import {
-  HttpClient,
-  HttpEvent,
-  HttpHandler,
-  HttpRequest,
-} from '@angular/common/http';
-import { firstValueFrom, Observable, of, throwError } from 'rxjs';
-import { Guid, renderRootComponent } from '../../common/testing-imports';
+import { throwError } from 'rxjs';
+import { Guid } from 'guid-typescript';
 import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { Type } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 describe('ResumeService', () => {
@@ -43,7 +36,7 @@ describe('ResumeService', () => {
         },
         error: () => fail('should not throw error'),
       });
-      const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
+      const req = httpMock.expectOne(`${baseUrl}/delete/${guid}`);
       expect(req.request.method).toBe('DELETE');
       req.flush(true, { status: 202, statusText: 'Accepted' });
     });
@@ -61,7 +54,7 @@ describe('ResumeService', () => {
             done();
           },
         });
-        const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
+        const req = httpMock.expectOne(`${baseUrl}/delete/${guid}`);
         req.flush(true, { status: statusCode, statusText: statusText });
       },
     );
@@ -83,15 +76,9 @@ describe('ResumeService', () => {
             done();
           },
         });
-        const req = httpMock.expectOne(`${baseUrl}/resume/delete/${guid}`);
+        const req = httpMock.expectOne(`${baseUrl}/delete/${guid}`);
         req.flush(null, { status: statusCode, statusText: statusText });
       },
     );
   });
 });
-
-class FakeHttpHandler extends HttpHandler {
-  handle(req: HttpRequest<any>): Observable<HttpEvent<any>> {
-    throw new Error('Method not implemented.');
-  }
-}

@@ -18,27 +18,23 @@ export class ResumeService {
   constructor(private http: HttpClient) {}
 
   public getResumes(): Observable<ResumeHeader[]> {
-    return this.http.get<ResumeHeader[]>(
-      `${this.env.apiBasePath}/resume/get-all`,
-    );
+    return this.http.get<ResumeHeader[]>(`${this.env.apiBasePath}/get-all`);
   }
 
   public getResume(id: string): Observable<ResumeTreeNode> {
-    return this.http.get<ResumeTreeNode>(
-      `${this.env.apiBasePath}/resume/get/${id}`,
-    );
+    return this.http.get<ResumeTreeNode>(`${this.env.apiBasePath}/get/${id}`);
   }
 
   public updateResume(resumes: ResumeTreeNode[]): Observable<void> {
     return this.http.post<void>(
-      `${this.env.apiBasePath}/resume/upsert`,
+      `${this.env.apiBasePath}/upsert`,
       resumes.map(duplicateTreeNode),
     );
   }
 
   public deleteNode(guid: Guid): Observable<boolean> {
     return this.http
-      .delete<boolean>(`${this.env.apiBasePath}/resume/delete/${guid}`)
+      .delete<boolean>(`${this.env.apiBasePath}/delete/${guid}`)
       .pipe(
         catchError(error => {
           if (error.status === 404) {
@@ -51,7 +47,7 @@ export class ResumeService {
   }
 
   public getPreview(resume: ResumeTreeNode): Observable<Blob> {
-    return this.http.get(`${this.env.apiBasePath}/resume/build/${resume.id}`, {
+    return this.http.get(`${this.env.apiBasePath}/build/${resume.id}`, {
       responseType: 'blob',
     });
   }
