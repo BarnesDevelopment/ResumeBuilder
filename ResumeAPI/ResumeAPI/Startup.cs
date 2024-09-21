@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
@@ -10,6 +11,7 @@ using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
@@ -60,11 +62,11 @@ public class Startup
 
     services.AddTransient<IUserOrchestrator, UserOrchestrator>();
     services.AddTransient<IUserService, UserService>();
-    
+
 
     services.AddTransient<IUserData, UserData>();
     services.AddTransient<IResumeTree, ResumeTree>();
-    
+
     services.AddTransient<IUserValidator, UserValidator>();
 
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -99,6 +101,40 @@ public class Startup
             return Task.CompletedTask;
           }
         };
+      })
+      .AddCookie(options =>
+      {
+        options.Cookie.Name = "demo";
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.Events = new CookieAuthenticationEvents
+        {
+          OnRedirectToLogin = context =>
+          {
+            var cookie = context.Request.Cookies["demo"];
+            Console.WriteLine("Cookie: " + cookie);
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+          },
+          OnRedirectToAccessDenied = context =>
+          {
+            context.Response.StatusCode = StatusCodes.Status403Forbidden;
+            return Task.CompletedTask;
+          },
+          OnValidatePrincipal = context =>
+          {
+            var validator = context.HttpContext.RequestServices.GetRequiredService<IUserValidator>();
+            var valid = validator.ValidateCookie(context.Principal!.FindFirst("resume-id")!.Value).Result;
+            if (valid)
+            {
+              context.ShouldRenew = true;
+              return Task.CompletedTask;
+            }
+
+            context.RejectPrincipal();
+            return Task.CompletedTask;
+          }
+        };
       });
 
     services.AddAuthorization(options =>
@@ -122,12 +158,12 @@ public class Startup
   public void Configure(WebApplication app, IWebHostEnvironment env)
   {
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment()) {
+    if (app.Environment.IsDevelopment())
+    {
       app.UseDeveloperExceptionPage();
       app.UseSwagger();
       app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
     }
-
 
 
     app.UseStaticFiles();
