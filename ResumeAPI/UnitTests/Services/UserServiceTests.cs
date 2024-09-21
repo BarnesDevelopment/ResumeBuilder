@@ -1,7 +1,5 @@
 using Moq;
 using ResumeAPI.Database;
-using ResumeAPI.Helpers;
-using ResumeAPI.Models;
 using ResumeAPI.Services;
 
 namespace UnitTests.Services;
@@ -26,6 +24,18 @@ public class UserServiceTests
     var actual = await _service.CreateUser(guid);
 
     actual.Should().Be(guid);
+  }
+
+  [Fact]
+  public async Task CreateUser_ReturnCookie()
+  {
+    var guid = Guid.NewGuid();
+    var cookie = "cookie";
+    _db.Setup(x => x.CreateUser(guid, cookie)).ReturnsAsync(cookie);
+
+    var actual = await _service.CreateUser(guid, cookie);
+
+    actual.Should().Be(cookie);
   }
 
   [Fact]
