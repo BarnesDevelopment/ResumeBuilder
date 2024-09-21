@@ -9,7 +9,6 @@ public interface IUserValidator
   Task<UserValidationResult> ValidateUser(HttpContext context);
   Task<UserValidationResult> ValidateResource(Guid userId, Guid resourceId);
   Task<UserValidationResult> Validate(HttpContext context, Guid resourceId);
-  Task<bool> ValidateCookie(string cookie);
   Guid GetUserId(HttpContext context);
 }
 
@@ -52,11 +51,6 @@ public class UserValidator : IUserValidator
 
     if (user != UserValidationResult.Valid) return user;
     return await ValidateResource(userId, resourceId);
-  }
-
-  public async Task<bool> ValidateCookie(string cookie)
-  {
-    return await _userDb.GetUser(cookie) != null;
   }
 
   public Guid GetUserId(HttpContext context)

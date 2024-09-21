@@ -1,17 +1,32 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResumeAPI.Helpers;
 
 namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/demo/")]
-[Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
 public class DemoController : ControllerBase
 {
-  [HttpGet]
-  public IActionResult Test()
+  private readonly IAnonymousUserValidator _validator;
+
+  public DemoController(IAnonymousUserValidator anonymousUserValidator)
   {
+    _validator = anonymousUserValidator;
+  }
+
+  [HttpGet]
+  public async Task<IActionResult> Test()
+  {
+    if(await _validator.ValidateCookie(Request)) return Unauthorized("You're not in!");
     return Ok("You're in!");
   }
+
+  // [HttpPost("login")]
+  // public async Task<IActionResult> Login()
+  // {
+  //   if(await _validator.ValidateCookie(Request))
+  //
+  // }
 }

@@ -68,6 +68,7 @@ public class Startup
     services.AddTransient<IResumeTree, ResumeTree>();
 
     services.AddTransient<IUserValidator, UserValidator>();
+    services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
 
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       .AddJwtBearer(options =>
