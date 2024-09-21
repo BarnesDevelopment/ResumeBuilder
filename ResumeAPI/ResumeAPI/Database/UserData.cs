@@ -34,7 +34,7 @@ public class UserData : PostgreSqlContext, IUserData
     return (await Db.QueryAsync<User>($@"select 
                     id {nameof(User.Id)},
                     created_date {nameof(User.CreatedDate)}
-                    from ResumeDb.Users where cookie = @cookie", new { cookie }))
+                    from ResumeDb.Users where demo_session_cookie = @cookie", new { cookie }))
       .FirstOrDefault();
   }
 
