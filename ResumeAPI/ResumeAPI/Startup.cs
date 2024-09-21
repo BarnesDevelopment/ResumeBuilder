@@ -101,40 +101,6 @@ public class Startup
             return Task.CompletedTask;
           }
         };
-      })
-      .AddCookie(options =>
-      {
-        options.Cookie.Name = "demo";
-        options.Cookie.SameSite = SameSiteMode.None;
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.Events = new CookieAuthenticationEvents
-        {
-          OnRedirectToLogin = context =>
-          {
-            var cookie = context.Request.Cookies["demo"];
-            Console.WriteLine("Cookie: " + cookie);
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-          },
-          OnRedirectToAccessDenied = context =>
-          {
-            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-            return Task.CompletedTask;
-          },
-          OnValidatePrincipal = context =>
-          {
-            var validator = context.HttpContext.RequestServices.GetRequiredService<IUserValidator>();
-            var valid = validator.ValidateCookie(context.Principal!.FindFirst("resume-id")!.Value).Result;
-            if (valid)
-            {
-              context.ShouldRenew = true;
-              return Task.CompletedTask;
-            }
-
-            context.RejectPrincipal();
-            return Task.CompletedTask;
-          }
-        };
       });
 
     services.AddAuthorization(options =>
