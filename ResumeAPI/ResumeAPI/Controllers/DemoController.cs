@@ -23,10 +23,9 @@ public class DemoController : ControllerBase
     return Ok("You're in!");
   }
 
-  // [HttpPost("login")]
-  // public async Task<IActionResult> Login()
-  // {
-  //   if(await _validator.ValidateCookie(Request))
-  //
-  // }
+  // Get new cookie
+  // Check for active cookie
+  // Refresh cookie
+  // Delete cookie
+  // Get user
 }
