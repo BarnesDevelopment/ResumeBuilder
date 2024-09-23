@@ -1,13 +1,16 @@
-import { Component, Inject, inject, OnInit } from "@angular/core";
-import { ResumeService } from "../../services/resume.service";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Guid } from "guid-typescript";
-import { ResumeTreeNode } from "../../../models/Resume";
-import { InputComponent } from "../../../common/input/input.component";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
-import { ButtonComponent, ButtonStyle } from "../../../common/button/button.component";
-import { Router } from "@angular/router";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
+import { Component, Inject, inject, OnInit } from '@angular/core';
+import { ResumeService } from '../../services/resume.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Guid } from 'guid-typescript';
+import { ResumeTreeNode } from '../../../models/Resume';
+import { InputComponent } from '../../../common/input/input.component';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  ButtonComponent,
+  ButtonStyle,
+} from '../../../common/button/button.component';
+import { Router } from '@angular/router';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-update-title',
@@ -53,11 +56,11 @@ export class UpdateTitleComponent implements OnInit {
   save() {
     this.service.duplicateResume(this.data.id.toString()).subscribe(id => {
       this.service.getResume(id).subscribe(resume => {
-        resume.content = this.form.get('ti"title"alue;
-        resume.comments = this.form.get('co"comments"alue;
+        resume.content = this.form.get('title').value;
+        resume.comments = this.form.get('comments').value;
         resume.order = this.data.order;
         this.service.updateResume([resume]).subscribe(() => {
-          this.router.navigate(['/r"/resume"his.data.id]);
+          this.router.navigate(['/resume', id]);
           this.dialogRef.close();
         });
       });
