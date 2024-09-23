@@ -17,6 +17,66 @@ public class ResumeServiceTests
   }
 
   [Fact]
+  public async Task DuplicateResume_ShouldReturnNewGuid()
+  {
+    var originalGuid = Guid.NewGuid();
+    var root = new ResumeTreeNode()
+    {
+      Id = originalGuid
+    };
+
+    _tree.UpsertNode(Arg.Any<ResumeTreeNode>()).Returns(root);
+
+    var actual = await _service.DuplicateResume(root);
+
+    actual.Should().NotBe(originalGuid);
+  }
+
+  [Fact]
+  public async Task DuplicateResume_ShouldCallUpsertNode()
+  {
+    var originalGuid = Guid.NewGuid();
+    var root = new ResumeTreeNode()
+    {
+      Id = originalGuid
+    };
+
+    _tree.UpsertNode(Arg.Any<ResumeTreeNode>()).Returns(root);
+
+    await _service.DuplicateResume(root);
+
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuid));
+  }
+
+  [Fact]
+  public async Task DuplicateResume_ShouldGiveChildrenNewIds()
+  {
+    var originalGuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+    var root = new ResumeTreeNode()
+    {
+      Id = originalGuids[0],
+      Content = "root",
+      Children = new List<ResumeTreeNode>
+      {
+        new() { Id = originalGuids[1],Content = "child1" },
+        new() { Id = originalGuids[2], Content = "child2" },
+        new() { Id = originalGuids[3],Content = "child3", Children = new List<ResumeTreeNode> { new() { Id = originalGuids[4], Content = "grandchild"} } }
+      }
+    };
+
+    _tree.UpsertNode(Arg.Any<ResumeTreeNode>()).Returns(root, root.Children[0], root.Children[1], root.Children[2],
+      root.Children[2].Children[0]);
+
+    await _service.DuplicateResume(root);
+
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[0] && n.Content == "root"));
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[1] && n.Content == "child1"));
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[2] && n.Content == "child2"));
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[3] && n.Content == "child3"));
+    await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[4] && n.Content == "grandchild"));
+  }
+
+  [Fact]
   public async Task GetFullResumeTree_ShouldReturnTree()
   {
     var userId = Guid.NewGuid();

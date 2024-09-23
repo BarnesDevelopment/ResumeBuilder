@@ -20,7 +20,26 @@ public class ResumeService : IResumeService
 
   public async Task<Guid> DuplicateResume(ResumeTreeNode resume)
   {
-    return Guid.Empty;
+    resume.Id = Guid.NewGuid();
+
+    await _tree.UpsertNode(resume);
+
+    await DuplicateChildren(resume);
+
+    return resume.Id;
+  }
+
+  private async Task DuplicateChildren(ResumeTreeNode root)
+  {
+    if (root.Children == null || root.Children.Count == 0) return;
+
+    foreach (var child in root.Children)
+    {
+      child.Id = Guid.NewGuid();
+      child.ParentId = root.Id;
+      await _tree.UpsertNode(child);
+      await DuplicateChildren(child);
+    }
   }
 
   public async Task<ResumeTreeNode> GetFullResumeTree(ResumeTreeNode root)
