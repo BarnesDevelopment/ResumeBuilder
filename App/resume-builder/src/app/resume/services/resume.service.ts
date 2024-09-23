@@ -5,7 +5,7 @@ import {
   ResumeHeader,
   ResumeTreeNode,
 } from '../../models/Resume';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { environment } from '../../../environment/environment';
 import { Guid } from 'guid-typescript';
 
@@ -30,6 +30,16 @@ export class ResumeService {
       `${this.env.apiBasePath}/upsert`,
       resumes.map(duplicateTreeNode),
     );
+  }
+
+  public duplicateResume(id: string): Observable<string> {
+    return this.http
+      .post<string>(
+        `${this.env.apiBasePath}/duplicate/${id}`,
+        {},
+        { observe: 'response' },
+      )
+      .pipe(map(response => response.headers.get('Location')));
   }
 
   public deleteNode(guid: Guid): Observable<boolean> {
