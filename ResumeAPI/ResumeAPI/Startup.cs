@@ -56,15 +56,15 @@ public class Startup
     var appSettings = _configuration.Get<AppSettings>();
 
     services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
-    services.AddTransient<IResumeService, ResumeService>();
+    services.AddTransient<IResumeBuilderService, ResumeBuilderBuilderService>();
 
     services.AddTransient<IUserOrchestrator, UserOrchestrator>();
     services.AddTransient<IUserService, UserService>();
-    
+
 
     services.AddTransient<IUserData, UserData>();
     services.AddTransient<IResumeTree, ResumeTree>();
-    
+
     services.AddTransient<IUserValidator, UserValidator>();
 
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -122,12 +122,12 @@ public class Startup
   public void Configure(WebApplication app, IWebHostEnvironment env)
   {
     // Configure the HTTP request pipeline.
-    if (app.Environment.IsDevelopment()) {
+    if (app.Environment.IsDevelopment())
+    {
       app.UseDeveloperExceptionPage();
       app.UseSwagger();
       app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
     }
-
 
 
     app.UseStaticFiles();
