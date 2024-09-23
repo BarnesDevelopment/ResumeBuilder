@@ -36,7 +36,7 @@ export class UpdateTitleComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA)
     public data: {
       id: Guid;
-      order: number;
+      next: number;
     },
   ) {}
 
@@ -58,9 +58,14 @@ export class UpdateTitleComponent implements OnInit {
       this.service.getResume(id).subscribe(resume => {
         resume.content = this.form.get('title').value;
         resume.comments = this.form.get('comments').value;
-        resume.order = this.data.order;
+        resume.order = this.data.next;
+        console.log({
+          content: resume.content,
+          comments: resume.comments,
+          order: resume.order,
+        });
         this.service.updateResume([resume]).subscribe(() => {
-          this.router.navigate(['/resume', id]);
+          this.router.navigate(['/edit', id]);
           this.dialogRef.close();
         });
       });

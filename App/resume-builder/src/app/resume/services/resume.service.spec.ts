@@ -37,7 +37,7 @@ describe('ResumeService', () => {
     });
     const req = httpMock.expectOne(`${baseUrl}/duplicate/${guid}`);
     expect(req.request.method).toBe('POST');
-    req.flush(null, { headers: { Location: 'location' } });
+    req.flush(guid.toString(), { status: 200, statusText: 'OK' });
   });
 
   describe('Delete', () => {
