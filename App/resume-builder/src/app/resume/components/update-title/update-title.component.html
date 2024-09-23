@@ -1,1 +1,13 @@
-<p>update-title works!</p>
+@if (isLoading) {
+  <mat-spinner />
+} @else {
+  <div class="p-3 h-full flex flex-col justify-between items-center" [formGroup]="form">
+    <div class="w-full">
+      <app-input formControlName="title">Title</app-input>
+      <app-input formControlName="comments">Comments</app-input>
+    </div>
+    <div class="w-40">
+      <app-button ignoreClick (click)="save()">Create</app-button>
+    </div>
+  </div>
+}
