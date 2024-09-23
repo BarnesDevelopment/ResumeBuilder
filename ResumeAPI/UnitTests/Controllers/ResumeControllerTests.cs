@@ -212,7 +212,7 @@ public class ResumeControllerTests
         var actual = await _controller.DuplicateResume(id);
 
         actual.Should().BeOfType<CreatedResult>();
-        actual.As<CreatedResult>().Location.Should().Be($"/resume/get/{newId}");
+        actual.As<CreatedResult>().Value.Should().Be(newId);
     }
 
     [Fact]

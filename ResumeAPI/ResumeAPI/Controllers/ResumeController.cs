@@ -207,7 +207,7 @@ public class ResumeController : ControllerBase
             }
 
             var newId = await _orchestrator.DuplicateResume(id);
-            return newId == Guid.Empty ? Problem("Failed to duplicate resume") : Created("/resume/get/" + newId, null);
+            return newId == Guid.Empty ? Problem("Failed to duplicate resume") : Created("", newId);
         }
         catch (Exception e)
         {
