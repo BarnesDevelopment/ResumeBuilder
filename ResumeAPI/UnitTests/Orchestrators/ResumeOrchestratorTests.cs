@@ -8,253 +8,153 @@ namespace UnitTests.Orchestrators;
 
 public class ResumeOrchestratorTests
 {
-  private readonly Mock<IResumeService> _service;
-  private readonly Mock<IResumeTree> _tree;
-  private readonly ResumeOrchestrator _orchestrator;
+    private readonly Mock<IResumeBuilderService> _builderService;
+    private readonly ResumeOrchestrator _orchestrator;
+    private readonly Mock<IResumeService> _service;
+    private readonly Mock<IResumeTree> _tree;
 
-  public ResumeOrchestratorTests()
-  {
-    _service = new Mock<IResumeService>();
-    _tree = new Mock<IResumeTree>();
-    _orchestrator = new ResumeOrchestrator(_service.Object, _tree.Object);
-  }
-
-  [Fact]
-  public async Task GetTopLevelResumes_ShouldReturnNodes()
-  {
-    var userId = Guid.NewGuid();
-    var nodes = new List<ResumeTreeNode>
+    public ResumeOrchestratorTests()
     {
-      new()
-      {
-        Children = null,
-        Id = Guid.NewGuid(),
-        Active = true,
-        UserId = userId,
-        ParentId = Guid.Empty,
-        Content = "resume1",
-        NodeType = "resume",
-        Depth = 0,
-        Order = 0
-      }
-    };
-    _tree.Setup(x => x.GetTopLevelNodes(userId)).ReturnsAsync(nodes);
+        _builderService = new Mock<IResumeBuilderService>();
+        _tree = new Mock<IResumeTree>();
+        _service = new Mock<IResumeService>();
+        _orchestrator = new ResumeOrchestrator(_builderService.Object, _tree.Object, _service.Object);
+    }
 
-    var actual = await _orchestrator.GetTopLevelResumes(userId);
-
-    actual.Should().BeEquivalentTo(nodes);
-  }
-
-  [Fact]
-  public async Task UpdateNode_ShouldReturnNode()
-  {
-    var userId = Guid.NewGuid();
-    var node = new ResumeTreeNode
+    [Fact]
+    public async Task GetTopLevelResumes_ShouldReturnNodes()
     {
-      Children = null,
-      Id = Guid.NewGuid(),
-      Active = true,
-      UserId = userId,
-      ParentId = Guid.Empty,
-      Content = "resume1",
-      NodeType = "resume",
-      Depth = 0,
-      Order = 0
-    };
-
-    _tree.Setup(x => x.UpsertNode(node)).ReturnsAsync(node);
-
-    var actual = await _orchestrator.UpsertNode(node, userId);
-
-    actual.Should().BeEquivalentTo(node);
-  }
-
-  [Fact]
-  public async Task DeleteNode_ShouldReturnSuccess()
-  {
-    var id = Guid.NewGuid();
-
-    _tree.Setup(x => x.DeleteNode(id)).ReturnsAsync(true);
-
-    var actual = await _orchestrator.DeleteNode(id);
-
-    actual.Should().BeTrue();
-  }
-
-  [Fact]
-  public async Task DeleteNode_ShouldReturnFailure()
-  {
-    var id = Guid.NewGuid();
-
-    _tree.Setup(x => x.DeleteNode(id)).ReturnsAsync(false);
-
-    var actual = await _orchestrator.DeleteNode(id);
-
-    actual.Should().BeFalse();
-  }
-
-  [Fact]
-  public async Task GetResumeTree_ShouldReturnNode()
-  {
-    var guid1 = Guid.NewGuid();
-    var root = new ResumeTreeNode
-    {
-      Id = guid1,
-      Active = true,
-      UserId = Guid.Empty,
-      ParentId = Guid.Empty,
-      Content = "resume1",
-      NodeType = "resume",
-      Depth = 0,
-      Order = 0
-    };
-
-    var expected = new ResumeTreeNode
-    {
-      Id = guid1,
-      Active = true,
-      UserId = Guid.Empty,
-      ParentId = Guid.Empty,
-      Content = "resume1",
-      NodeType = "resume",
-      Depth = 0,
-      Order = 0,
-      Children = new List<ResumeTreeNode>()
-    };
-
-    _tree.Setup(x => x.GetNode(guid1)).ReturnsAsync(root);
-    _tree.Setup(x => x.GetChildren(guid1)).ReturnsAsync(new List<ResumeTreeNode>());
-
-    var actual = await _orchestrator.GetResumeTree(guid1);
-
-    actual.Should().BeEquivalentTo(expected);
-  }
-
-  [Fact]
-  public async Task GetResumeTree_ShouldReturnTree()
-  {
-    var userId = Guid.NewGuid();
-    var guid1 = Guid.NewGuid();
-    var guid2 = Guid.NewGuid();
-    var guid3 = Guid.NewGuid();
-    var guid4 = Guid.NewGuid();
-
-    var root = new ResumeTreeNode
-    {
-      Id = guid1,
-      Active = true,
-      UserId = userId,
-      ParentId = Guid.Empty,
-      Content = "resume1",
-      NodeType = "resume",
-      Depth = 0,
-      Order = 0,
-      Children = new List<ResumeTreeNode>()
-    };
-
-    var children1 = new List<ResumeTreeNode>
-    {
-      new()
-      {
-        Id = guid2,
-        Active = true,
-        UserId = userId,
-        ParentId = guid1,
-        Content = "resume2",
-        NodeType = ResumeNodeType.Section,
-        Depth = 1,
-        Order = 0
-      },
-      new()
-      {
-        Id = guid3,
-        Active = true,
-        UserId = userId,
-        ParentId = guid1,
-        Content = "resume3",
-        NodeType = ResumeNodeType.Section,
-        Depth = 1,
-        Order = 1
-      }
-    };
-
-    var children2 = new List<ResumeTreeNode>
-    {
-      new()
-      {
-        Id = guid4,
-        Active = true,
-        UserId = userId,
-        ParentId = guid3,
-        Content = "resume4",
-        NodeType = ResumeNodeType.Paragraph,
-        Depth = 2,
-        Order = 0,
-        Children = new List<ResumeTreeNode>()
-      }
-    };
-
-    var expected = new ResumeTreeNode
-    {
-      Children = new List<ResumeTreeNode>
-      {
-        new()
+        var userId = Guid.NewGuid();
+        var nodes = new List<ResumeTreeNode>
         {
-          Id = guid2,
-          Active = true,
-          UserId = userId,
-          ParentId = guid1,
-          Content = "resume2",
-          NodeType = ResumeNodeType.Section,
-          Depth = 1,
-          Order = 0,
-          Children = new List<ResumeTreeNode>()
-        },
-        new()
-        {
-          Children = new List<ResumeTreeNode>
-          {
             new()
             {
-              Id = guid4,
-              Active = true,
-              UserId = userId,
-              ParentId = guid3,
-              Content = "resume4",
-              NodeType = ResumeNodeType.Paragraph,
-              Depth = 2,
-              Order = 0,
-              Children = new List<ResumeTreeNode>()
+                Children = null,
+                Id = Guid.NewGuid(),
+                Active = true,
+                UserId = userId,
+                ParentId = Guid.Empty,
+                Content = "resume1",
+                NodeType = "resume",
+                Depth = 0,
+                Order = 0
             }
-          },
-          Id = guid3,
-          Active = true,
-          UserId = userId,
-          ParentId = guid1,
-          Content = "resume3",
-          NodeType = ResumeNodeType.Section,
-          Depth = 1,
-          Order = 1
-        }
-      },
-      Id = guid1,
-      Active = true,
-      UserId = userId,
-      ParentId = Guid.Empty,
-      Content = "resume1",
-      NodeType = "resume",
-      Depth = 0,
-      Order = 0
-    };
+        };
+        _tree.Setup(x => x.GetTopLevelNodes(userId)).ReturnsAsync(nodes);
 
-    _tree.Setup(x => x.GetNode(guid1)).ReturnsAsync(root);
-    _tree.Setup(x => x.GetChildren(guid1)).ReturnsAsync(children1);
-    _tree.Setup(x => x.GetChildren(guid2)).ReturnsAsync(new List<ResumeTreeNode>());
-    _tree.Setup(x => x.GetChildren(guid3)).ReturnsAsync(children2);
-    _tree.Setup(x => x.GetChildren(guid4)).ReturnsAsync(new List<ResumeTreeNode>());
+        var actual = await _orchestrator.GetTopLevelResumes(userId);
 
-    var actual = await _orchestrator.GetResumeTree(guid1);
+        actual.Should().BeEquivalentTo(nodes);
+    }
 
-    actual.Should().BeEquivalentTo(expected);
-  }
+    [Fact]
+    public async Task DuplicateResume_CallsServicesCorrectly()
+    {
+        var id = Guid.NewGuid();
+        var newId = Guid.NewGuid();
+        var root = new ResumeTreeNode
+        {
+            Id = id,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            NodeType = "resume",
+            Depth = 0,
+            Order = 0
+        };
+
+        _tree.Setup(x => x.GetNode(id)).ReturnsAsync(root);
+        _service.Setup(x => x.GetFullResumeTree(root)).ReturnsAsync(root);
+        _service.Setup(x => x.DuplicateResume(root)).ReturnsAsync(newId);
+
+        var actual = await _orchestrator.DuplicateResume(id);
+
+        actual.Should().Be(newId);
+    }
+
+    [Fact]
+    public async Task UpdateNode_ShouldReturnNode()
+    {
+        var userId = Guid.NewGuid();
+        var node = new ResumeTreeNode
+        {
+            Children = null,
+            Id = Guid.NewGuid(),
+            Active = true,
+            UserId = userId,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            NodeType = "resume",
+            Depth = 0,
+            Order = 0
+        };
+
+        _tree.Setup(x => x.UpsertNode(node)).ReturnsAsync(node);
+
+        var actual = await _orchestrator.UpsertNode(node, userId);
+
+        actual.Should().BeEquivalentTo(node);
+    }
+
+    [Fact]
+    public async Task DeleteNode_ShouldReturnSuccess()
+    {
+        var id = Guid.NewGuid();
+
+        _tree.Setup(x => x.DeleteNode(id)).ReturnsAsync(true);
+
+        var actual = await _orchestrator.DeleteNode(id);
+
+        actual.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task DeleteNode_ShouldReturnFailure()
+    {
+        var id = Guid.NewGuid();
+
+        _tree.Setup(x => x.DeleteNode(id)).ReturnsAsync(false);
+
+        var actual = await _orchestrator.DeleteNode(id);
+
+        actual.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task GetResumeTree_ShouldReturnNode()
+    {
+        var guid1 = Guid.NewGuid();
+        var root = new ResumeTreeNode
+        {
+            Id = guid1,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            NodeType = "resume",
+            Depth = 0,
+            Order = 0
+        };
+
+        var expected = new ResumeTreeNode
+        {
+            Id = guid1,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            NodeType = "resume",
+            Depth = 0,
+            Order = 0,
+            Children = new List<ResumeTreeNode>()
+        };
+
+        _tree.Setup(x => x.GetNode(guid1)).ReturnsAsync(root);
+        _service.Setup(x => x.GetFullResumeTree(root)).ReturnsAsync(expected);
+
+        var actual = await _orchestrator.GetResumeTree(guid1);
+
+        actual.Should().BeEquivalentTo(expected);
+    }
 }

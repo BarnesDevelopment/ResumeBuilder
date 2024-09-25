@@ -1,9 +1,11 @@
 import { HomeComponent } from './home.component';
-import { renderRootComponent, screen, Guid } from '../common/testing-imports';
+import { Guid, renderRootComponent, screen } from '../common/testing-imports';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { ResumeService } from '../resume/services/resume.service';
 import { of } from 'rxjs';
 import { fireEvent } from '@testing-library/angular';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { UpdateTitleComponent } from '../resume/components/update-title/update-title.component';
 
 describe('HomeComponent', () => {
   beforeEach(() => {
@@ -25,6 +27,28 @@ describe('HomeComponent', () => {
     it('should show create resume card', async () => {
       await render();
       expect(screen.getByText('Create Resume')).toBeTruthy();
+    });
+    it('should duplicate resume', async () => {
+      const id = Guid.create();
+      resumeServiceSpy.mockReturnValue(
+        of([
+          {
+            content: 'Resume 1',
+            comments: 'This is my first resume',
+            id: id,
+          },
+        ]),
+      );
+      const dialogSpy = jest.spyOn(MockDialog.prototype, 'open');
+      await render();
+      fireEvent.click(screen.getByText('Copy'));
+
+      expect(dialogSpy).toHaveBeenCalledWith(UpdateTitleComponent, {
+        data: { id: id, next: 1 },
+        disableClose: true,
+        width: '25rem',
+        height: '15rem',
+      });
     });
     it('should delete resume', async () => {
       resumeServiceSpy.mockReturnValue(
@@ -95,19 +119,28 @@ describe('HomeComponent', () => {
   });
 });
 
-const render = async () => {
-  return renderRootComponent(HomeComponent, {
-    providers: [
-      {
-        provide: OAuthService,
-        useClass: MockOauthService,
-      },
-    ],
-  });
-};
-
 class MockOauthService {
   getIdToken(): string {
     return null;
   }
 }
+
+class MockDialog {
+  open() {}
+}
+
+const render = async () => {
+  return renderRootComponent(HomeComponent, {
+    imports: [MatDialogModule],
+    providers: [
+      {
+        provide: OAuthService,
+        useClass: MockOauthService,
+      },
+      {
+        provide: MatDialog,
+        useClass: MockDialog,
+      },
+    ],
+  });
+};

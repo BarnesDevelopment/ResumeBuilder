@@ -16,34 +16,36 @@ import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callba
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { OAuthModule } from 'angular-oauth2-oidc';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
-    declarations: [AppComponent],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        CommonComponentsModule,
-        FontAwesomeModule,
-        BrowserAnimationsModule,
-        ReactiveFormsModule,
-        HttpClientModule,
-        MatCardModule,
-        FormsModule,
-        ResumeModule,
-        OAuthModule.forRoot(),
-        HomeComponent,
-        PageNotFoundComponent,
-        LoginCallbackComponent,
-        LogoutCallbackComponent,
-        SilentCallbackComponent,
-    ],
-    providers: [
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true,
-        },
-    ],
-    bootstrap: [AppComponent],
+  declarations: [AppComponent],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    CommonComponentsModule,
+    FontAwesomeModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    MatCardModule,
+    FormsModule,
+    ResumeModule,
+    OAuthModule.forRoot(),
+    HomeComponent,
+    PageNotFoundComponent,
+    LoginCallbackComponent,
+    LogoutCallbackComponent,
+    SilentCallbackComponent,
+    MatDialogModule,
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    },
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule {}

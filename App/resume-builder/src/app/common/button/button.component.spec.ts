@@ -1,4 +1,4 @@
-import { fireEvent, screen } from '@testing-library/angular';
+import { fireEvent, screen, within } from '@testing-library/angular';
 import { ButtonComponent } from './button.component';
 import { renderRootComponent } from '../RenderRootComponent';
 import { Router } from '@angular/router';
@@ -14,7 +14,9 @@ describe('ButtonComponent', () => {
 
   it('should display text', async () => {
     await renderContainer('some text');
-    expect(screen.getByText('some text')).toBeTruthy();
+    expect(
+      within(screen.getByTestId('ignoreClick')).getByText('some text'),
+    ).toBeTruthy();
   });
 
   it('should navigate with correct href', async () => {
@@ -41,10 +43,22 @@ describe('ButtonComponent', () => {
 
   it('should not navigate when ignoreClick is true', async () => {
     await renderContainer('title', true);
-    const button = screen.getByTestId('button');
+    const button = screen.getByTestId('ignoreClick');
     fireEvent.click(button);
 
     expect(routerSpy).not.toHaveBeenCalled();
+  });
+
+  it('should be disabled when disabled is true', async () => {
+    await renderContainer('title', false, true);
+    const button = within(screen.getByTestId('disabled')).getByTestId('button');
+    expect(button.classList).toContain('disabled');
+  });
+
+  it('should not be disabled when disabled is false', async () => {
+    await renderContainer('title', false, false);
+    const button = within(screen.getByTestId('disabled')).getByTestId('button');
+    expect(button.classList).not.toContain('disabled');
   });
 });
 
@@ -63,11 +77,16 @@ async function render(href: string, queryParams = {}) {
   });
 }
 
-async function renderContainer(title: string, ignoreClick = false) {
+async function renderContainer(
+  title: string,
+  ignoreClick = false,
+  disabled = false,
+) {
   return await renderRootComponent(ButtonContainerComponent, {
     componentInputs: {
       title,
       ignoreClick,
+      disabled,
     },
   });
 }
@@ -76,10 +95,13 @@ async function renderContainer(title: string, ignoreClick = false) {
   standalone: true,
   selector: 'app-button-container',
   template:
-    '<app-button ignoreClick *ngIf="ignoreClick">{{title}}</app-button><app-button *ngIf="!ignoreClick">{{title}}</app-button>',
+    '<app-button ignoreClick *ngIf="ignoreClick" data-testid="ignoreClick">{{title}}</app-button>' +
+    '<app-button *ngIf="!ignoreClick" data-testid="ignoreClick">{{title}}</app-button>' +
+    '<app-button [disabled]="disabled" data-testid="disabled">{{title}}</app-button>',
   imports: [ButtonComponent, NgIf],
 })
 class ButtonContainerComponent {
   @Input() title: string;
   @Input() ignoreClick = false;
+  @Input() disabled = false;
 }

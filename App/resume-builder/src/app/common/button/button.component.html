@@ -1,3 +1,5 @@
-<div [className]="buttonStyle + ' ' + borderStyle" (click)="GoTo()" data-testid="button">
+<div [className]="buttonStyle + ' ' + borderStyle"
+     [ngClass]="{ 'disabled': disabled }"
+     (click)="GoTo()" data-testid="button">
   <span><ng-content></ng-content></span>
 </div>

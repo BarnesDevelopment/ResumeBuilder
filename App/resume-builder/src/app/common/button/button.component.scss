@@ -35,4 +35,9 @@ div {
       color: $light;
     }
   }
+
+  &.disabled {
+    filter: brightness(150%);
+    cursor: not-allowed;
+  }
 }

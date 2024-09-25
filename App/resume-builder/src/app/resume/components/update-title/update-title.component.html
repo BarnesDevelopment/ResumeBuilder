@@ -1,0 +1,14 @@
+@if (isLoading) {
+  <mat-spinner />
+} @else {
+  <div class="p-3 h-full flex flex-col justify-between items-center" [formGroup]="form">
+    <div class="w-full">
+      <app-input formControlName="title" [errorMessage]="titleError">Title</app-input>
+      <app-input formControlName="comments">Comments</app-input>
+    </div>
+    <div class="w-40">
+      <app-button data-testid="cancel" ignoreClick [buttonStyle]="ButtonStyle.Secondary" (click)="cancel()">Cancel</app-button>
+      <app-button data-testid="create" [disabled]="saveDisabled" ignoreClick (click)="save()">Create</app-button>
+    </div>
+  </div>
+}
