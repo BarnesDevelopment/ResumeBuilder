@@ -5,9 +5,12 @@ import { Guid } from 'guid-typescript';
 import { ResumeTreeNode } from '../../../models/Resume';
 import { InputComponent } from '../../../common/input/input.component';
 import {
+  AbstractControl,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import {
@@ -55,6 +58,7 @@ export class UpdateTitleComponent implements OnInit {
         title: new FormControl(this.resume.content, [
           Validators.required,
           Validators.pattern(/^(\s+\S+\s*)*(?!\s).*$/),
+          this.titleValidation(this.resume.content),
         ]),
         comments: new FormControl(this.resume.comments),
       });
@@ -65,30 +69,34 @@ export class UpdateTitleComponent implements OnInit {
     });
   }
 
+  titleValidation(passedValue: string): ValidatorFn {
+    return (control: AbstractControl<string>): ValidationErrors | null => {
+      if (!control.value) return null;
+      return control.value.trim() === passedValue.trim()
+        ? { titleMatch: true }
+        : null;
+    };
+  }
+
   validateForm() {
     const invalidForm = this.form.invalid;
-    const titleMatch =
-      this.form.get('title').value.trim() === this.resume.content.trim();
 
-    if (titleMatch) {
-      this.form.get('title').setErrors({ titleMatch: true });
-    }
-
-    if (
-      this.form.get('title').hasError('required') ||
-      this.form.get('title').hasError('pattern')
-    ) {
-      this.titleError = 'Title cannot be blank';
-    } else if (this.form.get('title').hasError('titleMatch')) {
-      this.titleError = 'Title must be different';
+    if (invalidForm) {
+      if (
+        this.form.get('title').hasError('required') ||
+        this.form.get('title').hasError('pattern')
+      ) {
+        this.titleError = 'Title cannot be blank';
+      } else if (this.form.get('title').hasError('titleMatch')) {
+        this.titleError = 'Title must be different';
+      }
     } else {
       this.titleError = '';
     }
 
     this.form.markAllAsTouched();
-    this.form.updateValueAndValidity();
 
-    this.saveDisabled = invalidForm || titleMatch;
+    this.saveDisabled = invalidForm;
   }
 
   save() {
@@ -102,7 +110,6 @@ export class UpdateTitleComponent implements OnInit {
         resume.comments = this.form.get('comments').value;
         resume.order = this.data.next;
         this.service.updateResume([resume]).subscribe(() => {
-          console.log('updated');
           this.router.navigate(['/edit', id]);
           this.dialogRef.close();
         });
