@@ -11,6 +11,7 @@ namespace ResumeAPI.Orchestrator;
 public interface IResumeOrchestrator
 {
     Task<ResumeTreeNode?> GetResumeTree(Guid id);
+    Task<Guid?> DuplicateResume(Guid id);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
     Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume, Guid userId);
     Task<bool> DeleteNode(Guid id);
@@ -20,40 +21,36 @@ public interface IResumeOrchestrator
 
 public class ResumeOrchestrator : IResumeOrchestrator
 {
+    private readonly IResumeBuilderService _builderService;
     private readonly IResumeService _service;
     private readonly IResumeTree _tree;
 
-    public ResumeOrchestrator(IResumeService service, IResumeTree tree)
+    public ResumeOrchestrator(IResumeBuilderService builderService, IResumeTree tree, IResumeService service)
     {
-        _service = service;
+        _builderService = builderService;
         _tree = tree;
+        _service = service;
     }
 
     public async Task<ResumeTreeNode?> GetResumeTree(Guid id)
     {
         var root = await _tree.GetNode(id);
         if (root == null) return null;
-        
-        root.Children = await _tree.GetChildren(root.Id);
 
-        return await GetGrandChildren(root);
+        return await _service.GetFullResumeTree(root);
     }
 
-    private async Task<ResumeTreeNode> GetGrandChildren(ResumeTreeNode root)
+    public async Task<Guid?> DuplicateResume(Guid id)
     {
-        for (var i = 0; i < root.Children.Count; i++)
-        {
-            root.Children[i].Children = await _tree.GetChildren(root.Children[i].Id);
-            root.Children[i] = await GetGrandChildren(root.Children[i]);
-        }
+        var root = await _tree.GetNode(id);
+        if (root == null) return null;
 
-        return root;
+        var resume = await _service.GetFullResumeTree(root);
+        return await _service.DuplicateResume(resume);
     }
 
-    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId)
-    {
-        return await _tree.GetTopLevelNodes(userId);
-    }
+    public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId) =>
+        await _tree.GetTopLevelNodes(userId);
 
     public async Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume, Guid userId)
     {
@@ -61,48 +58,42 @@ public class ResumeOrchestrator : IResumeOrchestrator
         await _tree.UpsertNode(resume);
 
         if (resume.Children != null && resume.Children.Any())
-        {
             resume = await CreateResumeRecurseChildren(resume, userId);
-        }
-        
+
         return resume;
     }
-    
+
+    public async Task<bool> DeleteNode(Guid id) => await _tree.DeleteNode(id);
+
     private async Task<ResumeTreeNode> CreateResumeRecurseChildren(ResumeTreeNode resume, Guid userId)
     {
-        for(var i = 0; i < resume.Children.Count; i++) 
+        for (var i = 0; i < resume.Children.Count; i++)
         {
             resume.Children[i].UserId = userId;
             await _tree.UpsertNode(resume.Children[i]);
             if (resume.Children[i].Children != null && resume.Children[i].Children.Any())
-            {
                 resume.Children[i] = await CreateResumeRecurseChildren(resume.Children[i], userId);
-            }
         }
+
         return resume;
     }
-    
-    public async Task<bool> DeleteNode(Guid id)
-    {
-        return await _tree.DeleteNode(id);
-    }
-    
+
     #region BuildResume
-    
+
     public MemoryStream BuildResume(Resume resume)
     {
         var stream = new MemoryStream();
-        
+
         var body = CreateHtml(resume);
         var html = body.Write();
 
         var properties = new ConverterProperties();
-        var fontProvider = new DefaultFontProvider(false,false,false);
+        var fontProvider = new DefaultFontProvider(false, false, false);
         fontProvider.AddDirectory("./Fonts/Roboto");
         properties.SetFontProvider(fontProvider);
-        
-        HtmlConverter.ConvertToPdf(html,stream,properties);
-        
+
+        HtmlConverter.ConvertToPdf(html, stream, properties);
+
         return stream;
     }
 
@@ -116,10 +107,10 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var body = new TagBuilder("body");
         body.InnerHtml.AppendHtml(BuildHeader(resume.Header));
-        body.InnerHtml.AppendHtml(_service.BuildSummary(resume.Header));
+        body.InnerHtml.AppendHtml(_builderService.BuildSummary(resume.Header));
         body.InnerHtml.AppendHtml(BuildEducation(resume.Education));
         var experience = BuildExperience(resume.Experience);
-        for (int i = 0; i < experience.Count; i++)
+        for (var i = 0; i < experience.Count; i++)
         {
             body.InnerHtml.AppendHtml(experience[i]);
             if (resume.SplitResume && i == resume.SplitExperienceAfter)
@@ -129,35 +120,38 @@ public class ResumeOrchestrator : IResumeOrchestrator
                 body.InnerHtml.AppendHtml(pageBreak);
             }
         }
-        
-        body.InnerHtml.AppendHtml(BuildSkills(resume.Skills)); 
-        
+
+        body.InnerHtml.AppendHtml(BuildSkills(resume.Skills));
+
         var html = new TagBuilder("html");
-        html.InnerHtml.AppendHtml(_service.BuildStyle());
+        html.InnerHtml.AppendHtml(_builderService.BuildStyle());
         html.InnerHtml.AppendHtml(body);
         return html;
     }
-    
+
     private TagBuilder BuildHeader(ResumeHeader header)
     {
         var headerTag = new TagBuilder("div");
         headerTag.AddCssClass("header");
-        if(!string.IsNullOrEmpty(header.Name)) headerTag.InnerHtml.AppendHtml(TagHelper.CreatTag("div", "name", header.Name));
-        
+        if (!string.IsNullOrEmpty(header.Name))
+            headerTag.InnerHtml.AppendHtml(TagHelper.CreatTag("div", "name", header.Name));
+
         var details = new TagBuilder("div");
         details.AddCssClass("details");
         if (!string.IsNullOrEmpty(header.Email))
         {
             details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "email", header.Email));
-            details.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            details.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
         }
 
         if (header.Phone != null)
         {
             details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "phone", header.Phone.FormattedNumber));
-            details.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            details.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
         }
-        if(!string.IsNullOrEmpty(header.Website)) details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "website", header.Website));
+
+        if (!string.IsNullOrEmpty(header.Website))
+            details.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "website", header.Website));
 
         headerTag.InnerHtml.AppendHtml(details);
         return headerTag;
@@ -167,7 +161,7 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var skillsTag = new TagBuilder("div");
         skillsTag.AddCssClass("skills");
-        skillsTag.InnerHtml.AppendHtml(_service.AddSeparator("Skills"));
+        skillsTag.InnerHtml.AppendHtml(_builderService.AddSeparator("Skills"));
         var skillsContainer = new TagBuilder("div");
         skillsContainer.AddCssClass("container");
         var skillsRow = new TagBuilder("div");
@@ -195,10 +189,7 @@ public class ResumeOrchestrator : IResumeOrchestrator
 
     private List<TagBuilder> BuildExperience(List<ResumeExperience> experience)
     {
-        var experienceTags = new List<TagBuilder>
-        {
-            _service.AddSeparator("Experience")
-        };
+        var experienceTags = new List<TagBuilder> { _builderService.AddSeparator("Experience") };
 
         foreach (var job in experience)
         {
@@ -207,16 +198,18 @@ public class ResumeOrchestrator : IResumeOrchestrator
             var jobHeader = new TagBuilder("div");
             jobHeader.AddCssClass("job-header");
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "title", job.JobTitle));
-            jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            jobHeader.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "employer", job.Employer));
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", job.City));
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "comma", ","));
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", job.State));
-            jobHeader.InnerHtml.AppendHtml(_service.VerticalSeparator());
+            jobHeader.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "start", job.StartDate.ToString("MMM, yyyy")));
             jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "spacer", "-"));
-            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "end", job.EndDate != null ? ((DateTime)job.EndDate!).ToString("MMM, yyyy") : "Present"));
+            jobHeader.InnerHtml.AppendHtml(TagHelper.CreatTag("span",
+                "end",
+                job.EndDate != null ? ((DateTime)job.EndDate!).ToString("MMM, yyyy") : "Present"));
             jobTag.InnerHtml.AppendHtml(jobHeader);
 
             var responsibilitiesTag = new TagBuilder("div");
@@ -234,7 +227,7 @@ public class ResumeOrchestrator : IResumeOrchestrator
             jobTag.InnerHtml.AppendHtml(responsibilitiesTag);
             experienceTags.Add(jobTag);
         }
-        
+
         return experienceTags;
     }
 
@@ -242,8 +235,8 @@ public class ResumeOrchestrator : IResumeOrchestrator
     {
         var educationTag = new TagBuilder("div");
         educationTag.AddCssClass("education");
-        educationTag.InnerHtml.AppendHtml(_service.AddSeparator("Education"));
-        
+        educationTag.InnerHtml.AppendHtml(_builderService.AddSeparator("Education"));
+
         foreach (var school in education)
         {
             BuildSchool(school, educationTag);
@@ -272,16 +265,16 @@ public class ResumeOrchestrator : IResumeOrchestrator
         var schoolNameTag = new TagBuilder("div");
         schoolNameTag.AddCssClass("school-name");
         schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "name", school.School));
-        schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        schoolNameTag.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
         schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "city", school.City));
         schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "", ", "));
         schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "state", school.State));
-        schoolNameTag.InnerHtml.AppendHtml(_service.VerticalSeparator());
+        schoolNameTag.InnerHtml.AppendHtml(_builderService.VerticalSeparator());
         schoolNameTag.InnerHtml.AppendHtml(TagHelper.CreatTag("span", "grad-year", school.GraduationYear));
         schoolTag.InnerHtml.AppendHtml(schoolNameTag);
 
         educationTag.InnerHtml.AppendHtml(schoolTag);
     }
-    
+
     #endregion
 }

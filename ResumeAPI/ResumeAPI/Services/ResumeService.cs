@@ -1,93 +1,62 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using ResumeAPI.Helpers;
+using ResumeAPI.Database;
 using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
 
 public interface IResumeService
 {
-    TagBuilder BuildSummary(ResumeHeader header);
-    TagBuilder BuildBody(List<TagBuilder> pages);
-    TagBuilder NewPage(int newPageId);
-    TagBuilder VerticalSeparator();
-    TagBuilder AddSeparator(string title);
-    TagBuilder BuildStyle();
+    Task<Guid> DuplicateResume(ResumeTreeNode resume);
+    Task<ResumeTreeNode> GetFullResumeTree(ResumeTreeNode root);
 }
 
 public class ResumeService : IResumeService
 {
-    public TagBuilder BuildBody(List<TagBuilder> pages)
-    {
-        var body = new TagBuilder("body");
+    private readonly IResumeTree _tree;
 
-        foreach (var page in pages)
+    public ResumeService(IResumeTree tree)
+    {
+        _tree = tree;
+    }
+
+    public async Task<Guid> DuplicateResume(ResumeTreeNode resume)
+    {
+        resume.Id = Guid.NewGuid();
+
+        await _tree.UpsertNode(resume);
+
+        await DuplicateChildren(resume);
+
+        return resume.Id;
+    }
+
+    public async Task<ResumeTreeNode> GetFullResumeTree(ResumeTreeNode root)
+    {
+        root.Children = await _tree.GetChildren(root.Id);
+
+        return await GetGrandChildren(root);
+    }
+
+    private async Task DuplicateChildren(ResumeTreeNode root)
+    {
+        if (root.Children == null || root.Children.Count == 0) return;
+
+        foreach (var child in root.Children)
         {
-            body.InnerHtml.AppendHtml(page);
+            child.Id = Guid.NewGuid();
+            child.ParentId = root.Id;
+            await _tree.UpsertNode(child);
+            await DuplicateChildren(child);
         }
-        
-        return body;
     }
 
-    public TagBuilder BuildStyle()
+    private async Task<ResumeTreeNode> GetGrandChildren(ResumeTreeNode root)
     {
-        var head = new TagBuilder("head");
-        var style = new TagBuilder("style");
-        StreamReader sr = new StreamReader("./CSS/DefaultCss.css");
-        var css = sr.ReadToEnd();
-        sr.Close();
-        style.InnerHtml.AppendHtml(css);
-        head.InnerHtml.AppendHtml(style);
-        return head;
-    }
+        for (var i = 0; i < root.Children.Count; i++)
+        {
+            root.Children[i].Children = await _tree.GetChildren(root.Children[i].Id);
+            root.Children[i] = await GetGrandChildren(root.Children[i]);
+        }
 
-    public TagBuilder BuildSummary(ResumeHeader header)
-    {
-        var summary = new TagBuilder("div");
-        summary.AddCssClass("paragraph");
-        var separator = AddSeparator("Summary");
-        summary.InnerHtml.AppendHtml(separator);
-        var text = new TagBuilder("p");
-        text.InnerHtml.Append(header.Summary);
-        summary.InnerHtml.AppendHtml(text);
-        
-        return summary;
-    }
-
-    public TagBuilder NewPage(int newPageId)
-    {
-        var page = new TagBuilder("div");
-        page.AddCssClass("page");
-        page.GenerateId($"page{newPageId}", "");
-        return page;
-    }
-
-    public TagBuilder AddSeparator(string title)
-    {
-        var hr = new TagBuilder("div");
-        hr.InnerHtml.AppendHtml(new TagBuilder("div"));
-        hr.AddCssClass("separator");
-        
-        var textSpan = new TagBuilder("span");
-        textSpan.InnerHtml.Append(title);
-        var text = new TagBuilder("div");
-        text.InnerHtml.AppendHtml(textSpan);
-        text.AddCssClass("separator-text");
-        
-        var separator = new TagBuilder("div");
-        separator.AddCssClass("separator-container");
-        var separatorTable = new TagBuilder("div");
-        separatorTable.AddCssClass("separator-table");
-        separator.InnerHtml.AppendHtml(hr);
-        separator.InnerHtml.AppendHtml(text);
-        separator.InnerHtml.AppendHtml(hr);
-        
-        separatorTable.InnerHtml.AppendHtml(separator);
-
-        return separatorTable;
-    }
-
-    public TagBuilder VerticalSeparator()
-    {
-        return TagHelper.CreatTag("span", "vertical-separator","|");
+        return root;
     }
 }

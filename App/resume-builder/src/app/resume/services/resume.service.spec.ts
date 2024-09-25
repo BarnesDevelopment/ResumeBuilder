@@ -27,6 +27,19 @@ describe('ResumeService', () => {
     httpMock.verify();
   });
 
+  it('should duplicate resume', done => {
+    service.duplicateResume(guid.toString()).subscribe({
+      next: data => {
+        expect(data).toBeTruthy();
+        done();
+      },
+      error: () => fail('should not throw error'),
+    });
+    const req = httpMock.expectOne(`${baseUrl}/duplicate/${guid}`);
+    expect(req.request.method).toBe('POST');
+    req.flush(guid.toString(), { status: 200, statusText: 'OK' });
+  });
+
   describe('Delete', () => {
     it('should call http delete with correct url', done => {
       service.deleteNode(guid).subscribe({

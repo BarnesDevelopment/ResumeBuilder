@@ -32,6 +32,13 @@ export class ResumeService {
     );
   }
 
+  public duplicateResume(id: string): Observable<string> {
+    return this.http.post<string>(
+      `${this.env.apiBasePath}/duplicate/${id}`,
+      {},
+    );
+  }
+
   public deleteNode(guid: Guid): Observable<boolean> {
     return this.http
       .delete<boolean>(`${this.env.apiBasePath}/delete/${guid}`)
