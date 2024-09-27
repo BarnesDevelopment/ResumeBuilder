@@ -1,38 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Helpers;
+using ResumeAPI.Orchestrator;
 
 namespace ResumeAPI.Controllers;
 
 [ApiController]
-[Route("resume/cookie/")]
+[Route("resume/cookie")]
 public class CookieController : ControllerBase
 {
+    private readonly IUserOrchestrator _userOrchestrator;
     private readonly IAnonymousUserValidator _validator;
 
-    public CookieController(IAnonymousUserValidator anonymousUserValidator)
+    public CookieController(IAnonymousUserValidator anonymousUserValidator, IUserOrchestrator userOrchestrator)
     {
         _validator = anonymousUserValidator;
+        _userOrchestrator = userOrchestrator;
     }
+
+    // [HttpGet]
+    // public async Task<IActionResult> Test()
+    // {
+    //     if (await _validator.ValidateCookie(Request)) return Unauthorized("You're not in!");
+    //     return Ok("You're in!");
+    // }
 
     [HttpGet]
-    public async Task<IActionResult> Test()
-    {
-        if (await _validator.ValidateCookie(Request)) return Unauthorized("You're not in!");
-        return Ok("You're in!");
-    }
+    public async Task<IActionResult> GetCookie() => Ok(await _userOrchestrator.GetCookie());
 
-    [HttpGet("cookie")]
-    public async Task<IActionResult> GetCookie() => throw new NotImplementedException();
-
-    [HttpPost("cookie/verify")]
+    [HttpPost("verify")]
     public async Task<IActionResult> VerifyCookie() => throw new NotImplementedException();
 
-    [HttpGet("cookie/refresh")]
+    [HttpGet("refresh")]
     public async Task<IActionResult> RefreshCookie() => throw new NotImplementedException();
 
-    [HttpDelete("cookie")]
+    [HttpDelete]
     public async Task<IActionResult> DeleteCookie() => throw new NotImplementedException();
 
-    [HttpGet("cookie/user")]
+    [HttpGet("user")]
     public async Task<IActionResult> GetUser() => throw new NotImplementedException();
 }
