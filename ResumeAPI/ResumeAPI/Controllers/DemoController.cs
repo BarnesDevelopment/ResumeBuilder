@@ -17,7 +17,7 @@ public class DemoController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Test()
     {
-        if (await _validator.ValidateCookie(Request)) return Unauthorized("You're not in!");
+        // if (await _validator.ValidateCookie(Request)) return Unauthorized("You're not in!");
         return Ok("You're in!");
     }
 }

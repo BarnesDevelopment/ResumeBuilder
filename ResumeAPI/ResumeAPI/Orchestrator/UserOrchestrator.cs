@@ -1,4 +1,5 @@
 using System.Net;
+using Npgsql;
 using ResumeAPI.Database;
 using ResumeAPI.Services;
 
@@ -26,5 +27,11 @@ public class UserOrchestrator : IUserOrchestrator
 
     public async Task<bool> DeleteUser(Guid id) => await _db.DeleteUser(id);
 
-    public async Task<Cookie> GetCookie() => _service.CreateCookie();
+    public async Task<Cookie> GetCookie()
+    {
+        var cookie = _service.CreateCookie();
+        var id = await _db.CreateUser(Guid.NewGuid(), cookie);
+        if (id == Guid.Empty) throw new NpgsqlException("Failed to create user");
+        return cookie;
+    }
 }
