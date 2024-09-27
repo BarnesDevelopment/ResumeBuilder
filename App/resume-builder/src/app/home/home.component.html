@@ -48,13 +48,13 @@
             [borderStyle]="BorderStyle.Dark"
             [buttonStyle]="ButtonStyle.Secondary"
             ignoreClick
-            (click)="duplicate(x.id)"
+            (click)='duplicate(x.id)'
           >Copy
           </app-button
           >
           <app-button
-            [borderStyle]="BorderStyle.Dark"
-            [buttonStyle]="ButtonStyle.Alert"
+            [borderStyle]='BorderStyle.Dark'
+            [buttonStyle]='ButtonStyle.Alert'
             ignoreClick
             (click)="queueDelete(x)"
           >Delete

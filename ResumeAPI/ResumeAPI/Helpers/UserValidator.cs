@@ -8,7 +8,6 @@ public interface IUserValidator
   Task<UserValidationResult> ValidateUser(Guid userId);
   Task<UserValidationResult> ValidateUser(HttpContext context);
   Task<UserValidationResult> ValidateResource(Guid userId, Guid resourceId);
-
   Task<UserValidationResult> Validate(HttpContext context, Guid resourceId);
   Guid GetUserId(HttpContext context);
 }
