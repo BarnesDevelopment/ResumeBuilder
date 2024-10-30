@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Helpers;
 using ResumeAPI.Orchestrator;
@@ -33,6 +34,7 @@ public class CookieController : ControllerBase
     public async Task<IActionResult> GetCookie() => Ok(await _userOrchestrator.GetCookie());
 
     [HttpPost("verify")]
+    [Authorize(AuthenticationSchemes = "DemoCookie")]
     [ProducesResponseType(200)]
     [ProducesResponseType(200, Type = typeof(Cookie))]
     [ProducesResponseType(204)]

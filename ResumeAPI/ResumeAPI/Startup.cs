@@ -7,6 +7,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
+using ResumeAPI.DemoCookieAuth;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
@@ -50,6 +51,9 @@ public class Startup
 
         services.Configure<AWSSecrets>(_configuration);
         var appSettings = _configuration.Get<AppSettings>();
+        var awsSecrets = _configuration.Get<AWSSecrets>();
+
+        #region Dependency Injection
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeBuilderService, ResumeBuilderBuilderService>();
@@ -63,6 +67,12 @@ public class Startup
 
         services.AddTransient<IUserValidator, UserValidator>();
         services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
+
+        #endregion
+
+        #region Auth
+
+        #region Authentication
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -98,6 +108,17 @@ public class Startup
                 };
             });
 
+        services.AddAuthentication("DemoCookie").UseDemoCookieAuthentication();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        });
+
+        #endregion
+
+        #region Authorization
+
         services.AddAuthorization(options =>
         {
             options.AddPolicy("User",
@@ -105,9 +126,11 @@ public class Startup
                     policy.RequireClaim("resume-id"));
         });
 
-        services.AddHttpClient();
+        #endregion
 
-        var awsSecrets = _configuration.Get<AWSSecrets>();
+        #endregion
+
+        services.AddHttpClient();
 
         services.AddHealthChecks()
             .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
@@ -119,8 +142,7 @@ public class Startup
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
