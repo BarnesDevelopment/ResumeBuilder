@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ssl",
+    "start-demo": "ng serve --ssl --configuration=demo",
     "start-prod": "ng serve --ssl --configuration=production",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
