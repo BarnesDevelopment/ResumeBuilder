@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Helpers;
 
@@ -5,6 +6,7 @@ namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/demo/")]
+[Authorize(AuthenticationSchemes = "DemoCookie")]
 public class DemoController : ControllerBase
 {
     private readonly IAnonymousUserValidator _validator;

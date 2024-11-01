@@ -10,6 +10,7 @@ public interface IUserService
     Task UpdateAccessedDate(Guid id);
     Cookie CreateCookie();
     Task<Cookie?> GetCookie(string cookie);
+    Task DeleteCookie(string cookie);
 }
 
 public class UserService : IUserService
@@ -47,5 +48,12 @@ public class UserService : IUserService
         {
             Expires = user.CookieExpiration, Secure = true
         };
+    }
+
+    public async Task DeleteCookie(string cookie)
+    {
+        var user = await _db.GetUser(cookie);
+        if (user == null) return;
+        await _db.DeleteUser(user.Id);
     }
 }

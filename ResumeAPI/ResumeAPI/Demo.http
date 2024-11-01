@@ -1,6 +1,14 @@
-###
+### Get new Cookie
 GET https://localhost:7211/resume/cookie
 
-###
+### Verify Cookie
 POST https://localhost:7211/resume/cookie/verify
-Cookie: resume-id={{cookie-value}}
+Cookie: resume-id={{cookies[0]}}
+
+### Delete Cookie
+DELETE https://localhost:7211/resume/cookie
+Cookie: resume-id={{cookies[0]}}
+
+### Test Demo Controller
+GET https://localhost:7211/resume/demo/
+Cookie: resume-id={{cookies[0]}}

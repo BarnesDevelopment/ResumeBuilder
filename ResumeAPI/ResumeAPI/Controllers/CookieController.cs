@@ -54,4 +54,13 @@ public class CookieController : ControllerBase
             default: return NoContent();
         }
     }
+
+    [HttpDelete]
+    [Authorize(AuthenticationSchemes = "DemoCookie")]
+    [ProducesResponseType(204)]
+    public async Task<IActionResult> DeleteCookie()
+    {
+        await _userService.DeleteCookie(Request.Cookies["resume-id"]!);
+        return NoContent();
+    }
 }
