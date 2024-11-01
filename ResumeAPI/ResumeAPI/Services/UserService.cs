@@ -1,10 +1,12 @@
 using System.Net;
 using ResumeAPI.Database;
+using ResumeAPI.Models;
 
 namespace ResumeAPI.Services;
 
 public interface IUserService
 {
+    Task<User?> GetUser(string cookie);
     Task<Guid> CreateUser(Guid id);
     Task<bool> DeleteUser(string id);
     Task UpdateAccessedDate(Guid id);
@@ -21,6 +23,8 @@ public class UserService : IUserService
     {
         _db = db;
     }
+
+    public Task<User?> GetUser(string cookie) => _db.GetUser(cookie);
 
     public async Task<Guid> CreateUser(Guid id) => await _db.CreateUser(id);
 

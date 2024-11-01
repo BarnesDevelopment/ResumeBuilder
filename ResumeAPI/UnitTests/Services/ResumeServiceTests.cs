@@ -24,7 +24,7 @@ public class ResumeServiceTests
 
         _tree.UpsertNode(Arg.Any<ResumeTreeNode>()).Returns(root);
 
-        var actual = await _service.DuplicateResume(root);
+        var actual = await _service.DuplicateResume(root, Guid.Empty);
 
         actual.Should().NotBe(originalGuid);
     }
@@ -37,7 +37,7 @@ public class ResumeServiceTests
 
         _tree.UpsertNode(Arg.Any<ResumeTreeNode>()).Returns(root);
 
-        await _service.DuplicateResume(root);
+        await _service.DuplicateResume(root, Guid.Empty);
 
         await _tree.Received(1).UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuid));
     }
@@ -80,7 +80,7 @@ public class ResumeServiceTests
                 root.Children[2],
                 root.Children[2].Children[0]);
 
-        await _service.DuplicateResume(root);
+        await _service.DuplicateResume(root, Guid.Empty);
 
         await _tree.Received(1)
             .UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[0] && n.Content == "root"));
@@ -92,6 +92,69 @@ public class ResumeServiceTests
             .UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[3] && n.Content == "child3"));
         await _tree.Received(1)
             .UpsertNode(Arg.Is<ResumeTreeNode>(n => n.Id != originalGuids[4] && n.Content == "grandchild"));
+    }
+
+    [Fact]
+    public async Task DuplicateResume_ShouldAssignNewUserIds()
+    {
+        var originalGuids = new List<Guid>
+        {
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            Guid.NewGuid()
+        };
+
+        var originalUserId = Guid.NewGuid();
+        var newUserId = Guid.NewGuid();
+
+        var root = new ResumeTreeNode
+        {
+            Id = originalGuids[0],
+            UserId = originalUserId,
+            Content = "root",
+            Children = new List<ResumeTreeNode>
+            {
+                new() { Id = originalGuids[1], Content = "child1", UserId = originalUserId },
+                new() { Id = originalGuids[2], Content = "child2", UserId = originalUserId },
+                new()
+                {
+                    Id = originalGuids[3],
+                    UserId = originalUserId,
+                    Content = "child3",
+                    Children = new List<ResumeTreeNode>
+                    {
+                        new() { Id = originalGuids[4], Content = "grandchild" }
+                    }
+                }
+            }
+        };
+
+        _tree.UpsertNode(Arg.Any<ResumeTreeNode>())
+            .Returns(root,
+                root.Children[0],
+                root.Children[1],
+                root.Children[2],
+                root.Children[2].Children[0]);
+
+        await _service.DuplicateResume(root, newUserId);
+
+        await _tree.Received(1)
+            .UpsertNode(Arg.Is<ResumeTreeNode>(n =>
+                n.Id != originalGuids[0] && n.Content == "root" && n.UserId == newUserId));
+        await _tree.Received(1)
+            .UpsertNode(Arg.Is<ResumeTreeNode>(n =>
+                n.Id != originalGuids[1] && n.Content == "child1" && n.UserId == newUserId));
+        await _tree.Received(1)
+            .UpsertNode(Arg.Is<ResumeTreeNode>(n =>
+                n.Id != originalGuids[2] && n.Content == "child2" && n.UserId == newUserId));
+        await _tree.Received(1)
+            .UpsertNode(Arg.Is<ResumeTreeNode>(n =>
+                n.Id != originalGuids[3] && n.Content == "child3" && n.UserId == newUserId));
+        await _tree.Received(1)
+            .UpsertNode(Arg.Is<ResumeTreeNode>(n =>
+                n.Id != originalGuids[4] && n.Content == "grandchild" && n.UserId == newUserId));
     }
 
     [Fact]

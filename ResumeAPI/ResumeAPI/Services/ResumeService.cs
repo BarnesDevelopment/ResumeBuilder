@@ -5,7 +5,7 @@ namespace ResumeAPI.Services;
 
 public interface IResumeService
 {
-    Task<Guid> DuplicateResume(ResumeTreeNode resume);
+    Task<Guid> DuplicateResume(ResumeTreeNode resume, Guid userId);
     Task<ResumeTreeNode> GetFullResumeTree(ResumeTreeNode root);
 }
 
@@ -18,13 +18,14 @@ public class ResumeService : IResumeService
         _tree = tree;
     }
 
-    public async Task<Guid> DuplicateResume(ResumeTreeNode resume)
+    public async Task<Guid> DuplicateResume(ResumeTreeNode resume, Guid userId)
     {
         resume.Id = Guid.NewGuid();
+        resume.UserId = userId;
 
         await _tree.UpsertNode(resume);
 
-        await DuplicateChildren(resume);
+        await DuplicateChildren(resume, userId);
 
         return resume.Id;
     }
@@ -36,16 +37,17 @@ public class ResumeService : IResumeService
         return await GetGrandChildren(root);
     }
 
-    private async Task DuplicateChildren(ResumeTreeNode root)
+    private async Task DuplicateChildren(ResumeTreeNode root, Guid userId)
     {
         if (root.Children == null || root.Children.Count == 0) return;
 
         foreach (var child in root.Children)
         {
             child.Id = Guid.NewGuid();
+            child.UserId = userId;
             child.ParentId = root.Id;
             await _tree.UpsertNode(child);
-            await DuplicateChildren(child);
+            await DuplicateChildren(child, userId);
         }
     }
 
