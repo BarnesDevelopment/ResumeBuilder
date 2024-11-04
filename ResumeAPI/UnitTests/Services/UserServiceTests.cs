@@ -32,7 +32,7 @@ public class UserServiceTests
         var guid = Guid.NewGuid();
         _db.Setup(x => x.DeleteUser(guid)).ReturnsAsync(true);
 
-        var actual = await _service.DeleteUser(guid.ToString());
+        var actual = await _service.DeleteUser(guid);
 
         actual.Should().Be(true);
     }

@@ -9,7 +9,7 @@ public interface IUserOrchestrator
 {
     Task<Guid> CreateUser();
     Task<bool> DeleteUser(Guid id);
-    Task<Cookie> GetCookie();
+    Task<Cookie> GetNewCookie();
 }
 
 public class UserOrchestrator : IUserOrchestrator
@@ -27,7 +27,7 @@ public class UserOrchestrator : IUserOrchestrator
 
     public async Task<bool> DeleteUser(Guid id) => await _db.DeleteUser(id);
 
-    public async Task<Cookie> GetCookie()
+    public async Task<Cookie> GetNewCookie()
     {
         var cookie = _service.CreateCookie();
         var id = await _db.CreateUser(Guid.NewGuid(), cookie);

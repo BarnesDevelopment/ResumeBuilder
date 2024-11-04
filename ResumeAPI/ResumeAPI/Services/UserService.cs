@@ -8,7 +8,7 @@ public interface IUserService
 {
     Task<User?> GetUser(string cookie);
     Task<Guid> CreateUser(Guid id);
-    Task<bool> DeleteUser(string id);
+    Task<bool> DeleteUser(Guid id);
     Task UpdateAccessedDate(Guid id);
     Cookie CreateCookie();
     Task<Cookie?> GetCookie(string cookie);
@@ -28,7 +28,7 @@ public class UserService : IUserService
 
     public async Task<Guid> CreateUser(Guid id) => await _db.CreateUser(id);
 
-    public async Task<bool> DeleteUser(string id) => await _db.DeleteUser(Guid.Parse(id));
+    public async Task<bool> DeleteUser(Guid id) => await _db.DeleteUser(id);
 
     public async Task UpdateAccessedDate(Guid id)
     {

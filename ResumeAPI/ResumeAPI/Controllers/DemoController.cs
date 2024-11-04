@@ -1,44 +1,53 @@
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ResumeAPI.Helpers;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 
 namespace ResumeAPI.Controllers;
 
 [ApiController]
-[Route("resume/demo/")]
+[Route("resume/demo")]
 [Authorize(AuthenticationSchemes = "DemoCookie")]
 public class DemoController : ControllerBase
 {
     private readonly IDemoOrchestrator _demoOrchestrator;
+    private readonly ILogger<DemoController> _logger;
+    private readonly IUserOrchestrator _userOrchestrator;
     private readonly IUserService _userService;
-    private readonly IAnonymousUserValidator _validator;
 
     public DemoController(
-        IAnonymousUserValidator anonymousUserValidator,
+        IUserOrchestrator userOrchestrator,
         IUserService userService,
-        IDemoOrchestrator demoOrchestrator
+        IDemoOrchestrator demoOrchestrator,
+        ILogger<DemoController> logger
     )
     {
-        _validator = anonymousUserValidator;
+        _userOrchestrator = userOrchestrator;
         _userService = userService;
         _demoOrchestrator = demoOrchestrator;
+        _logger = logger;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Test()
+    [HttpPut("login")]
+    public async Task<ActionResult<Cookie>> Login()
     {
-        return Ok("You're in!");
+        var cookie = await _userOrchestrator.GetNewCookie();
+        var user = (await _userService.GetUser(cookie.Value))!;
+
+        await _demoOrchestrator.InitResumes(user.Id);
+
+        return Ok(cookie);
     }
 
-    public async Task<IActionResult> InitResumes()
+    [HttpDelete("logout")]
+    public async Task<IActionResult> Logout()
     {
         var cookie = Request.Cookies["resume-id"];
         var user = (await _userService.GetUser(cookie!))!;
 
-        await _demoOrchestrator.InitResumes(user.Id);
+        await _userService.DeleteUser(user.Id);
 
-        return Ok();
+        return NoContent();
     }
 }

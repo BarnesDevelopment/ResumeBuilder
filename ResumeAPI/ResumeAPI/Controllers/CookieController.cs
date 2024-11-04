@@ -31,7 +31,7 @@ public class CookieController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(200, Type = typeof(Cookie))]
-    public async Task<IActionResult> GetCookie() => Ok(await _userOrchestrator.GetCookie());
+    public async Task<IActionResult> GetCookie() => Ok(await _userOrchestrator.GetNewCookie());
 
     [HttpPost("verify")]
     [Authorize(AuthenticationSchemes = "DemoCookie")]

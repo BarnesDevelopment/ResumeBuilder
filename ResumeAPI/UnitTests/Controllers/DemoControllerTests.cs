@@ -1,11 +1,13 @@
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using ResumeAPI.Controllers;
-using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
+using UnitTests.Models;
 
 namespace UnitTests.Controllers;
 
@@ -13,19 +15,35 @@ public class DemoControllerTests
 {
     private readonly DemoController _controller;
     private readonly IDemoOrchestrator _demoOrchestrator;
+    private readonly IUserOrchestrator _userOrchestrator;
     private readonly IUserService _userService;
-    private readonly IAnonymousUserValidator _validator;
 
     public DemoControllerTests()
     {
-        _validator = Substitute.For<IAnonymousUserValidator>();
+        var logger = Substitute.For<ILogger<DemoController>>();
+        _userOrchestrator = Substitute.For<IUserOrchestrator>();
         _userService = Substitute.For<IUserService>();
         _demoOrchestrator = Substitute.For<IDemoOrchestrator>();
-        _controller = new DemoController(_validator, _userService, _demoOrchestrator);
+        _controller = new DemoController(_userOrchestrator, _userService, _demoOrchestrator, logger);
     }
 
     [Fact]
-    public async Task InitResumes_ShouldCallCorrectMethods()
+    public async Task Login_ShouldCallCorrectMethods()
+    {
+        var userId = Guid.NewGuid();
+        var user = new User { Id = userId };
+        _userService.GetUser("123").Returns(user);
+        _userOrchestrator.GetNewCookie().Returns(new Cookie("resume-id", "123"));
+        var actual = (await _controller.Login()).Result as OkObjectResult;
+
+        await _userService.Received().GetUser("123");
+        await _demoOrchestrator.Received().InitResumes(userId);
+
+        actual!.Value.Should().BeEquivalentTo(new Cookie("resume-id", "123"));
+    }
+
+    [Fact]
+    public async Task Logout_ShouldCallCorrectMethods()
     {
         var userId = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext
@@ -39,29 +57,9 @@ public class DemoControllerTests
         var user = new User { Id = userId };
         _userService.GetUser("123").Returns(user);
 
-        var actual = await _controller.InitResumes() as OkResult;
+        var actual = await _controller.Logout() as NoContentResult;
 
-        await _userService.Received().GetUser("123");
-        await _demoOrchestrator.Received().InitResumes(userId);
-
-        actual.Should().NotBeNull();
-    }
-}
-
-public class RequestCookieCollection : Dictionary<string, string>, IRequestCookieCollection
-{
-    public new ICollection<string> Keys => base.Keys;
-
-    public new string? this[string key]
-    {
-        get
-        {
-            TryGetValue(key, out var value);
-            return value;
-        }
-        set
-        {
-            if (value != null) base[key] = value;
-        }
+        await _userService.Received().DeleteUser(userId);
+        actual!.Should().NotBeNull();
     }
 }
