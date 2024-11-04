@@ -8,7 +8,6 @@ namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/demo")]
-[Authorize(AuthenticationSchemes = "DemoCookie")]
 public class DemoController : ControllerBase
 {
     private readonly IDemoOrchestrator _demoOrchestrator;
@@ -41,6 +40,7 @@ public class DemoController : ControllerBase
     }
 
     [HttpDelete("logout")]
+    [Authorize(AuthenticationSchemes = "DemoCookie")]
     public async Task<IActionResult> Logout()
     {
         var cookie = Request.Cookies["resume-id"];
