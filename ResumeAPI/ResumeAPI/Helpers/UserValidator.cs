@@ -30,7 +30,7 @@ public class UserValidator : IUserValidator
     }
 
     public async Task<UserValidationResult> ValidateUser(HttpContext context)
-    { //TODO: Allow validation of cookies
+    {
         if (!Guid.TryParse((context.User.Identity as ClaimsIdentity)!.FindFirst("resume-id")!.Value, out var userId))
             return UserValidationResult.Invalid;
         return await ValidateUser(userId);
