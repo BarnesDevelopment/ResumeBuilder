@@ -8,3 +8,7 @@ Cookie: resume-id={{cookies[0]}}
 ### Get all resumes
 GET https://localhost:7211/resume/get-all
 Cookie: resume-id={{cookies[0]}}
+
+### Get PDF
+GET https://localhost:7211/resume/build/{{resumeIds[0]}}
+Cookie: resume-id={{cookies[0]}}
