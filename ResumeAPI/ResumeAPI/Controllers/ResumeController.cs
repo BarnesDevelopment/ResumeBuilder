@@ -12,7 +12,7 @@ namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //TODO: allow cookie auth as well
 public class ResumeController : ControllerBase
 {
     private readonly ILogger<ResumeController> _logger;
