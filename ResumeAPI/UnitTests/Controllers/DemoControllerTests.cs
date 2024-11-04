@@ -59,7 +59,7 @@ public class DemoControllerTests
 
         var actual = await _controller.Logout() as NoContentResult;
 
-        await _userService.Received().DeleteUser(userId);
+        await _demoOrchestrator.Received().DeleteUser(userId);
         actual!.Should().NotBeNull();
     }
 }

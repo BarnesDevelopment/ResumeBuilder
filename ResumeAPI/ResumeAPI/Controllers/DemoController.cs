@@ -45,9 +45,15 @@ public class DemoController : ControllerBase
     public async Task<IActionResult> Logout()
     {
         var cookie = Request.Cookies["resume-id"];
-        var user = (await _userService.GetUser(cookie!))!;
+        var user = await _userService.GetUser(cookie!);
 
-        await _userService.DeleteUser(user.Id);
+        if (user == null)
+        {
+            _logger.LogWarning("User not found for cookie {Cookie}", cookie);
+            return NotFound();
+        }
+
+        await _demoOrchestrator.DeleteUser(user.Id);
 
         return NoContent();
     }
