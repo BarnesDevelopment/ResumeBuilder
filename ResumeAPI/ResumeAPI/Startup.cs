@@ -111,11 +111,6 @@ public class Startup
         services.AddAuthentication("DemoCookie").UseDemoCookieAuthentication();
         //TODO: Allow either auth method
 
-        services.AddAuthentication(options =>
-        {
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        });
-
         #endregion
 
         #region Authorization
