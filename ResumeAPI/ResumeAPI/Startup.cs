@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
 using ResumeAPI.DemoCookieAuth;
@@ -54,6 +55,8 @@ public class Startup
         var awsSecrets = _configuration.Get<AWSSecrets>();
 
         #region Dependency Injection
+
+        services.AddTransient<IDemoOrchestrator, DemoOrchestrator>();
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeBuilderService, ResumeBuilderBuilderService>();
@@ -108,12 +111,29 @@ public class Startup
                 };
             });
 
-        services.AddAuthentication("DemoCookie").UseDemoCookieAuthentication();
-        //TODO: Allow either auth method
+        services.AddAuthentication(Constants.DemoCookieAuth).UseDemoCookieAuthentication();
 
         #endregion
 
         #region Authorization
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "MultiAuth";
+                options.DefaultChallengeScheme = "MultiAuth";
+            })
+            .AddPolicyScheme("MultiAuth",
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var authorization = context.Request.Headers[HeaderNames.Authorization].ToString();
+                        if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        return Constants.DemoCookieAuth;
+                    };
+                });
 
         services.AddAuthorization(options =>
         {

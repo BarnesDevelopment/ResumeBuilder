@@ -1,6 +1,5 @@
 using iText.Html2pdf;
 using iText.Html2pdf.Resolver.Font;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ResumeAPI.Builders;
@@ -11,8 +10,8 @@ using ResumeAPI.Orchestrator;
 namespace ResumeAPI.Controllers;
 
 [ApiController]
-[Route("resume/")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)] //TODO: allow cookie auth as well
+[Route("resume")]
+[Authorize]
 public class ResumeController : ControllerBase
 {
     private readonly ILogger<ResumeController> _logger;

@@ -3,6 +3,7 @@ using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using ResumeAPI.Database;
+using ResumeAPI.Models;
 
 namespace ResumeAPI.DemoCookieAuth;
 
@@ -36,11 +37,12 @@ public class DemoCookieAuthenticationHandler : AuthenticationHandler<Authenticat
             new(ClaimTypes.Name, "DemoUser"),
             new(ClaimTypes.NameIdentifier, "1"),
             new(ClaimTypes.Role, "User"),
-            new(ClaimTypes.AuthenticationMethod, "DemoCookie")
+            new(ClaimTypes.AuthenticationMethod, Constants.DemoCookieAuth),
+            new("resume-id", user.Id.ToString())
         };
-        var identity = new ClaimsIdentity(claims, "DemoCookie");
+        var identity = new ClaimsIdentity(claims, Constants.DemoCookieAuth);
         var principal = new ClaimsPrincipal(identity);
-        var ticket = new AuthenticationTicket(principal, "DemoCookie");
+        var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
         return AuthenticateResult.Success(ticket);
     }

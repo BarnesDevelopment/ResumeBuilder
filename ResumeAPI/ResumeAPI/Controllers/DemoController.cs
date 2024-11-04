@@ -1,6 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
 
@@ -40,7 +41,7 @@ public class DemoController : ControllerBase
     }
 
     [HttpDelete("logout")]
-    [Authorize(AuthenticationSchemes = "DemoCookie")]
+    [Authorize(AuthenticationSchemes = Constants.DemoCookieAuth)]
     public async Task<IActionResult> Logout()
     {
         var cookie = Request.Cookies["resume-id"];
