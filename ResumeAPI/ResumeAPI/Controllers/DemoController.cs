@@ -37,6 +37,13 @@ public class DemoController : ControllerBase
 
         await _demoOrchestrator.InitResumes(user.Id);
 
+        Response.Cookies.Append("resume-id",
+            cookie.Value,
+            new CookieOptions
+            {
+                HttpOnly = false, Secure = true, SameSite = SameSiteMode.Strict, MaxAge = TimeSpan.FromDays(1)
+            });
+
         return Ok(cookie);
     }
 
