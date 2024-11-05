@@ -149,6 +149,7 @@ public class Startup
                 policy =>
                 {
                     policy.SetIsOriginAllowed(x => new Uri(x).Host == "localhost")
+                        .AllowCredentials()
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
