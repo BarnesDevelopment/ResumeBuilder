@@ -41,7 +41,7 @@ public class DemoController : ControllerBase
             cookie.Value,
             new CookieOptions
             {
-                HttpOnly = false, Secure = false, SameSite = SameSiteMode.Lax, MaxAge = TimeSpan.FromDays(1)
+                HttpOnly = false, Secure = true, SameSite = SameSiteMode.None, MaxAge = TimeSpan.FromDays(1)
             });
 
         return Ok(cookie);
