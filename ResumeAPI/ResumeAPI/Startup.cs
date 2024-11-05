@@ -27,6 +27,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var dev = _configuration.GetSection("Environment").Value == "Development";
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -39,20 +41,15 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-                policy =>
-                {
-                    policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-        });
-
         services.Configure<AWSSecrets>(_configuration);
         var appSettings = _configuration.Get<AppSettings>();
         var awsSecrets = _configuration.Get<AWSSecrets>();
+
+        if (dev)
+        {
+            Console.WriteLine("Development mode enabled.");
+            Console.WriteLine("PostgreSql connection string: {0}", awsSecrets.ConnectionStrings_PostgreSql);
+        }
 
         #region Dependency Injection
 
