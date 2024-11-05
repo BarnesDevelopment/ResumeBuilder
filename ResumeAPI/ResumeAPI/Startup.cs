@@ -144,6 +144,29 @@ public class Startup
 
         #endregion
 
+        #region Cors
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy(Constants.Cors.Development,
+                policy =>
+                {
+                    policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+
+            options.AddPolicy(Constants.Cors.Production,
+                policy =>
+                {
+                    policy.WithOrigins("https://resume-builder.barnes-development.com")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+
+        #endregion
+
         #endregion
 
         services.AddHttpClient();
@@ -163,11 +186,12 @@ public class Startup
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
+            app.UseCors(Constants.Cors.Development);
         }
+        else
+            app.UseCors(Constants.Cors.Production);
 
         app.UseStaticFiles();
-        app.UseCors();
-
         app.UseHttpsRedirection();
 
         app.UseAuthentication();
