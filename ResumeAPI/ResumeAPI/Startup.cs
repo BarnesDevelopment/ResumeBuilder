@@ -151,7 +151,7 @@ public class Startup
             options.AddPolicy(Constants.Cors.Development,
                 policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.SetIsOriginAllowed(x => new Uri(x).Host == "localhost")
                         .AllowAnyHeader()
                         .AllowAnyMethod();
                 });
