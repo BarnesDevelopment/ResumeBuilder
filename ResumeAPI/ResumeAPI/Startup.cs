@@ -166,7 +166,11 @@ public class Startup
         }
 
         app.UseStaticFiles();
-        app.UseCors();
+        app.UseCors(options =>
+        {
+            options.AllowCredentials();
+            options.AllowAnyOrigin();
+        });
 
         app.UseHttpsRedirection();
 
