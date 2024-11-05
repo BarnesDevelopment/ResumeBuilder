@@ -44,7 +44,7 @@ public class DemoController : ControllerBase
                 HttpOnly = false, Secure = true, SameSite = SameSiteMode.None, MaxAge = TimeSpan.FromDays(1)
             });
 
-        return Ok(cookie);
+        return Ok();
     }
 
     [HttpDelete("logout")]
