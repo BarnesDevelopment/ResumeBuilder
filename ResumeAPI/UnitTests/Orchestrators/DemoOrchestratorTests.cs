@@ -40,21 +40,25 @@ public class DemoOrchestratorTests
     [Fact]
     public async Task DeleteUser_WhenCalled_ShouldCallGetTopLevelResumes()
     {
-        await _demoOrchestrator.DeleteUser(Guid.NewGuid());
+        var userId = Guid.NewGuid();
+        await _demoOrchestrator.DeleteUser(userId);
 
-        await _resumeOrchestrator.Received(1).GetTopLevelResumes(Guid.Empty);
+        await _resumeOrchestrator.Received(1).GetTopLevelResumes(userId);
     }
 
     [Fact]
     public async Task DeleteUser_WhenCalled_ShouldCallDeleteNodeForEachResume()
     {
         var userId = Guid.NewGuid();
-        var resumes = new List<ResumeTreeNode> { new(), new(), new() };
-        _resumeOrchestrator.GetTopLevelResumes(Guid.Empty).Returns(resumes);
+        var ids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+        var resumes = new List<ResumeTreeNode> { new() { Id = ids[0] }, new() { Id = ids[1] }, new() { Id = ids[2] } };
+        _resumeOrchestrator.GetTopLevelResumes(userId).Returns(resumes);
 
         await _demoOrchestrator.DeleteUser(userId);
 
-        await _resumeOrchestrator.Received(3).DeleteNode(Arg.Any<Guid>());
+        await _resumeOrchestrator.Received(1).DeleteNode(ids[0]);
+        await _resumeOrchestrator.Received(1).DeleteNode(ids[1]);
+        await _resumeOrchestrator.Received(1).DeleteNode(ids[2]);
     }
 
     [Fact]
