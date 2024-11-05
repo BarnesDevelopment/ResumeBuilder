@@ -27,7 +27,7 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        var dev = _configuration.GetSection("Environment").Value == "Development";
+        var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -178,7 +178,7 @@ public class Startup
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
+        if (env.IsEnvironment("Development") || env.IsEnvironment("Docker"))
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
