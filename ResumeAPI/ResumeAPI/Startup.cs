@@ -168,7 +168,6 @@ public class Startup
         app.UseStaticFiles();
         app.UseCors(options =>
         {
-            options.AllowCredentials();
             options.AllowAnyOrigin();
         });
 
