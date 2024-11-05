@@ -166,10 +166,7 @@ public class Startup
         }
 
         app.UseStaticFiles();
-        app.UseCors(options =>
-        {
-            options.AllowAnyOrigin();
-        });
+        app.UseCors();
 
         app.UseHttpsRedirection();
 
