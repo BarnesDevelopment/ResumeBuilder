@@ -9,7 +9,6 @@ import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callba
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
 
 const routes: Routes = [
-  // { path: '**', canActivate: [AuthGuard] },
   {
     path: '',
     component: HomeComponent,
