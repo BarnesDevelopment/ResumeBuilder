@@ -24,8 +24,9 @@ export class DemoService {
   }
 
   public logout(): Observable<void> {
-    return this.http.delete<void>(`${this.env.apiBasePath}/demo/logout`, {
-      withCredentials: true,
-    });
+    return this.http.delete<void>(
+      `${this.env.apiBasePath}/demo/logout`,
+      this.httpOptions,
+    );
   }
 }
