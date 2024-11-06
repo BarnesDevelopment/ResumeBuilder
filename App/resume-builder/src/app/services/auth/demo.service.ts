@@ -11,22 +11,11 @@ export class DemoService {
 
   constructor(private http: HttpClient) {}
 
-  httpOptions = {
-    withCredentials: true,
-  };
-
   public login(): Observable<void> {
-    return this.http.put<void>(
-      `${this.env.apiBasePath}/demo/login`,
-      {},
-      this.httpOptions,
-    );
+    return this.http.put<void>(`${this.env.apiBasePath}/demo/login`, {});
   }
 
   public logout(): Observable<void> {
-    return this.http.delete<void>(
-      `${this.env.apiBasePath}/demo/logout`,
-      this.httpOptions,
-    );
+    return this.http.delete<void>(`${this.env.apiBasePath}/demo/logout`);
   }
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
   HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
 } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
@@ -26,7 +26,7 @@ export class AuthInterceptor implements HttpInterceptor {
       'Authorization',
       `Bearer ${accessToken}`,
     );
-    const authRequest = request.clone({ headers });
+    const authRequest = request.clone({ headers, withCredentials: true });
 
     return next.handle(authRequest).pipe(
       tap({
