@@ -14,21 +14,31 @@ import { Guid } from 'guid-typescript';
 })
 export class ResumeService {
   env = environment;
+  httpOptions = {
+    withCredentials: true,
+  };
 
   constructor(private http: HttpClient) {}
 
   public getResumes(): Observable<ResumeHeader[]> {
-    return this.http.get<ResumeHeader[]>(`${this.env.apiBasePath}/get-all`);
+    return this.http.get<ResumeHeader[]>(
+      `${this.env.apiBasePath}/get-all`,
+      this.httpOptions,
+    );
   }
 
   public getResume(id: string): Observable<ResumeTreeNode> {
-    return this.http.get<ResumeTreeNode>(`${this.env.apiBasePath}/get/${id}`);
+    return this.http.get<ResumeTreeNode>(
+      `${this.env.apiBasePath}/get/${id}`,
+      this.httpOptions,
+    );
   }
 
   public updateResume(resumes: ResumeTreeNode[]): Observable<void> {
     return this.http.post<void>(
       `${this.env.apiBasePath}/upsert`,
       resumes.map(duplicateTreeNode),
+      this.httpOptions,
     );
   }
 
@@ -36,12 +46,16 @@ export class ResumeService {
     return this.http.post<string>(
       `${this.env.apiBasePath}/duplicate/${id}`,
       {},
+      this.httpOptions,
     );
   }
 
   public deleteNode(guid: Guid): Observable<boolean> {
     return this.http
-      .delete<boolean>(`${this.env.apiBasePath}/delete/${guid}`)
+      .delete<boolean>(
+        `${this.env.apiBasePath}/delete/${guid}`,
+        this.httpOptions,
+      )
       .pipe(
         catchError(error => {
           if (error.status === 404) {
@@ -56,6 +70,7 @@ export class ResumeService {
   public getPreview(resume: ResumeTreeNode): Observable<Blob> {
     return this.http.get(`${this.env.apiBasePath}/build/${resume.id}`, {
       responseType: 'blob',
+      ...this.httpOptions,
     });
   }
 }
