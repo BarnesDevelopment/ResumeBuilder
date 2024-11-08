@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { DemoService } from './demo.service';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,9 +15,11 @@ export class AuthService {
     private oauthService: OAuthService,
     private demoService: DemoService,
     private router: Router,
+    private cookieService: CookieService,
   ) {}
 
   public isLoggedIn() {
+    this.checkForCookie();
     return this.loggedIn;
   }
 
@@ -26,6 +29,12 @@ export class AuthService {
     } else {
       return this.oauthService.getIdentityClaims() as any;
     }
+  }
+
+  private checkForCookie() {
+    const cookie = this.cookieService.get('resume-id');
+    this.loggedIn = cookie !== '';
+    this.demo = cookie !== '';
   }
 
   public login(demo: boolean = false) {
@@ -45,6 +54,7 @@ export class AuthService {
       this.demoService.logout().subscribe(() => {
         this.loggedIn = false;
         this.demo = false;
+        this.cookieService.delete('resume-id');
         this.router.navigate(['/']);
       });
     } else {
