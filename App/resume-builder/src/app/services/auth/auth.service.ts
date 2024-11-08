@@ -8,8 +8,8 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root',
 })
 export class AuthService {
-  private loggedIn: boolean = false;
-  private demo: boolean = false;
+  loggedIn: boolean = false;
+  demo: boolean = false;
 
   constructor(
     private oauthService: OAuthService,
