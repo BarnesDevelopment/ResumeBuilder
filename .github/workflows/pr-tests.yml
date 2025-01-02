@@ -22,7 +22,7 @@ jobs:
         working-directory: ./App/resume-builder
 
       - name: Publish CTRF Test Summary Results
-        run: npx github-actions-ctrf ./App/resume-builder/ctrf/ctrf-report.json
+        run: npx github-actions-ctrf failed-folded ./App/resume-builder/ctrf/ctrf-report.json
         if: always()
 
       - name: Upload coverage
