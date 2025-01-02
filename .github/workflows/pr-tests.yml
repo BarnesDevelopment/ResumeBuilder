@@ -48,6 +48,7 @@ jobs:
         working-directory: ./ResumeAPI
 
       - name: Publish test results
+        if: always()
         uses: bibipkins/dotnet-test-reporter@v1.4.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
