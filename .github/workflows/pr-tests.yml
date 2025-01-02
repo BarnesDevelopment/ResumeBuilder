@@ -54,5 +54,4 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-title: 'Unit Test Results'
           results-path: ./ResumeAPI/UnitTests/results/*.trx
-          coverage-path: ./TestResults/coverage.xml
           coverage-threshold: 80
