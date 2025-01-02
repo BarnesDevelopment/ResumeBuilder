@@ -140,3 +140,5 @@ CSS/
 *.DotSettings.user
 
 **/.angular
+
+**/results
