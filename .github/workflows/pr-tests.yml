@@ -33,6 +33,7 @@ jobs:
           path: ./App/resume-builder/coverage
 
   dotnet-tests:
+    permissions: write-all
     name: .NET Tests
     runs-on: ubuntu-latest
     steps:
