@@ -49,9 +49,9 @@ jobs:
 
       - name: Publish test results
         if: always()
-        uses: bibipkins/dotnet-test-reporter@v1.4.0
+        uses: zyborg/dotnet-tests-report@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          comment-title: 'Unit Test Results'
-          results-path: ./ResumeAPI/UnitTests/results/*.trx
-          coverage-threshold: 80
+          project_path: ./ResumeAPI/UnitTests
+          report_name: unit-tests
+          report_title: Api Unit Tests
+          github_token: ${{ secrets.GITHUB_TOKEN }}
