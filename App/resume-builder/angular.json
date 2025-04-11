@@ -109,7 +109,10 @@
             },
             "demo": {
               "buildTarget": "resume-builder:build:demo"
-            }
+            },
+            "docker": {
+              "buildTarget": "resume-builder:build:docker"
+            },
             "development": {
               "buildTarget": "resume-builder:build:development"
             }

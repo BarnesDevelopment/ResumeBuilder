@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --ssl",
+    "start-docker": "ng serve --ssl --configuration=docker",
     "start-demo": "ng serve --ssl --configuration=demo",
     "start-prod": "ng serve --ssl --configuration=production",
     "build": "ng build",
