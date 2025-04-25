@@ -23,10 +23,15 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     const accessToken = this._authService.getAccessToken();
     const headers = request.headers;
+    const setHeaders = {};
     if (accessToken) {
-      headers.set('Authorization', `Bearer ${accessToken}`);
+      setHeaders['Authorization'] = `Bearer ${accessToken}`;
     }
-    const authRequest = request.clone({ headers, withCredentials: true });
+    const authRequest = request.clone({
+      headers,
+      withCredentials: true,
+      setHeaders,
+    });
 
     return next.handle(authRequest).pipe(
       tap({
