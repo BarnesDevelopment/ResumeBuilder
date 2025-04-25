@@ -66,7 +66,7 @@ public class DemoOrchestratorTests
     {
         var userId = Guid.NewGuid();
         var resumes = new List<ResumeTreeNode> { new(), new(), new() };
-        _resumeOrchestrator.GetTopLevelResumes(Guid.Empty).Returns(resumes);
+        _resumeOrchestrator.GetTopLevelResumes(userId).Returns(resumes);
 
         await _demoOrchestrator.DeleteUser(userId);
 
