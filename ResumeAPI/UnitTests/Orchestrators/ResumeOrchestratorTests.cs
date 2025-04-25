@@ -66,9 +66,36 @@ public class ResumeOrchestratorTests
 
         _tree.Setup(x => x.GetNode(id)).ReturnsAsync(root);
         _service.Setup(x => x.GetFullResumeTree(root)).ReturnsAsync(root);
-        _service.Setup(x => x.DuplicateResume(root)).ReturnsAsync(newId);
+        _service.Setup(x => x.DuplicateResume(root, root.UserId)).ReturnsAsync(newId);
 
         var actual = await _orchestrator.DuplicateResume(id);
+
+        actual.Should().Be(newId);
+    }
+
+    [Fact]
+    public async Task DuplicateResume_NewUserId_CallsServicesCorrectly()
+    {
+        var id = Guid.NewGuid();
+        var newId = Guid.NewGuid();
+        var newUserId = Guid.NewGuid();
+        var root = new ResumeTreeNode
+        {
+            Id = id,
+            Active = true,
+            UserId = Guid.Empty,
+            ParentId = Guid.Empty,
+            Content = "resume1",
+            NodeType = "resume",
+            Depth = 0,
+            Order = 0
+        };
+
+        _tree.Setup(x => x.GetNode(id)).ReturnsAsync(root);
+        _service.Setup(x => x.GetFullResumeTree(root)).ReturnsAsync(root);
+        _service.Setup(x => x.DuplicateResume(root, newUserId)).ReturnsAsync(newId);
+
+        var actual = await _orchestrator.DuplicateResume(root, newUserId);
 
         actual.Should().Be(newId);
     }

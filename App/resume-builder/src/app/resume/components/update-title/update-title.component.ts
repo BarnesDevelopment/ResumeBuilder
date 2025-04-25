@@ -33,14 +33,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   styleUrl: './update-title.component.scss',
 })
 export class UpdateTitleComponent implements OnInit {
-  private readonly service = inject(ResumeService);
-  private readonly router = inject(Router);
-  protected readonly ButtonStyle = ButtonStyle;
   isLoading: boolean = true;
   saveDisabled: boolean = true;
   resume: ResumeTreeNode;
   form: FormGroup;
   titleError: string;
+  protected readonly ButtonStyle = ButtonStyle;
+  private readonly service = inject(ResumeService);
+  private readonly router = inject(Router);
 
   constructor(
     public dialogRef: MatDialogRef<UpdateTitleComponent>,

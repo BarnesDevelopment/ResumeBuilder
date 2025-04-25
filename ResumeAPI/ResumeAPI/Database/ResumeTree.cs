@@ -65,8 +65,8 @@ public class ResumeTree : PostgreSqlContext, IResumeTree
                         sectiontype {nameof(ResumeTreeNode.NodeType)},
                         active {nameof(ResumeTreeNode.Active)},
                         comments {nameof(ResumeTreeNode.Comments)}
-                        FROM ResumeDb.ResumeTree WHERE depth = 0";
-    return (await Db.QueryAsync<ResumeTreeNode>(query)).ToList();
+                        FROM ResumeDb.ResumeTree WHERE depth = 0 and userid = :userId";
+    return (await Db.QueryAsync<ResumeTreeNode>(query, new { userId })).ToList();
   }
 
   public async Task<bool> CreateNode(ResumeTreeNode node)

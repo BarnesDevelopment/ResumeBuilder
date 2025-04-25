@@ -12,6 +12,7 @@ public interface IResumeOrchestrator
 {
     Task<ResumeTreeNode?> GetResumeTree(Guid id);
     Task<Guid?> DuplicateResume(Guid id);
+    Task<Guid?> DuplicateResume(ResumeTreeNode root, Guid userId);
     Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId);
     Task<ResumeTreeNode> UpsertNode(ResumeTreeNode resume, Guid userId);
     Task<bool> DeleteNode(Guid id);
@@ -45,8 +46,13 @@ public class ResumeOrchestrator : IResumeOrchestrator
         var root = await _tree.GetNode(id);
         if (root == null) return null;
 
+        return await DuplicateResume(root, root.UserId);
+    }
+
+    public async Task<Guid?> DuplicateResume(ResumeTreeNode root, Guid userId)
+    {
         var resume = await _service.GetFullResumeTree(root);
-        return await _service.DuplicateResume(resume);
+        return await _service.DuplicateResume(resume, userId);
     }
 
     public async Task<IEnumerable<ResumeTreeNode>> GetTopLevelResumes(Guid userId) =>

@@ -1,5 +1,5 @@
 export interface Cookie {
-  key: string;
-  expiration: Date;
-  userId: string;
+  name: string;
+  expires: Date;
+  value: string;
 }

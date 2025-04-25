@@ -58,18 +58,18 @@ describe('UpdateTitleComponent', () => {
     await render(data);
 
     expect(getResumeSpy).toHaveBeenCalledWith(initialId.toString());
-    expect(screen.getByLabelText('Title:')).toHaveValue('title text');
-    expect(screen.getByLabelText('Comments:')).toHaveValue('initial comment');
+    expect(screen.getByTitle('title')).toHaveValue('title text');
+    expect(screen.getByTitle('comments')).toHaveValue('initial comment');
   });
 
   describe('Save', () => {
     it('should duplicate the resume with new title and comments', async () => {
       await render(data);
 
-      fireEvent.input(screen.getByLabelText('Title:'), {
+      fireEvent.input(screen.getByTitle('title'), {
         target: { value: 'new title' },
       });
-      fireEvent.input(screen.getByLabelText('Comments:'), {
+      fireEvent.input(screen.getByTitle('comments'), {
         target: { value: 'new comment' },
       });
       fireEvent.click(screen.getByText('Create'));
@@ -88,10 +88,10 @@ describe('UpdateTitleComponent', () => {
     it('should close the dialog after saving', async () => {
       await render(data);
 
-      fireEvent.input(screen.getByLabelText('Title:'), {
+      fireEvent.input(screen.getByTitle('title'), {
         target: { value: 'new title' },
       });
-      fireEvent.input(screen.getByLabelText('Comments:'), {
+      fireEvent.input(screen.getByTitle('comments'), {
         target: { value: 'new comment' },
       });
       fireEvent.click(screen.getByText('Create'));
@@ -101,10 +101,10 @@ describe('UpdateTitleComponent', () => {
     it('should route to edit page after saving', async () => {
       await render(data);
 
-      fireEvent.input(screen.getByLabelText('Title:'), {
+      fireEvent.input(screen.getByTitle('title'), {
         target: { value: 'new title' },
       });
-      fireEvent.input(screen.getByLabelText('Comments:'), {
+      fireEvent.input(screen.getByTitle('comments'), {
         target: { value: 'new comment' },
       });
       fireEvent.click(screen.getByText('Create'));
@@ -134,7 +134,7 @@ describe('UpdateTitleComponent', () => {
       it('should not duplicate if title is empty', async () => {
         const component = await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: '' },
         });
         fireEvent.click(screen.getByText('Create'));
@@ -146,7 +146,7 @@ describe('UpdateTitleComponent', () => {
       it('should not duplicate if title is only whitespace', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: ' ' },
         });
         fireEvent.click(screen.getByText('Create'));
@@ -157,7 +157,7 @@ describe('UpdateTitleComponent', () => {
       it('should not duplicate if the title is the same as the original', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: 'title text' },
         });
         fireEvent.click(screen.getByText('Create'));
@@ -171,7 +171,7 @@ describe('UpdateTitleComponent', () => {
       it('should enable the save button if title is valid', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: 'new title' },
         });
         expect(
@@ -188,7 +188,7 @@ describe('UpdateTitleComponent', () => {
       it('should disable the save button if the title is the same as original', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: 'title text' },
         });
         expect(
@@ -198,7 +198,7 @@ describe('UpdateTitleComponent', () => {
       it('should disable the save button if the title is empty', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: '' },
         });
         expect(
@@ -208,7 +208,7 @@ describe('UpdateTitleComponent', () => {
       it('should disable the save button if the title is only whitespace', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: ' ' },
         });
         expect(
@@ -221,7 +221,7 @@ describe('UpdateTitleComponent', () => {
       it('should show error if the title is the same as the original', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: 'title text' },
         });
         fireEvent.click(screen.getByText('Create'));
@@ -231,7 +231,7 @@ describe('UpdateTitleComponent', () => {
       it('should show error if the title is empty', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: '' },
         });
         fireEvent.click(screen.getByText('Create'));
@@ -241,7 +241,7 @@ describe('UpdateTitleComponent', () => {
       it('should show error if the title is only whitespace', async () => {
         await render(data);
 
-        fireEvent.input(screen.getByLabelText('Title:'), {
+        fireEvent.input(screen.getByTitle('title'), {
           target: { value: ' ' },
         });
         fireEvent.click(screen.getByText('Create'));

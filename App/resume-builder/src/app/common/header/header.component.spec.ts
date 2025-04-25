@@ -2,8 +2,9 @@ import { HeaderComponent } from './header.component';
 import { User } from '../../models/User';
 import { within } from '@testing-library/angular';
 import { Router } from '@angular/router';
+import { fireEvent, renderRootComponent, screen } from '../testing-imports';
+import { AuthService } from '../../services/auth/auth.service';
 import { OAuthService } from 'angular-oauth2-oidc';
-import { renderRootComponent, fireEvent, screen } from '../testing-imports';
 
 describe('HeaderComponent', () => {
   const user: User = {
@@ -15,8 +16,21 @@ describe('HeaderComponent', () => {
     username: '',
   };
   let router: jest.SpyInstance;
+  let authServiceLoggedIn,
+    authServiceClaims,
+    authServiceLogin,
+    authServiceLogout;
   beforeEach(() => {
+    jest.resetAllMocks();
     router = jest.spyOn(Router.prototype, 'navigate');
+    authServiceLoggedIn = jest
+      .spyOn(AuthService.prototype, 'isLoggedIn')
+      .mockReturnValue(true);
+    authServiceClaims = jest
+      .spyOn(AuthService.prototype, 'getClaims')
+      .mockReturnValue(user);
+    authServiceLogin = jest.spyOn(AuthService.prototype, 'login');
+    authServiceLogout = jest.spyOn(AuthService.prototype, 'logout');
   });
 
   describe('Title', () => {
@@ -35,18 +49,20 @@ describe('HeaderComponent', () => {
   });
 
   describe('Login Button', () => {
-    it('should display login button if user is null', async () => {
+    beforeEach(() => {
+      authServiceLoggedIn.mockReturnValue(false);
+    });
+    it('should display login button if not logged in', async () => {
       await render();
       const button = screen.getByTitle('login');
       expect(button).toBeTruthy();
     });
 
-    it('should call oauth login method', async () => {
-      const spy = jest.spyOn(MockOAuthService.prototype, 'initCodeFlow');
+    it('should call auth login method', async () => {
       await render();
       const button = screen.getByTitle('login');
       fireEvent.click(button);
-      expect(spy).toHaveBeenCalledTimes(1);
+      expect(authServiceLogin).toHaveBeenCalledTimes(1);
     });
 
     it('should have correct login button text', async () => {
@@ -58,12 +74,7 @@ describe('HeaderComponent', () => {
 
   describe('User', () => {
     beforeEach(() => {
-      jest
-        .spyOn(MockOAuthService.prototype, 'getIdentityClaims')
-        .mockReturnValue({ name: 'full name' });
-      jest
-        .spyOn(MockOAuthService.prototype, 'getIdToken')
-        .mockReturnValue('fakeIdToken');
+      authServiceClaims.mockReturnValue({ name: 'full name' });
     });
 
     it('should display username if user is not null', async () => {
@@ -110,41 +121,32 @@ describe('HeaderComponent', () => {
           expect(router).toHaveBeenCalledWith(['/account']);
         });
 
-        it('should call oauth logout when logout button clicked', async () => {
-          const spy = jest.spyOn(MockOAuthService.prototype, 'logOut');
+        it('should call auth logout when logout button clicked', async () => {
           await render();
           const userButton = screen.getByText('full name');
           fireEvent.click(userButton);
           fireEvent.click(screen.getByText('Logout'));
 
-          expect(spy).toHaveBeenCalledTimes(1);
+          expect(authServiceLogout).toHaveBeenCalledTimes(1);
         });
       });
     });
   });
 });
 
+class MockOauthService {
+  getIdToken(): string {
+    return null;
+  }
+}
+
 const render = async () => {
   return await renderRootComponent(HeaderComponent, {
     providers: [
       {
         provide: OAuthService,
-        useClass: MockOAuthService,
+        useClass: MockOauthService,
       },
     ],
   });
 };
-
-class MockOAuthService {
-  getIdentityClaims() {
-    return null;
-  }
-
-  getIdToken() {
-    return null;
-  }
-
-  initCodeFlow() {}
-
-  logOut() {}
-}

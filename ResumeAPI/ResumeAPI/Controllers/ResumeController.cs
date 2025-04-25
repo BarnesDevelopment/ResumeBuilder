@@ -10,7 +10,7 @@ using ResumeAPI.Orchestrator;
 namespace ResumeAPI.Controllers;
 
 [ApiController]
-[Route("resume/")]
+[Route("resume")]
 [Authorize]
 public class ResumeController : ControllerBase
 {

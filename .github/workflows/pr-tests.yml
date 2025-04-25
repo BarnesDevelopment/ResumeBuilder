@@ -7,20 +7,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        
+
       - name: Setup Node 20
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
+
       - name: Install dependencies
         run: npm install
         working-directory: ./App/resume-builder
-        
+
       - name: Run tests
         run: npm run test:coverage
         working-directory: ./App/resume-builder
-        
+
+      - name: Publish CTRF Test Summary Results
+        run: npx github-actions-ctrf failed-folded ./App/resume-builder/ctrf/ctrf-report.json
+        if: always()
+
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
@@ -29,6 +33,7 @@ jobs:
           path: ./App/resume-builder/coverage
 
   dotnet-tests:
+    permissions: write-all
     name: .NET Tests
     runs-on: ubuntu-latest
     steps:
@@ -42,3 +47,12 @@ jobs:
       - name: Run tests
         run: dotnet test
         working-directory: ./ResumeAPI
+
+      - name: Publish test results
+        if: always()
+        uses: zyborg/dotnet-tests-report@v1
+        with:
+          project_path: ./ResumeAPI/UnitTests
+          report_name: unit-tests
+          report_title: Api Unit Tests
+          github_token: ${{ secrets.GITHUB_TOKEN }}

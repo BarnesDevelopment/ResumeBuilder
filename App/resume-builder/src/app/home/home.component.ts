@@ -6,12 +6,12 @@ import {
 } from '../common/button/button.component';
 import { ResumeHeader } from '../models/Resume';
 import { ResumeService } from '../resume/services/resume.service';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { MatCardModule } from '@angular/material/card';
 import { LoginSplashScreenComponent } from '../common/login-splash-screen/login-splash-screen.component';
 import { Guid } from 'guid-typescript';
 import { MatDialog } from '@angular/material/dialog';
 import { UpdateTitleComponent } from '../resume/components/update-title/update-title.component';
+import { AuthService } from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +22,7 @@ import { UpdateTitleComponent } from '../resume/components/update-title/update-t
 })
 export class HomeComponent implements OnInit {
   private readonly service = inject(ResumeService);
-  private readonly oauthService = inject(OAuthService);
+  private readonly authService = inject(AuthService);
   private readonly dialog = inject(MatDialog);
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
   }
 
   get isLoggedIn() {
-    return this.oauthService.getIdToken();
+    return this.authService.isLoggedIn();
   }
 
   queueDelete(resume: ResumeHeader) {

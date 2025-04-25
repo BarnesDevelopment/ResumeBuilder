@@ -1,16 +1,20 @@
-import { Component } from '@angular/core';
-import { BorderStyle, ButtonStyle, ButtonComponent } from '../button/button.component';
+import { Component, inject } from '@angular/core';
+import {
+  BorderStyle,
+  ButtonComponent,
+  ButtonStyle,
+} from '../button/button.component';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { Router } from '@angular/router';
-import { OAuthService } from 'angular-oauth2-oidc';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
-    selector: 'app-header',
-    templateUrl: './header.component.html',
-    styleUrls: ['./header.component.scss'],
-    standalone: true,
-    imports: [FaIconComponent, ButtonComponent],
+  selector: 'app-header',
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.scss'],
+  standalone: true,
+  imports: [FaIconComponent, ButtonComponent],
 })
 export class HeaderComponent {
   faCaretDown = faCaretDown;
@@ -18,11 +22,8 @@ export class HeaderComponent {
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
-
-  constructor(
-    private router: Router,
-    private oauthService: OAuthService,
-  ) {}
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   ToggleUserPanel() {
     this.showUserPanel = !this.showUserPanel;
@@ -33,18 +34,18 @@ export class HeaderComponent {
   }
 
   get Claims() {
-    return this.oauthService.getIdentityClaims() as any;
+    return this.authService.getClaims();
   }
 
   get isLoggedIn() {
-    return this.oauthService.getIdToken();
+    return this.authService.isLoggedIn();
   }
 
   Login() {
-    this.oauthService.initCodeFlow();
+    this.authService.login();
   }
 
   Logout() {
-    this.oauthService.logOut();
+    this.authService.logout();
   }
 }

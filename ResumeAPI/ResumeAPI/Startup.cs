@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
+using ResumeAPI.DemoCookieAuth;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
@@ -25,6 +27,8 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
+        var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -37,19 +41,19 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(
-                policy =>
-                {
-                    policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-        });
-
         services.Configure<AWSSecrets>(_configuration);
         var appSettings = _configuration.Get<AppSettings>();
+        var awsSecrets = _configuration.Get<AWSSecrets>();
+
+        if (dev)
+        {
+            Console.WriteLine("Development mode enabled.");
+            Console.WriteLine("PostgreSql connection string: {0}", awsSecrets.ConnectionStrings_PostgreSql);
+        }
+
+        #region Dependency Injection
+
+        services.AddTransient<IDemoOrchestrator, DemoOrchestrator>();
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
         services.AddTransient<IResumeBuilderService, ResumeBuilderBuilderService>();
@@ -62,6 +66,13 @@ public class Startup
         services.AddTransient<IResumeTree, ResumeTree>();
 
         services.AddTransient<IUserValidator, UserValidator>();
+        services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
+
+        #endregion
+
+        #region Auth
+
+        #region Authentication
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -97,6 +108,30 @@ public class Startup
                 };
             });
 
+        services.AddAuthentication(Constants.DemoCookieAuth).UseDemoCookieAuthentication();
+
+        #endregion
+
+        #region Authorization
+
+        services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = "MultiAuth";
+                options.DefaultChallengeScheme = "MultiAuth";
+            })
+            .AddPolicyScheme("MultiAuth",
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.ForwardDefaultSelector = context =>
+                    {
+                        var authorization = context.Request.Headers[HeaderNames.Authorization].ToString();
+                        if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
+                            return JwtBearerDefaults.AuthenticationScheme;
+                        return Constants.DemoCookieAuth;
+                    };
+                });
+
         services.AddAuthorization(options =>
         {
             options.AddPolicy("User",
@@ -104,9 +139,35 @@ public class Startup
                     policy.RequireClaim("resume-id"));
         });
 
-        services.AddHttpClient();
+        #endregion
 
-        var awsSecrets = _configuration.Get<AWSSecrets>();
+        #region Cors
+
+        services.AddCors(options =>
+        {
+            options.AddPolicy(Constants.Cors.Development,
+                policy =>
+                {
+                    policy.SetIsOriginAllowed(x => new Uri(x).Host == "localhost")
+                        .AllowCredentials()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+
+            options.AddPolicy(Constants.Cors.Production,
+                policy =>
+                {
+                    policy.WithOrigins("https://resume-builder.barnes-development.com")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
+
+        #endregion
+
+        #endregion
+
+        services.AddHttpClient();
 
         services.AddHealthChecks()
             .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
@@ -118,17 +179,17 @@ public class Startup
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+        if (env.IsEnvironment("Development") || env.IsEnvironment("Docker"))
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ResumeAPI v1"));
+            app.UseCors(Constants.Cors.Development);
         }
+        else
+            app.UseCors(Constants.Cors.Production);
 
         app.UseStaticFiles();
-        app.UseCors();
-
         app.UseHttpsRedirection();
 
         app.UseAuthentication();

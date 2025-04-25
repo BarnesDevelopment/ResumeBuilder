@@ -1,0 +1,18 @@
+---
+title: Anonymous User Flows
+---
+
+flowchart TB
+	subgraph Anonymous Login
+		start[Start Demo Session]
+		init[PUT resume/demo/init]
+		token[/Cookie/]
+		start -- Call --> init
+		init -- Returns --> token
+		stop[Use normal resume endpoints]
+	end
+
+	subgraph Anonymous Logout
+		Logout[PUT resume/demo/logout]
+
+	end

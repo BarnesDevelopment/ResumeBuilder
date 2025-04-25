@@ -140,3 +140,6 @@ CSS/
 *.DotSettings.user
 
 **/.angular
+
+**/results
+**/ctrf
