@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   BorderStyle,
   ButtonComponent,
@@ -22,11 +22,8 @@ export class HeaderComponent {
 
   protected readonly ButtonStyle = ButtonStyle;
   protected readonly BorderStyle = BorderStyle;
-
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-  ) {}
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   ToggleUserPanel() {
     this.showUserPanel = !this.showUserPanel;
