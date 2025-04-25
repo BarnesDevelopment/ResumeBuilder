@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { fireEvent } from '@testing-library/angular';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { UpdateTitleComponent } from '../resume/components/update-title/update-title.component';
+import { AuthService } from '../services/auth/auth.service';
 
 describe('HomeComponent', () => {
   beforeEach(() => {
@@ -20,14 +21,14 @@ describe('HomeComponent', () => {
       deleteSpy = jest
         .spyOn(ResumeService.prototype, 'deleteNode')
         .mockReturnValue(of(true));
-      jest
-        .spyOn(MockOauthService.prototype, 'getIdToken')
-        .mockReturnValue('fakeIdToken');
+      jest.spyOn(AuthService.prototype, 'isLoggedIn').mockReturnValue(true);
     });
+
     it('should show create resume card', async () => {
       await render();
       expect(screen.getByText('Create Resume')).toBeTruthy();
     });
+
     it('should duplicate resume', async () => {
       const id = Guid.create();
       resumeServiceSpy.mockReturnValue(
@@ -50,6 +51,7 @@ describe('HomeComponent', () => {
         height: '15rem',
       });
     });
+
     it('should delete resume', async () => {
       resumeServiceSpy.mockReturnValue(
         of([
@@ -77,6 +79,7 @@ describe('HomeComponent', () => {
       expect(screen.queryByText('Resume 1')).toBeFalsy();
       expect(deleteSpy).toHaveBeenCalled();
     });
+
     it('should show resume cards', async () => {
       resumeServiceSpy.mockReturnValue(
         of([
@@ -106,7 +109,11 @@ describe('HomeComponent', () => {
       expect(screen.getByText('This is my third resume')).toBeTruthy();
     });
   });
+
   describe('Logged Out', () => {
+    beforeEach(() => {
+      jest.spyOn(AuthService.prototype, 'isLoggedIn').mockReturnValue(false);
+    });
     it('should show dumb cards if login is false', async () => {
       await render();
       expect(screen.getByTitle('dumb cards')).toBeTruthy();
