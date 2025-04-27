@@ -28,7 +28,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
-
+        
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -40,15 +40,17 @@ public class Startup
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
         });
-
-        services.Configure<AWSSecrets>(_configuration);
+        
         var appSettings = _configuration.Get<AppSettings>();
-        var awsSecrets = _configuration.Get<AWSSecrets>();
-
+        var clientId = _configuration.GetSection("infisical-client-id").Value;
+        var clientSecret = _configuration.GetSection("infisical-client-secret").Value;
+        var infisicalSecrets = new InfisicalSecretsClient(clientId!, clientSecret!);
+        var postgresConnectionString = infisicalSecrets.GetPostgresConnectionString();
+        
         if (dev)
         {
             Console.WriteLine("Development mode enabled.");
-            Console.WriteLine("PostgreSql connection string: {0}", awsSecrets.ConnectionStrings_PostgreSql);
+            Console.WriteLine("PostgreSql connection string: {0}", postgresConnectionString);
         }
 
         #region Dependency Injection
@@ -170,11 +172,11 @@ public class Startup
         services.AddHttpClient();
 
         services.AddHealthChecks()
-            .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
+            .AddNpgSql(postgresConnectionString);
 
-        #if DEBUG
+#if DEBUG
         services.AddSassCompiler();
-        #endif
+#endif
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
