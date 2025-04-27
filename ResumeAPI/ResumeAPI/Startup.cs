@@ -28,7 +28,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
-        
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -40,13 +40,11 @@ public class Startup
             var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
             c.IncludeXmlComments(xmlPath);
         });
-        
-        var appSettings = _configuration.Get<AppSettings>();
-        var clientId = _configuration.GetSection("infisical-client-id").Value;
-        var clientSecret = _configuration.GetSection("infisical-client-secret").Value;
-        var infisicalSecrets = new InfisicalSecretsClient(clientId!, clientSecret!);
+
+        var appSettings = _configuration.Get<AppSettings>()!;
+        var infisicalSecrets = new InfisicalSecretsClient(appSettings.InfisicalClientId, appSettings.InfisicalClientSecret);
         var postgresConnectionString = infisicalSecrets.GetPostgresConnectionString();
-        
+
         if (dev)
         {
             Console.WriteLine("Development mode enabled.");
