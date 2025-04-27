@@ -30,7 +30,7 @@ docker-run:
 	docker run -p 8080:80/tcp -p 10443:443/tcp ghcr.io/barnesdevelopment/resume-api
 	
 docker-build-run:
-	docker build -t ghcr.io/barnesdevelopment/resume-api .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api .
 	docker run -p 8080:80/tcp -p 10443:443/tcp -d ghcr.io/barnesdevelopment/resume-api
 
 generate-swagger:
