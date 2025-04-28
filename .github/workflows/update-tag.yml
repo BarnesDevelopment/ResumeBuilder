@@ -1,0 +1,26 @@
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to create'
+        required: true
+      message:
+        description: 'Message for the tag'
+        required: true
+        default: 'Tag created by workflow dispatch'
+
+permissions: write-all
+
+jobs:
+  set-tag:
+    name: Set Merge Tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rickstaa/action-create-tag@v1
+        id: "tag_create"
+        with:
+          tag: "${{ inputs.tag }}"
+          message: "${{ inputs.message }}"
+          github_token: '${{ secrets.PAT }}'
