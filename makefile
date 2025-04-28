@@ -5,24 +5,24 @@ docker:
 
 docker-build:
 ifdef v
-	docker build -t ghcr.io/barnesdevelopment/resume-api:$(v) .
-	docker build -t ghcr.io/barnesdevelopment/resume-api:latest .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:$(v) .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:latest .
 else
-	docker build -t ghcr.io/barnesdevelopment/resume-api .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api .
 endif
 	
 docker-build-push:
 ifdef v
-	docker build -t ghcr.io/barnesdevelopment/resume-api:$(v) .
-	docker build -t ghcr.io/barnesdevelopment/resume-api:latest .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:$(v) .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:latest .
 	docker push ghcr.io/barnesdevelopment/resume-api:$(v)
 else
-	docker build -t ghcr.io/barnesdevelopment/resume-api:latest .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:latest .
 endif
 	docker push ghcr.io/barnesdevelopment/resume-api:latest
 	
 docker-test:
-	docker build -t ghcr.io/barnesdevelopment/resume-api:latest .
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:latest .
 	docker push ghcr.io/barnesdevelopment/resume-api
 	docker-compose up -d
 	

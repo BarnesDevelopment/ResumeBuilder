@@ -13,10 +13,8 @@ builder.Configuration.AddUserSecrets<Program>()
         .SetInfisicalUrl("https://secrets.barnes7619.com")
         .SetAuth(
             new InfisicalAuthBuilder().SetUniversalAuth(
-                    builder.Configuration.GetSection("InfisicalClientId").Value
-                    ?? throw new InvalidOperationException(),
-                    builder.Configuration.GetSection("InfisicalClientSecret").Value
-                    ?? throw new InvalidOperationException())
+                    builder.Configuration.GetRequiredSection("InfisicalClientId").Value!,
+                    builder.Configuration.GetRequiredSection("InfisicalClientSecret").Value!)
                 .Build())
         .Build()
     );
