@@ -42,13 +42,10 @@ public class Startup
         });
 
         var appSettings = _configuration.Get<AppSettings>()!;
-        var infisicalSecrets = new InfisicalSecretsClient(appSettings.InfisicalClientId, appSettings.InfisicalClientSecret);
-        var postgresConnectionString = infisicalSecrets.GetPostgresConnectionString();
-
         if (dev)
         {
             Console.WriteLine("Development mode enabled.");
-            Console.WriteLine("PostgreSql connection string: {0}", postgresConnectionString);
+            Console.WriteLine("PostgreSql connection string: {0}", appSettings.ConnectionStrings.Postgres);
         }
 
         #region Dependency Injection
@@ -170,11 +167,11 @@ public class Startup
         services.AddHttpClient();
 
         services.AddHealthChecks()
-            .AddNpgSql(postgresConnectionString);
+            .AddNpgSql(appSettings.ConnectionStrings.Postgres);
 
-#if DEBUG
+        #if DEBUG
         services.AddSassCompiler();
-#endif
+        #endif
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

@@ -26,7 +26,7 @@
         <PackageReference Include="AWSSDK.SecretsManager.Caching" Version="1.0.6"/>
         <PackageReference Include="Dapper" Version="2.0.143"/>
         <PackageReference Include="HealthChecks.PostgreSQL" Version="1.1.0"/>
-        <PackageReference Include="Infisical.Sdk" Version="2.3.9"/>
+        <PackageReference Include="Infisical.IConfigurationProvider" Version="0.0.2"/>
         <PackageReference Include="itext7.bouncy-castle-adapter" Version="8.0.0"/>
         <PackageReference Include="itext7.pdfhtml" Version="5.0.0"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.28"/>
