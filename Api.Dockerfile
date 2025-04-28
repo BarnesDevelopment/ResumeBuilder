@@ -21,4 +21,4 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=build ["/src/ResumeAPI/CSS", "./CSS/"]
 COPY --from=build ["/src/ResumeAPI/Fonts", "./Fonts/"]
-ENTRYPOINT ["dotnet", "ResumeAPI.dll"]
+ENTRYPOINT ["env","&&","dotnet", "ResumeAPI.dll"]
