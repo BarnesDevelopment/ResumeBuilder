@@ -41,14 +41,13 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        services.Configure<AWSSecrets>(_configuration);
         var appSettings = _configuration.Get<AppSettings>();
-        var awsSecrets = _configuration.Get<AWSSecrets>();
+        if (appSettings == null) throw new InvalidOperationException("AppSettings cannot be null.");
 
         if (dev)
         {
             Console.WriteLine("Development mode enabled.");
-            Console.WriteLine("PostgreSql connection string: {0}", awsSecrets.ConnectionStrings_PostgreSql);
+            Console.WriteLine("PostgreSql connection string: {0}", appSettings.ConnectionStrings.Postgres);
         }
 
         #region Dependency Injection
@@ -170,7 +169,7 @@ public class Startup
         services.AddHttpClient();
 
         services.AddHealthChecks()
-            .AddNpgSql(awsSecrets.ConnectionStrings_PostgreSql);
+            .AddNpgSql(appSettings.ConnectionStrings.Postgres);
 
         #if DEBUG
         services.AddSassCompiler();

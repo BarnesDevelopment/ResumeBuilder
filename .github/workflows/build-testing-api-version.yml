@@ -2,6 +2,8 @@ on:
   push:
     paths:
       - '**/ResumeAPI/**'
+      - 'Api.Dockerfile'
+      - '.github/workflows/**'
 
 permissions: write-all
 

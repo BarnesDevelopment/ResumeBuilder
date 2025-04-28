@@ -1,16 +1,27 @@
+using InfisicalConfiguration;
 using ResumeAPI;
-using ResumeAPI.Configuration;
+using ResumeAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var startup = new Startup(builder.Configuration);
 builder.Services.AddControllers();
-builder.Host.ConfigureAppConfiguration(((_, configurationBuilder) =>
-{
-    var secretName = _.Configuration.GetSection("AwsSecret").Value!;
-    var region = _.Configuration.GetSection("AwsRegion").Value!;
-    configurationBuilder.AddAmazonSecretsManager(region, secretName);
-}));
+builder.Configuration.AddUserSecrets<Program>()
+    .AddEnvironmentVariables();
+var appSettings = builder.Configuration.Get<AppSettings>()!;
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddInfisical(new InfisicalConfigBuilder()
+        .SetProjectId(appSettings.Infisical.ProjectId)
+        .SetEnvironment(appSettings.Infisical.Environment)
+        .SetInfisicalUrl(appSettings.Infisical.Url)
+        .SetAuth(
+            new InfisicalAuthBuilder().SetUniversalAuth(
+                    appSettings.Infisical.ClientId,
+                    appSettings.Infisical.ClientSecret)
+                .Build())
+        .Build()
+    );
+var startup = new Startup(builder.Configuration);
 startup.ConfigureServices(builder.Services);
 var app = builder.Build();
 startup.Configure(app, builder.Environment);
