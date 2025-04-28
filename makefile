@@ -22,8 +22,7 @@ endif
 	docker push ghcr.io/barnesdevelopment/resume-api:latest
 	
 docker-test:
-	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:latest .
-	docker push ghcr.io/barnesdevelopment/resume-api
+	docker build -f Api.Dockerfile -t ghcr.io/barnesdevelopment/resume-api:test .
 	docker-compose up -d
 	
 docker-run:
