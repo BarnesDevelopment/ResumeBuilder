@@ -1,20 +1,23 @@
 using InfisicalConfiguration;
 using ResumeAPI;
+using ResumeAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Configuration.AddUserSecrets<Program>()
-    .AddEnvironmentVariables()
+    .AddEnvironmentVariables();
+var appSettings = builder.Configuration.Get<AppSettings>()!;
+builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddInfisical(new InfisicalConfigBuilder()
-        .SetProjectId("39828bb7-07bb-4f99-bc16-706caf452bde")
-        .SetEnvironment("dev")
-        .SetInfisicalUrl("https://secrets.barnes7619.com")
+        .SetProjectId(appSettings.Infisical.ProjectId)
+        .SetEnvironment(appSettings.Infisical.Environment)
+        .SetInfisicalUrl(appSettings.Infisical.Url)
         .SetAuth(
             new InfisicalAuthBuilder().SetUniversalAuth(
-                    builder.Configuration.GetRequiredSection("InfisicalClientId").Value!,
-                    builder.Configuration.GetRequiredSection("InfisicalClientSecret").Value!)
+                    appSettings.Infisical.ClientId,
+                    appSettings.Infisical.ClientSecret)
                 .Build())
         .Build()
     );

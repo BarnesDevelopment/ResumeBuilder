@@ -87,4 +87,4 @@ jobs:
         run: ssh webhost "echo ${{ secrets.PAT }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin"
 
       - name: Docker Compose Up
-        run: ssh webhost "export INFISICALCLIENTID=${{ secrets.INFISICALCLIENTID }} && export INFISICALCLIENTSECRET=${{ secrets.INFISICALCLIENTSECRET }} && cd ~/apps/resume-builder && docker compose pull && docker compose up -d"
+        run: ssh webhost "export INFISICAL__CLIENTID=${{ secrets.INFISICALCLIENTID }} && export INFISICAL__CLIENTSECRET=${{ secrets.INFISICALCLIENTSECRET }} && cd ~/apps/resume-builder && docker compose pull && docker compose up -d"
