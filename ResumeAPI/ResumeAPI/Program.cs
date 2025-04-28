@@ -7,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Configuration.AddUserSecrets<Program>()
     .AddEnvironmentVariables();
+Console.WriteLine("ClientId:" + builder.Configuration.GetSection("INFISICAL__CLIENTID").Value);
+Console.WriteLine("ClientSecret:" + builder.Configuration.GetSection("INFISICAL__CLIENTSECRET").Value);
+Console.WriteLine("ClientId:" + builder.Configuration.GetSection("ASPNETCORE_INFISICAL__CLIENTID").Value);
+Console.WriteLine("ClientSecret:" + builder.Configuration.GetSection("ASPNETCORE_INFISICAL__CLIENTSECRET").Value);
 var appSettings = builder.Configuration.Get<AppSettings>()!;
 Console.WriteLine(appSettings.Infisical);
 builder.Configuration
