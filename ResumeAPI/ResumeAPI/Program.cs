@@ -8,6 +8,7 @@ builder.Services.AddControllers();
 builder.Configuration.AddUserSecrets<Program>()
     .AddEnvironmentVariables();
 var appSettings = builder.Configuration.Get<AppSettings>()!;
+Console.WriteLine(appSettings.Infisical);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddInfisical(new InfisicalConfigBuilder()

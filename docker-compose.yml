@@ -13,8 +13,6 @@ services:
     #      - "80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - INFISICAL__CLIENTID=${INFISICAL__CLIENTID}
-      - INFISICAL__CLIENTSECRET=${INFISICAL__CLIENTSECRET}
     networks:
       - api
 
