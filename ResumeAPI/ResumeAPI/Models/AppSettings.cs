@@ -24,7 +24,4 @@ public class Infisical
     public required string Url { get; set; }
     public required string ClientId { get; set; }
     public required string ClientSecret { get; set; }
-
-    public override string ToString() =>
-        $"ProjectId: {ProjectId}, Environment: {Environment}, Url: {Url}, ClientId: {ClientId}, ClientSecret: {ClientSecret}";
 }

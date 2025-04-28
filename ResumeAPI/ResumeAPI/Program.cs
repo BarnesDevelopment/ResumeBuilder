@@ -7,14 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Configuration.AddUserSecrets<Program>()
     .AddEnvironmentVariables();
-Console.WriteLine("ClientId:" + builder.Configuration["INFISICAL:CLIENTID"]);
-Console.WriteLine("ClientSecret:" + builder.Configuration["INFISICAL:CLIENTSECRET"]);
-Console.WriteLine("ClientId:" + builder.Configuration["INFISICAL__CLIENTID"]);
-Console.WriteLine("ClientSecret:" + builder.Configuration["INFISICAL__CLIENTSECRET"]);
-Console.WriteLine("ClientId:" + builder.Configuration["ASPNETCORE_INFISICAL__CLIENTID"]);
-Console.WriteLine("ClientSecret:" + builder.Configuration["ASPNETCORE_INFISICAL__CLIENTSECRET"]);
 var appSettings = builder.Configuration.Get<AppSettings>()!;
-Console.WriteLine(appSettings.Infisical);
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddInfisical(new InfisicalConfigBuilder()
