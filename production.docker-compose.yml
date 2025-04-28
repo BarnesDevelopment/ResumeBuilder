@@ -22,8 +22,8 @@ services:
     #      - "80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Release
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - INFISICALCLIENTID=${INFISICALCLIENTID}
+      - INFISICALCLIENTSECRET=${INFISICALCLIENTSECRET}
     networks:
       - api
     labels:
