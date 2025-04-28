@@ -41,7 +41,9 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        var appSettings = _configuration.Get<AppSettings>()!;
+        var appSettings = _configuration.Get<AppSettings>();
+        if (appSettings == null) throw new InvalidOperationException("AppSettings cannot be null.");
+
         if (dev)
         {
             Console.WriteLine("Development mode enabled.");
