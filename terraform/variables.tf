@@ -20,7 +20,7 @@ variable "fusionauth_default_tenant_id" {
 variable "fusionauth_default_application_id" {
 	description = "The Application Id of the Default FusionAuth Application"
 	type        = string
-	default     = "3c219e58-ed0e-4b18-ad48-f4f92793ae32"
+	default     = "3c219458-ed0e-4b18-ad48-f4f92793ae32"
 }
 
 variable "fusionauth_default_theme_id" {
