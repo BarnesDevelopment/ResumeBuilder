@@ -145,3 +145,5 @@ CSS/
 **/ctrf
 
 **/terraform.tfvars
+.terraform
+.terraform.*
