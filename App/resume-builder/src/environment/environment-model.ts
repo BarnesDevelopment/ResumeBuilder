@@ -4,4 +4,5 @@ export interface Environment {
   apiBasePath: string;
   domain: string;
   loggedIn: boolean;
+  fusionAuthRedirectUri: string;
 }

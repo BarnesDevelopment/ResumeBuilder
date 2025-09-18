@@ -16,18 +16,11 @@ using ResumeAPI.Services;
 
 namespace ResumeAPI;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-
-    public Startup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
-        var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
+        var dev = new[] { "Development", "Docker" }.Any(x => x == configuration.GetSection("Environment").Value);
 
         services.AddControllers();
         services.AddEndpointsApiExplorer();
@@ -41,7 +34,7 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        var appSettings = _configuration.Get<AppSettings>();
+        var appSettings = configuration.Get<AppSettings>();
         if (appSettings == null) throw new InvalidOperationException("AppSettings cannot be null.");
 
         if (dev)
@@ -106,6 +99,11 @@ public class Startup
                     }
                 };
             });
+
+        services.AddAuthentication("fusionauth").AddJwtBearer(options =>
+        {
+            
+        });
 
         services.AddAuthentication(Constants.DemoCookieAuth).UseDemoCookieAuthentication();
 

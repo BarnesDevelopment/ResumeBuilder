@@ -1,8 +1,20 @@
 resource "fusionauth_application" "resume-builder" {
   tenant_id = fusionauth_tenant.resume-builder.id
   name      = local.friendly_name
-  jwt_configuration {
-    access_token_id = fusionauth_key.resume-builder-access-token.id
+  oauth_configuration {
+    enabled               = true
+    client_id             = var.fusionauth_default_application_id # Optional: Specify a custom client_id
+    authorized_redirect_urls = [
+      "http://localhost:4200/login/callback",
+    ]
+    generate_refresh_tokens = true
+
+    scope_handling_policy = "Strict"
+    unknown_scope_policy  = "Reject"
+    
+    enabled_grants = [
+      "authorization_code", "implicit"
+    ]
   }
 }
 

@@ -17,6 +17,8 @@ import { SilentCallbackComponent } from './services/auth/callbacks/silent-callba
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { OAuthModule } from 'angular-oauth2-oidc';
 import { MatDialogModule } from '@angular/material/dialog';
+import { FusionAuthModule } from '@fusionauth/angular-sdk';
+import {environment} from "../environment/environment";
 
 @NgModule({
   declarations: [AppComponent],
@@ -38,6 +40,12 @@ import { MatDialogModule } from '@angular/material/dialog';
     LogoutCallbackComponent,
     SilentCallbackComponent,
     MatDialogModule,
+    FusionAuthModule.forRoot({
+      clientId: '', // Your FusionAuth client ID
+      serverUrl: 'auth.barnes7619.com', // The base URL of the server that performs the token exchange
+      redirectUri: environment.fusionAuthRedirectUri, // The URI that the user is directed to after the login/register/logout action
+      shouldAutoRefresh: true // option to configure the SDK to automatically handle token refresh. Defaults to false if not specified here.
+    }),
   ],
   providers: [
     {
