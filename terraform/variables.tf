@@ -32,11 +32,16 @@ variable "fusionauth_default_theme_id" {
 variable "fusionauth_email_configuration_host" {
   description = "The Email Server Host used to send emails from FusionAuth"
   type        = string
-  default     = "localhost"
+  default     = "mail"
 }
 
 variable "fusionauth_email_configuration_port" {
   description = "The Email Server Port used to send emails from FusionAuth"
   type        = string
-  default     = "25"
+  default     = "1025"
+}
+
+locals {
+	name = "resume-builder"
+	friendly_name = "Resume Builder"
 }

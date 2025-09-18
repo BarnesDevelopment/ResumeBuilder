@@ -1,9 +1,9 @@
-resource "fusionauth_tenant" "forum" {
+resource "fusionauth_tenant" "resume-builder" {
   lifecycle {
     prevent_destroy = true
   }
-  issuer   = "forum"
-  name     = "Forum"
+  issuer   = "auth.barnes7616.com"
+  name     = local.friendly_name
   theme_id = var.fusionauth_default_theme_id
   multi_factor_configuration {
     login_policy = "Disabled"
@@ -73,7 +73,7 @@ resource "fusionauth_tenant" "forum" {
   }
 }
 
-resource "fusionauth_key" "forum-access-token" {
+resource "fusionauth_key" "resume-builder-access-token" {
   algorithm = "HS512"
-  name      = "Forum Application Access Token Key"
+  name      = "Resume Builder Application Access Token Key"
 }
