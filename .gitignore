@@ -147,3 +147,5 @@ CSS/
 **/terraform.tfvars
 .terraform
 .terraform.*
+**/*.tfstate
+**/*.tfstate.backup
