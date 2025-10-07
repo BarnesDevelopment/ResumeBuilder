@@ -10,10 +10,9 @@ public class PostgreSqlContext
 {
     protected readonly DbConnection Db;
 
-    public PostgreSqlContext(IOptions<AWSSecrets> options)
+    public PostgreSqlContext(AppSettings appSettings)
     {
-        var secrets = options.Value;
-        Db = new NpgsqlConnection(secrets.ConnectionStrings_PostgreSql);
+        Db = new NpgsqlConnection(appSettings.ConnectionStrings.Postgres);
     }
 
    

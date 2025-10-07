@@ -5,6 +5,12 @@ public class AppSettings
     public required Jwt Jwt { get; set; }
     public required ConnectionStrings ConnectionStrings { get; set; }
     public required Infisical Infisical { get; set; }
+    public required FusionAuth FusionAuth { get; set; }
+}
+
+public class FusionAuth
+{
+    public required string UserCreationApiKey { get; set; }
 }
 
 public class Jwt

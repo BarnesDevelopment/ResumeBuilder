@@ -21,7 +21,7 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         var dev = new[] { "Development", "Docker" }.Any(x => x == configuration.GetSection("Environment").Value);
-
+        
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -110,11 +110,6 @@ public class Startup(IConfiguration configuration)
                     },
                 };
             });
-
-        services.AddAuthentication("fusionauth").AddJwtBearer(options =>
-        {
-            
-        });
 
         services.AddAuthentication(Constants.DemoCookieAuth).UseDemoCookieAuthentication();
 
