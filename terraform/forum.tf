@@ -2,7 +2,7 @@ resource "fusionauth_tenant" "resume-builder" {
   lifecycle {
     prevent_destroy = true
   }
-  issuer   = "auth.barnes7616.com"
+  issuer   = "auth.barnes7619.com"
   name     = local.friendly_name
   theme_id = var.fusionauth_default_theme_id
   multi_factor_configuration {
