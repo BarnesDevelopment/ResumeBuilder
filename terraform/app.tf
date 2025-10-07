@@ -2,8 +2,7 @@ resource "fusionauth_application" "resume-builder" {
   tenant_id = fusionauth_tenant.resume-builder.id
   name      = local.friendly_name
   oauth_configuration {
-    enabled               = true
-    client_id             = var.fusionauth_default_application_id # Optional: Specify a custom client_id
+    client_id = var.fusionauth_default_application_id
     authorized_redirect_urls = [
       "http://localhost:4200/login/callback",
     ]
@@ -11,7 +10,7 @@ resource "fusionauth_application" "resume-builder" {
 
     scope_handling_policy = "Strict"
     unknown_scope_policy  = "Reject"
-    
+
     enabled_grants = [
       "authorization_code", "implicit"
     ]
