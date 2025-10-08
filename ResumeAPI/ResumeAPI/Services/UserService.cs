@@ -13,15 +13,18 @@ public interface IUserService
     Cookie CreateCookie();
     Task<Cookie?> GetCookie(string cookie);
     Task DeleteCookie(string cookie);
+    Task<string> CreateAnonymousUser();
 }
 
 public class UserService : IUserService
 {
     private readonly IUserData _db;
+    private readonly IAuthClient _authClient;
 
-    public UserService(IUserData db)
+    public UserService(IUserData db, IAuthClient authClient)
     {
         _db = db;
+        _authClient = authClient;
     }
 
     public Task<User?> GetUser(string cookie) => _db.GetUser(cookie);
@@ -59,5 +62,12 @@ public class UserService : IUserService
         var user = await _db.GetUser(cookie);
         if (user == null) return;
         await _db.DeleteUser(user.Id);
+    }
+
+    public async Task<string> CreateAnonymousUser()
+    {
+        var id = await _authClient.CreateAnonymousUser();
+        if (id == null) throw new Exception("Failed to create anonymous user");
+        return await _authClient.VendJwtFromId(id.Value);
     }
 }

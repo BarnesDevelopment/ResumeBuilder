@@ -11,11 +11,13 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private readonly IUserOrchestrator _orchestrator;
+    private readonly IUserService _service;
 
     public UserController(ILogger<UserController> logger, IUserService service, IUserOrchestrator orchestrator)
     {
         _logger = logger;
         _orchestrator = orchestrator;
+        _service = service;
     }
 
     #region User
@@ -59,6 +61,18 @@ public class UserController : ControllerBase
             _logger.LogError(e.Message);
             return Problem(e.Message);
         }
+    }
+
+    /// <summary>
+    /// Create Anonymous User
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("anonymous")]
+    [ProducesResponseType(typeof(string), 201)]
+    public async Task<IActionResult> CreateAnonymousUser()
+    {
+        var token = await _service.CreateAnonymousUser();
+        return Created("", token);
     }
 
     #endregion

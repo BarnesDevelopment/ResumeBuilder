@@ -45,6 +45,7 @@ public class Startup(IConfiguration configuration)
 
         #region Dependency Injection
 
+        services.AddSingleton(appSettings);
         services.AddTransient<IDemoOrchestrator, DemoOrchestrator>();
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
