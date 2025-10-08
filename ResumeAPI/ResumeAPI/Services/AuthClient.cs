@@ -45,11 +45,12 @@ public class AuthClient(HttpClient client, AppSettings appSettings) : IAuthClien
 
     public async Task<string> VendJwtFromId(Guid id)
     {
-        const int sevenDaysInSeconds = 60 * 60 * 24 * 7;
+        const int ttl = 60 * 10; // 10 minutes
+        // const int ttl = 60 * 60 * 24 * 7; // 7 days
         var response = await _authClient.VendJWTAsync(new()
         {
             keyId = id,
-            timeToLiveInSeconds = sevenDaysInSeconds,
+            timeToLiveInSeconds = ttl,
             claims = new Dictionary<string, object>
             {
                 { "userId", id }
