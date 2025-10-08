@@ -14,10 +14,8 @@ public interface IResumeTree
     Task<bool> DeleteNode(Guid id);
 }
 
-public class ResumeTree : PostgreSqlContext, IResumeTree
+public class ResumeTree(AppSettings appSettings) : PostgreSqlContext(appSettings), IResumeTree
 {
-    public ResumeTree(IOptions<AWSSecrets> options) : base(options) { }
-
     public async Task<ResumeTreeNode?> GetNode(Guid id)
     {
         var query = $@"SELECT 

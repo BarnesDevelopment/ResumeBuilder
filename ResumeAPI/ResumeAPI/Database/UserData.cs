@@ -16,7 +16,7 @@ public interface IUserData
     Task<DateTime> UpdateCookieExpiration(Guid id);
 }
 
-public class UserData : PostgreSqlContext, IUserData
+public class UserData(AppSettings appSettings) : PostgreSqlContext(appSettings), IUserData
 {
     private const string UserSelect = @$"
                     id {nameof(User.Id)},
@@ -24,8 +24,6 @@ public class UserData : PostgreSqlContext, IUserData
                     demo {nameof(User.Demo)},
                     demo_session_cookie {nameof(User.Cookie)},
                     cookie_expiration {nameof(User.CookieExpiration)}";
-
-    public UserData(IOptions<AWSSecrets> options) : base(options) { }
 
     public async Task<User?> GetUser(Guid id) => (await Db.QueryAsync<User>($@"select 
                     {UserSelect}
