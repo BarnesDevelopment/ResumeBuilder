@@ -5,5 +5,6 @@ export const environment: Environment = {
   demo: false,
   apiBasePath: 'https://localhost:7211/resume',
   domain: 'localhost:4200',
+  fusionAuthRedirectUri: 'http://localhost:4200/login/callback',
   loggedIn: false,
 };

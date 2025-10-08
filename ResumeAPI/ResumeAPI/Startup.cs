@@ -16,19 +16,12 @@ using ResumeAPI.Services;
 
 namespace ResumeAPI;
 
-public class Startup
+public class Startup(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-
-    public Startup(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-
     public void ConfigureServices(IServiceCollection services)
     {
-        var dev = new[] { "Development", "Docker" }.Any(x => x == _configuration.GetSection("Environment").Value);
-
+        var dev = new[] { "Development", "Docker" }.Any(x => x == configuration.GetSection("Environment").Value);
+        
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -41,7 +34,7 @@ public class Startup
             c.IncludeXmlComments(xmlPath);
         });
 
-        var appSettings = _configuration.Get<AppSettings>();
+        var appSettings = configuration.Get<AppSettings>();
         if (appSettings == null) throw new InvalidOperationException("AppSettings cannot be null.");
 
         if (dev)
@@ -66,6 +59,11 @@ public class Startup
 
         services.AddTransient<IUserValidator, UserValidator>();
         services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
+        
+        services.AddHttpClient<IAuthClient, AuthClient>(options =>
+        {
+            options.BaseAddress = new Uri(appSettings.Jwt.Authority);
+        });
 
         #endregion
 
@@ -89,21 +87,27 @@ public class Startup
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnAuthenticationFailed = context =>
+                    OnChallenge = async context =>
                     {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Response.ContentType = "application/json";
-                        Console.WriteLine("Authentication failed.");
-                        Console.WriteLine(context.Exception.Message);
-                        return Task.CompletedTask;
+                        context.HandleResponse();
+                        
+                        var tokenString = context.Request.Headers.Authorization;
+                        var authClient = configuration.Get<IAuthClient>()!;
+                        
+                        if (string.IsNullOrEmpty(tokenString.ToString()) || await authClient.AuthenticateJwt(tokenString.ToString()))
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Response.ContentType = "application/json";
+
+                            var errorResponse = new
+                            {
+                                error = "Authentication failed.",
+                                message = "Invalid or missing token provided."
+                            };
+                            
+                            await context.Response.WriteAsJsonAsync(errorResponse);
+                        }
                     },
-                    OnForbidden = context =>
-                    {
-                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                        context.Response.ContentType = "application/json";
-                        Console.WriteLine("Forbidden. Role is likely incorrect.");
-                        return Task.CompletedTask;
-                    }
                 };
             });
 
