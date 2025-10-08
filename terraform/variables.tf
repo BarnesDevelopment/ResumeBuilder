@@ -42,6 +42,6 @@ variable "fusionauth_email_configuration_port" {
 }
 
 locals {
-	name = "resume-builder"
-	friendly_name = "Resume Builder"
+  name          = "resume-builder"
+  friendly_name = "Resume Builder"
 }

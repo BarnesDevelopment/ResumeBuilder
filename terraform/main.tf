@@ -4,10 +4,10 @@ terraform {
       source  = "FusionAuth/fusionauth"
       version = "1.2.0"
     }
-# 	portainer = {
-# 	  source = "portainer/portainer"
-# 	  version = "1.12.2"
-# 	}
+    # 	portainer = {
+    # 	  source = "portainer/portainer"
+    # 	  version = "1.12.2"
+    # 	}
   }
 }
 
