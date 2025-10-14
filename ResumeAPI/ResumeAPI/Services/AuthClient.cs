@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using io.fusionauth;
 using io.fusionauth.domain.api;
+using io.fusionauth.domain.api.jwt;
 using io.fusionauth.domain.search;
 using ResumeAPI.Models;
+using User = io.fusionauth.domain.User;
 
 namespace ResumeAPI.Services;
 
@@ -11,6 +13,7 @@ public interface IAuthClient
     Task<Guid?> CreateAnonymousUser();
     Task<bool> AuthenticateJwt(string token);
     Task<string> VendJwtFromId(Guid id);
+    Task<bool> DeleteUser(Guid id);
 }
 
 public class AuthClient : IAuthClient
@@ -23,52 +26,44 @@ public class AuthClient : IAuthClient
         _client = client;
         var authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey, appSettings.Jwt.Authority);
 
-        var search = new TenantSearchCriteria()
-        {
-            name = "Resume Builder",
-            numberOfResults = 1
-        };
-        var tenantSearchRequest = new TenantSearchRequest
-        {
-            search = search
-        };
+        var search = new TenantSearchCriteria { name = "Resume Builder", numberOfResults = 1 };
+        var tenantSearchRequest = new TenantSearchRequest { search = search };
         var response = authClient.SearchTenantsAsync(tenantSearchRequest).Result;
         var tenantId = response?.successResponse?.tenants[0]?.id;
-        if (tenantId == null)
-            throw new InvalidOperationException("TenantId cannot be null.");
-        
-        _authClient = new(appSettings.FusionAuth.UserCreationApiKey, appSettings.Jwt.Authority,tenantId.ToString());
+        if (tenantId == null) throw new InvalidOperationException("TenantId cannot be null.");
+
+        _authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
+            appSettings.Jwt.Authority,
+            tenantId.ToString());
     }
-    
+
     public async Task<bool> AuthenticateJwt(string token)
     {
-        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+        _client.DefaultRequestHeaders.Authorization
+            = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         var response = await _client.GetAsync("/api/jwt/validate");
         return response.IsSuccessStatusCode;
     }
 
     public async Task<Guid?> CreateAnonymousUser()
     {
-        var response = await _authClient.CreateUserAsync(Guid.NewGuid(), new UserRequest
-        {
-            user = new()
+        var response = await _authClient.CreateUserAsync(Guid.NewGuid(),
+            new UserRequest
             {
-                username=Guid.NewGuid().ToString(),
-                password=Guid.NewGuid().ToString(),
-                email = $"demo_{Guid.NewGuid()}@example.com",
-                fullName = "Demo User",
-                firstName = "Demo",
-                lastName = "User",
-                // expiry = DateTimeOffset.Now.AddDays(7),
-                expiry = DateTime.Now.AddMinutes(10),
-                data=new Dictionary<string, object>
+                user = new User
                 {
-                    {"anonymousUser",true},
+                    username = Guid.NewGuid().ToString(),
+                    password = Guid.NewGuid().ToString(),
+                    email = $"demo_{Guid.NewGuid()}@example.com",
+                    fullName = "Demo User",
+                    firstName = "Demo",
+                    lastName = "User",
+                    // expiry = DateTimeOffset.Now.AddDays(7),
+                    expiry = DateTime.Now.AddMinutes(10),
+                    data = new Dictionary<string, object> { { "anonymousUser", true } }
                 }
-            }
-            
-        });
-        
+            });
+
         return response.successResponse.user.id;
     }
 
@@ -76,15 +71,18 @@ public class AuthClient : IAuthClient
     {
         const int ttl = 60 * 10; // 10 minutes
         // const int ttl = 60 * 60 * 24 * 7; // 7 days
-        var response = await _authClient.VendJWTAsync(new()
+        var response = await _authClient.VendJWTAsync(new JWTVendRequest
         {
-            timeToLiveInSeconds = ttl,
-            claims = new Dictionary<string, object>
-            {
-                { "userId", id.ToString() }
-            }
+            timeToLiveInSeconds = ttl, claims = new Dictionary<string, object> { { "userId", id.ToString() } }
         });
 
         return response.successResponse.token;
+    }
+
+    public async Task<bool> DeleteUser(Guid id)
+    {
+        var response = await _authClient.DeleteUserAsync(id);
+
+        return response.WasSuccessful();
     }
 }

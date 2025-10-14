@@ -13,7 +13,8 @@ public interface IUserService
     Cookie CreateCookie();
     Task<Cookie?> GetCookie(string cookie);
     Task DeleteCookie(string cookie);
-    Task<string> CreateAnonymousUser();
+    Task<(string jwt, Guid id)> CreateAnonymousUser();
+    Task<bool> DeleteAnonymousUser(Guid id);
 }
 
 public class UserService : IUserService
@@ -64,10 +65,12 @@ public class UserService : IUserService
         await _db.DeleteUser(user.Id);
     }
 
-    public async Task<string> CreateAnonymousUser()
+    public async Task<(string jwt, Guid id)> CreateAnonymousUser()
     {
         var id = await _authClient.CreateAnonymousUser();
         if (id == null) throw new Exception("Failed to create anonymous user");
-        return await _authClient.VendJwtFromId(id.Value);
+        return (await _authClient.VendJwtFromId(id.Value), id.Value);
     }
+
+    public async Task<bool> DeleteAnonymousUser(Guid id) => await _authClient.DeleteUser(id);
 }

@@ -63,17 +63,5 @@ public class UserController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Create Anonymous User
-    /// </summary>
-    /// <returns></returns>
-    [HttpPost("anonymous")]
-    [ProducesResponseType(typeof(string), 201)]
-    public async Task<IActionResult> CreateAnonymousUser()
-    {
-        var token = await _service.CreateAnonymousUser();
-        return Created("", token);
-    }
-
     #endregion
 }

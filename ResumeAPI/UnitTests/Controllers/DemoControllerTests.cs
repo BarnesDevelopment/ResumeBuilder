@@ -16,16 +16,14 @@ public class DemoControllerTests
 {
     private readonly DemoController _controller;
     private readonly IDemoOrchestrator _demoOrchestrator;
-    private readonly IUserOrchestrator _userOrchestrator;
     private readonly IUserService _userService;
 
     public DemoControllerTests()
     {
         var logger = Substitute.For<ILogger<DemoController>>();
-        _userOrchestrator = Substitute.For<IUserOrchestrator>();
         _userService = Substitute.For<IUserService>();
         _demoOrchestrator = Substitute.For<IDemoOrchestrator>();
-        _controller = new DemoController(_userOrchestrator, _userService, _demoOrchestrator, logger);
+        _controller = new DemoController(_userService, _demoOrchestrator, logger);
     }
 
     [Fact(Skip = "Cant properly init Response.Cookies")]
@@ -37,7 +35,6 @@ public class DemoControllerTests
         var userId = Guid.NewGuid();
         var user = new User { Id = userId };
         _userService.GetUser("123").Returns(user);
-        _userOrchestrator.GetNewCookie().Returns(new Cookie("resume-id", "123"));
         var actual = (await _controller.Login()).Result as OkObjectResult;
 
         await _userService.Received().GetUser("123");

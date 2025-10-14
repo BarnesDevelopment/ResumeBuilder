@@ -9,58 +9,38 @@ namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/demo")]
-public class DemoController : ControllerBase
+public class DemoController(
+    IUserService userService,
+    IDemoOrchestrator demoOrchestrator,
+    ILogger<DemoController> logger
+)
+    : ControllerBase
 {
-    private readonly IDemoOrchestrator _demoOrchestrator;
-    private readonly ILogger<DemoController> _logger;
-    private readonly IUserOrchestrator _userOrchestrator;
-    private readonly IUserService _userService;
-
-    public DemoController(
-        IUserOrchestrator userOrchestrator,
-        IUserService userService,
-        IDemoOrchestrator demoOrchestrator,
-        ILogger<DemoController> logger
-    )
-    {
-        _userOrchestrator = userOrchestrator;
-        _userService = userService;
-        _demoOrchestrator = demoOrchestrator;
-        _logger = logger;
-    }
-
     [HttpPut("login")]
-    public async Task<ActionResult<Cookie>> Login()
+    public async Task<ActionResult<string>> Login()
     {
-        var cookie = await _userOrchestrator.GetNewCookie();
-        var user = (await _userService.GetUser(cookie.Value))!;
+        var user = await userService.CreateAnonymousUser();
 
-        await _demoOrchestrator.InitResumes(user.Id);
+        await demoOrchestrator.InitResumes(user.id);
 
-        Response.Cookies.Append("resume-id",
-            cookie.Value,
-            new CookieOptions
-            {
-                HttpOnly = false, Secure = true, SameSite = SameSiteMode.None, MaxAge = TimeSpan.FromDays(1)
-            });
-
-        return Ok();
+        return Ok(user.jwt);
     }
 
     [HttpDelete("logout")]
     [Authorize(AuthenticationSchemes = Constants.DemoCookieAuth)]
     public async Task<IActionResult> Logout()
     {
-        var cookie = Request.Cookies["resume-id"];
-        var user = await _userService.GetUser(cookie!);
+        var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
-        if (user == null)
+        if (id == null)
         {
-            _logger.LogWarning("User not found for cookie {Cookie}", cookie);
-            return NotFound();
+            logger.LogWarning("User not found");
+            return Unauthorized();
         }
 
-        await _demoOrchestrator.DeleteUser(user.Id);
+        var userId = Guid.Parse(id);
+        await demoOrchestrator.DeleteUser(userId);
+        await userService.DeleteAnonymousUser(userId);
 
         return NoContent();
     }
