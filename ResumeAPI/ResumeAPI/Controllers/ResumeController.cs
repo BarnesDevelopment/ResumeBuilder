@@ -12,23 +12,13 @@ namespace ResumeAPI.Controllers;
 [ApiController]
 [Route("resume")]
 [Authorize]
-public class ResumeController : ControllerBase
+public class ResumeController(
+    ILogger<ResumeController> logger,
+    IResumeOrchestrator orchestrator,
+    IUserValidator validator
+)
+    : ControllerBase
 {
-    private readonly ILogger<ResumeController> _logger;
-    private readonly IResumeOrchestrator _orchestrator;
-    private readonly IUserValidator _validator;
-
-    public ResumeController(
-        ILogger<ResumeController> logger,
-        IResumeOrchestrator orchestrator,
-        IUserValidator validator
-    )
-    {
-        _logger = logger;
-        _orchestrator = orchestrator;
-        _validator = validator;
-    }
-
     [HttpGet("build/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -38,7 +28,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.Validate(HttpContext, id);
+            var valid = await validator.Validate(HttpContext, id);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -49,7 +39,7 @@ public class ResumeController : ControllerBase
 
             var stream = new MemoryStream();
 
-            var resume = _orchestrator.GetResumeTree(id).Result;
+            var resume = orchestrator.GetResumeTree(id).Result;
             var html = resume!.Build(true);
 
             var properties = new ConverterProperties();
@@ -63,7 +53,7 @@ public class ResumeController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -75,13 +65,13 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var stream = _orchestrator.BuildResume(resume);
+            var stream = orchestrator.BuildResume(resume);
 
             return File(stream.GetBuffer(), "application/octet-stream", resume.Header.Filename);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -94,13 +84,13 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var user = await _validator.ValidateUser(HttpContext);
+            var user = await validator.ValidateUser(HttpContext);
             if (user != UserValidationResult.Valid) return Forbid();
-            return Ok(await _orchestrator.GetTopLevelResumes(_validator.GetUserId(HttpContext)));
+            return Ok(await orchestrator.GetTopLevelResumes(validator.GetUserId(HttpContext)));
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -114,7 +104,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.Validate(HttpContext, id);
+            var valid = await validator.Validate(HttpContext, id);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -123,12 +113,12 @@ public class ResumeController : ControllerBase
                 default: throw new TiltedException();
             }
 
-            var resume = await _orchestrator.GetResumeTree(id);
+            var resume = await orchestrator.GetResumeTree(id);
             return Ok(resume);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -142,7 +132,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.ValidateUser(HttpContext);
+            var valid = await validator.ValidateUser(HttpContext);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -151,14 +141,14 @@ public class ResumeController : ControllerBase
                 default: throw new TiltedException();
             }
 
-            var userId = _validator.GetUserId(HttpContext);
+            var userId = validator.GetUserId(HttpContext);
 
             try
             {
                 foreach (var node in resume)
                 {
                     if (node.UserId != Guid.Empty)
-                        valid = await _validator.ValidateResource(userId, node.ParentId ?? node.Id);
+                        valid = await validator.ValidateResource(userId, node.ParentId ?? node.Id);
                     switch (valid)
                     {
                         case UserValidationResult.Invalid: throw new UnauthorizedAccessException();
@@ -167,7 +157,7 @@ public class ResumeController : ControllerBase
                         default: throw new TiltedException();
                     }
 
-                    await _orchestrator.UpsertNode(node, userId);
+                    await orchestrator.UpsertNode(node, userId);
                 }
             }
             catch (UnauthorizedAccessException)
@@ -183,7 +173,7 @@ public class ResumeController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -197,7 +187,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.Validate(HttpContext, id);
+            var valid = await validator.Validate(HttpContext, id);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -206,12 +196,12 @@ public class ResumeController : ControllerBase
                 default: throw new TiltedException();
             }
 
-            var newId = await _orchestrator.DuplicateResume(id);
+            var newId = await orchestrator.DuplicateResume(id);
             return newId == Guid.Empty ? Problem("Failed to duplicate resume") : Created("", newId);
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -224,7 +214,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.Validate(HttpContext, id);
+            var valid = await validator.Validate(HttpContext, id);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -233,12 +223,12 @@ public class ResumeController : ControllerBase
                 default: throw new TiltedException();
             }
 
-            await _orchestrator.DeleteNode(id);
+            await orchestrator.DeleteNode(id);
             return NoContent();
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -254,7 +244,7 @@ public class ResumeController : ControllerBase
     {
         try
         {
-            var valid = await _validator.Validate(HttpContext, id);
+            var valid = await validator.Validate(HttpContext, id);
             switch (valid)
             {
                 case UserValidationResult.Invalid: return Forbid();
@@ -263,12 +253,12 @@ public class ResumeController : ControllerBase
                 default: throw new TiltedException();
             }
 
-            var resume = _orchestrator.GetResumeTree(id).Result;
+            var resume = orchestrator.GetResumeTree(id).Result;
             return Content(resume!.Build(), "text/html");
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "{Message}", e.Message);
+            logger.LogError(e, "{Message}", e.Message);
             return Problem(e.Message);
         }
     }
@@ -436,7 +426,7 @@ public class ResumeController : ControllerBase
             }
         };
 
-        return Content(_orchestrator.BuildResumeHtml(resume), "text/html");
+        return Content(orchestrator.BuildResumeHtml(resume), "text/html");
     }
 
     #endregion

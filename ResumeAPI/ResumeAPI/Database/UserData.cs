@@ -18,6 +18,7 @@ public interface IUserData
 
 public class UserData(AppSettings appSettings) : PostgreSqlContext(appSettings), IUserData
 {
+    // TODO: remove user table and rely on fusionauth to validate user existence
     private const string UserSelect = @$"
                     id {nameof(User.Id)},
                     created_date {nameof(User.CreatedDate)},
