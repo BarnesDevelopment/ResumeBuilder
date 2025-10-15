@@ -1,14 +1,12 @@
 using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using ResumeAPI.Controllers;
-using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
-using UnitTests.Models;
 
 namespace UnitTests.Controllers;
 
@@ -26,21 +24,17 @@ public class DemoControllerTests
         _controller = new DemoController(_userService, _demoOrchestrator, logger);
     }
 
-    [Fact(Skip = "Cant properly init Response.Cookies")]
+    [Fact]
     public async Task Login_ShouldCallCorrectMethods()
     {
-        var features = new FeatureCollection();
-        _controller.ControllerContext
-            = new ControllerContext { HttpContext = new DefaultHttpContext(features) };
         var userId = Guid.NewGuid();
-        var user = new User { Id = userId };
-        _userService.GetUser("123").Returns(user);
+
+        _userService.CreateAnonymousUser().Returns((jwt: "token", id: userId));
+
         var actual = (await _controller.Login()).Result as OkObjectResult;
 
-        await _userService.Received().GetUser("123");
         await _demoOrchestrator.Received().InitResumes(userId);
-
-        actual!.Value.Should().BeEquivalentTo(new Cookie("resume-id", "123"));
+        actual!.Value.Should().Be("token");
     }
 
     [Fact]
@@ -51,16 +45,60 @@ public class DemoControllerTests
         {
             HttpContext = new DefaultHttpContext
             {
-                Request = { Cookies = new RequestCookieCollection { { "resume-id", "123" } } }
+                User = new ClaimsPrincipal(new List<ClaimsIdentity>
+                {
+                    new([new Claim("userId", userId.ToString()), new Claim("isAnonymous", "true")],
+                        "Bearer")
+                })
             }
         };
 
-        var user = new User { Id = userId };
-        _userService.GetUser("123").Returns(user);
-
         var actual = await _controller.Logout() as NoContentResult;
 
+        actual!.StatusCode.Should().Be((int)HttpStatusCode.NoContent);
         await _demoOrchestrator.Received().DeleteUser(userId);
-        actual!.Should().NotBeNull();
+        await _userService.Received().DeleteAnonymousUser(userId);
+    }
+
+    [Fact]
+    public async Task Logout_ShouldReturnUnauthorized_WhenNoUserId()
+    {
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new List<ClaimsIdentity>
+                {
+                    new([new Claim("isAnonymous", "true")], "Bearer")
+                })
+            }
+        };
+
+        var actual = await _controller.Logout();
+        actual.Should().BeOfType<UnauthorizedResult>();
+        await _demoOrchestrator.DidNotReceive().DeleteUser(Arg.Any<Guid>());
+        await _userService.DidNotReceive().DeleteAnonymousUser(Arg.Any<Guid>());
+    }
+
+    [Fact]
+    public async Task Logout_ShouldReturnForbid_WhenNotAnonymous()
+    {
+        var userId = Guid.NewGuid();
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new List<ClaimsIdentity>
+                {
+                    new([new Claim("userId", userId.ToString()), new Claim("isAnonymous", "false")],
+                        "Bearer")
+                })
+            }
+        };
+
+        var actual = await _controller.Logout();
+        actual.Should().BeOfType<ForbidResult>();
+        await _demoOrchestrator.DidNotReceive().DeleteUser(Arg.Any<Guid>());
+        await _userService.DidNotReceive().DeleteAnonymousUser(Arg.Any<Guid>());
     }
 }

@@ -73,7 +73,8 @@ public class AuthClient : IAuthClient
         // const int ttl = 60 * 60 * 24 * 7; // 7 days
         var response = await _authClient.VendJWTAsync(new JWTVendRequest
         {
-            timeToLiveInSeconds = ttl, claims = new Dictionary<string, object> { { "userId", id.ToString() } }
+            timeToLiveInSeconds = ttl,
+            claims = new Dictionary<string, object> { { "userId", id.ToString() }, { "anonymousUser", true } }
         });
 
         return response.successResponse.token;

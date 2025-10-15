@@ -30,11 +30,18 @@ public class DemoController(
     public async Task<IActionResult> Logout()
     {
         var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+        var isAnonymous = User.Claims.FirstOrDefault(c => c.Type == "isAnonymous")?.Value;
 
         if (id == null)
         {
             logger.LogWarning("User not found");
             return Unauthorized();
+        }
+
+        if (isAnonymous != "true")
+        {
+            logger.LogWarning("User is not anonymous");
+            return Forbid();
         }
 
         var userId = Guid.Parse(id);

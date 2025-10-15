@@ -21,7 +21,7 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         var dev = new[] { "Development", "Docker" }.Any(x => x == configuration.GetSection("Environment").Value);
-        
+
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(c =>
@@ -60,7 +60,7 @@ public class Startup(IConfiguration configuration)
 
         services.AddTransient<IUserValidator, UserValidator>();
         services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
-        
+
         services.AddHttpClient<IAuthClient, AuthClient>(options =>
         {
             options.BaseAddress = new Uri(appSettings.Jwt.Authority);
@@ -91,56 +91,36 @@ public class Startup(IConfiguration configuration)
                     OnChallenge = async context =>
                     {
                         context.HandleResponse();
-                        
+
                         var tokenString = context.Request.Headers.Authorization;
                         var authClient = configuration.Get<IAuthClient>()!;
-                        
-                        if (string.IsNullOrEmpty(tokenString.ToString()) || await authClient.AuthenticateJwt(tokenString.ToString()))
+
+                        if (string.IsNullOrEmpty(tokenString.ToString())
+                            || await authClient.AuthenticateJwt(tokenString.ToString()))
                         {
                             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             context.Response.ContentType = "application/json";
 
                             var errorResponse = new
                             {
-                                error = "Authentication failed.",
-                                message = "Invalid or missing token provided."
+                                error = "Authentication failed.", message = "Invalid or missing token provided."
                             };
-                            
+
                             await context.Response.WriteAsJsonAsync(errorResponse);
                         }
-                    },
+                    }
                 };
             });
-
-        services.AddAuthentication(Constants.DemoCookieAuth).UseDemoCookieAuthentication();
 
         #endregion
 
         #region Authorization
 
-        services.AddAuthentication(options =>
-            {
-                options.DefaultScheme = "MultiAuth";
-                options.DefaultChallengeScheme = "MultiAuth";
-            })
-            .AddPolicyScheme("MultiAuth",
-                JwtBearerDefaults.AuthenticationScheme,
-                options =>
-                {
-                    options.ForwardDefaultSelector = context =>
-                    {
-                        var authorization = context.Request.Headers[HeaderNames.Authorization].ToString();
-                        if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer"))
-                            return JwtBearerDefaults.AuthenticationScheme;
-                        return Constants.DemoCookieAuth;
-                    };
-                });
-
         services.AddAuthorization(options =>
         {
             options.AddPolicy("User",
                 policy =>
-                    policy.RequireClaim("resume-id"));
+                    policy.RequireClaim("userId"));
         });
 
         #endregion
