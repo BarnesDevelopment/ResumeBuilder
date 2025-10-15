@@ -7,18 +7,10 @@ namespace ResumeAPI.Controllers;
 
 [ApiController]
 [Route("resume/users")]
-public class UserController : ControllerBase
+public class UserController(ILogger<UserController> logger, IUserService service, IUserOrchestrator orchestrator)
+    : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
-    private readonly IUserOrchestrator _orchestrator;
-    private readonly IUserService _service;
-
-    public UserController(ILogger<UserController> logger, IUserService service, IUserOrchestrator orchestrator)
-    {
-        _logger = logger;
-        _orchestrator = orchestrator;
-        _service = service;
-    }
+    private readonly IUserService _service = service;
 
     #region User
 
@@ -32,11 +24,11 @@ public class UserController : ControllerBase
     {
         try
         {
-            return Created("", await _orchestrator.CreateUser());
+            return Created("", await orchestrator.CreateUser());
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
+            logger.LogError(e.Message);
             return Problem(e.Message);
         }
     }
@@ -53,12 +45,12 @@ public class UserController : ControllerBase
     {
         try
         {
-            if (await _orchestrator.DeleteUser(Guid.Parse(id))) return Accepted();
+            if (await orchestrator.DeleteUser(Guid.Parse(id))) return Accepted();
             return NotFound();
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message);
+            logger.LogError(e.Message);
             return Problem(e.Message);
         }
     }
