@@ -3,16 +3,30 @@ title: Anonymous User Flows
 ---
 
 flowchart TB
-	subgraph Anonymous Login
-		start[Start Demo Session]
-		init[PUT resume/demo/init]
-		token[/Cookie/]
-		start -- Call --> init
-		init -- Returns --> token
-		stop[Use normal resume endpoints]
+	subgraph FusionAuth
+		delete[Delete Anonymous User]
+		create[Create Anonymous User]
+		create --> jwt[Generate JWT]
+	end
+	
+	subgraph anonLogin[Anonymous Login]
+		start[PUT resume/demo/login]
+		token[/JWT/]
+		start -- Create User --> create
+		jwt -- Returns --> token
 	end
 
-	subgraph Anonymous Logout
-		Logout[PUT resume/demo/logout]
+	anonLogin --> stop[Use normal resume endpoints]
 
+	subgraph Anonymous Logout
+		logout[DELETE resume/demo/logout]
+		logout --> check[/Check for User/]
+		check --> exists{User Exists?}
+		exists -- No --> 403[Forbidden]
+		exists -- Yes --> isAnon{Is Anonymous?}
+		isAnon -- No --> 403
+		isAnon -- Yes --> deleteUserData[Delete User Data]
+		deleteUserData --> delete
+		delete --> 204[No Content]
+		
 	end
