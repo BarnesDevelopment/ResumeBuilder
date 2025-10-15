@@ -26,7 +26,7 @@ public class DemoController(
     }
 
     [HttpDelete("logout")]
-    [Authorize(AuthenticationSchemes = Constants.DemoCookieAuth)]
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         var id = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
