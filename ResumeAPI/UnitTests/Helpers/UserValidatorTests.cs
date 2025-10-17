@@ -1,207 +1,128 @@
-using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using ResumeAPI.Database;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
+using ResumeAPI.Services;
 
 namespace UnitTests.Helpers;
 
 public class UserValidatorTests
 {
-  private readonly Mock<IUserData> _userDb;
-  private readonly Mock<IResumeTree> _resumeDb;
-  private readonly UserValidator _validator;
+    private readonly Mock<IAuthClient> _authClient;
+    private readonly HttpContext _httpContext = new DefaultHttpContext();
+    private readonly Mock<IResumeTree> _resumeDb;
+    private readonly Guid _userId = Guid.NewGuid();
+    private readonly UserValidator _validator;
 
-  public UserValidatorTests()
-  {
-    _userDb = new Mock<IUserData>();
-    _resumeDb = new Mock<IResumeTree>();
-    _validator = new UserValidator(_userDb.Object, _resumeDb.Object);
-  }
-
-  [Fact]
-  public async Task ValidateUser_ValidUser()
-  {
-    var userId = Guid.NewGuid();
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync(new User());
-
-    var result = await _validator.ValidateUser(userId);
-
-    result.Should().Be(UserValidationResult.Valid);
-  }
-
-  [Fact]
-  public async Task ValidateUser_InvalidUser()
-  {
-    var userId = Guid.NewGuid();
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync((User)null!);
-
-    var result = await _validator.ValidateUser(userId);
-
-    result.Should().Be(UserValidationResult.Invalid);
-  }
-
-  [Fact]
-  public async Task ValidateUser_ValidUserFromContext()
-  {
-    var userId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+    public UserValidatorTests()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync(new User());
+        _resumeDb = new Mock<IResumeTree>();
+        _authClient = new Mock<IAuthClient>();
+        _validator = new UserValidator(_resumeDb.Object, _authClient.Object);
+        _httpContext.User
+            = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("userId", _userId.ToString()) }));
+    }
 
-    var result = await _validator.ValidateUser(context);
+    #region GetUserId(HttpContext context)
 
-    result.Should().Be(UserValidationResult.Valid);
-  }
-
-  [Fact]
-  public async Task ValidateUser_InvalidUserFromContext()
-  {
-    var userId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+    [Fact]
+    public void GetUserId()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync((User)null!);
+        var result = _validator.GetUserId(_httpContext);
 
-    var result = await _validator.ValidateUser(context);
+        result.Should().Be(_userId);
+    }
 
-    result.Should().Be(UserValidationResult.Invalid);
-  }
-
-  [Fact]
-  public async Task ValidateUser_InvalidUserIdFromContext()
-  {
-    var context = new DefaultHttpContext
+    [Fact]
+    public void GetUserId_NoClaim_ThrowsInvalidOperationException()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", "invalid") }))
-    };
+        _httpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
+        
+        Action act = () => _ = _validator.GetUserId(_httpContext);
+        
+        act.Should().Throw<InvalidOperationException>().WithMessage("User ID claim not found");
+    }
+    #endregion
 
-    var result = await _validator.ValidateUser(context);
+    #region ValidateUser(HttpContext context)
 
-    result.Should().Be(UserValidationResult.Invalid);
-  }
-
-  [Fact]
-  public async Task ValidateResource_ValidResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode() { UserId = userId });
-
-    var result = await _validator.ValidateResource(userId, resourceId);
-
-    result.Should().Be(UserValidationResult.Valid);
-  }
-
-  [Fact]
-  public async Task ValidateResource_InvalidResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode() { UserId = Guid.NewGuid() });
-
-    var result = await _validator.ValidateResource(userId, resourceId);
-
-    result.Should().Be(UserValidationResult.Invalid);
-  }
-
-  [Fact]
-  public async Task ValidateResource_NullResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync((ResumeTreeNode)null!);
-
-    var result = await _validator.ValidateResource(userId, resourceId);
-
-    result.Should().Be(UserValidationResult.NotFound);
-  }
-
-  [Fact]
-  public async Task Validate_ValidUserAndResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+    [Fact]
+    public async Task ValidateUser_ValidUser()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync(new User());
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode() { UserId = userId });
+        _httpContext.Request.Headers["Authorization"] = "Bearer valid_token";
 
-    var result = await _validator.Validate(context, resourceId);
+        _authClient.Setup(x => x.AuthenticateJwt("valid_token")).ReturnsAsync(true);
 
-    result.Should().Be(UserValidationResult.Valid);
-  }
+        var result = await _validator.ValidateUser(_httpContext);
 
-  [Fact]
-  public async Task Validate_InvalidUser()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+        result.Should().Be(UserValidationResult.Valid);
+    }
+
+    [Fact]
+    public async Task ValidateUser_InvalidUser()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync((User)null!);
+        _httpContext.Request.Headers["Authorization"] = "Bearer invalid_token";
 
-    var result = await _validator.Validate(context, resourceId);
+        _authClient.Setup(x => x.AuthenticateJwt("invalid_token")).ReturnsAsync(false);
 
-    result.Should().Be(UserValidationResult.Invalid);
-  }
+        var result = await _validator.ValidateUser(_httpContext);
 
-  [Fact]
-  public async Task Validate_InvalidResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+        result.Should().Be(UserValidationResult.Invalid);
+    }
+
+    #endregion
+
+    #region ValidateResource(Guid userId, Guid resourceId)
+
+    [Fact]
+    public async Task ValidateResource_ValidResource()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync(new User());
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync((ResumeTreeNode)null!);
+        var userId = Guid.NewGuid();
+        var resourceId = Guid.NewGuid();
+        _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode { UserId = userId });
 
-    var result = await _validator.Validate(context, resourceId);
+        var result = await _validator.ValidateResource(userId, resourceId);
 
-    result.Should().Be(UserValidationResult.NotFound);
-  }
+        result.Should().Be(UserValidationResult.Valid);
+    }
 
-  [Fact]
-  public async Task Validate_UserIdDoesntMatchResource()
-  {
-    var userId = Guid.NewGuid();
-    var resourceId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+    [Fact]
+    public async Task ValidateResource_InvalidResource()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
-    _userDb.Setup(x => x.GetUser(userId)).ReturnsAsync(new User());
-    _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode() { UserId = Guid.NewGuid() });
+        var userId = Guid.NewGuid();
+        var resourceId = Guid.NewGuid();
+        _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode { UserId = Guid.NewGuid() });
 
-    var result = await _validator.Validate(context, resourceId);
+        var result = await _validator.ValidateResource(userId, resourceId);
 
-    result.Should().Be(UserValidationResult.Invalid);
-  }
+        result.Should().Be(UserValidationResult.Invalid);
+    }
 
-  [Fact]
-  public void GetUserId()
-  {
-    var userId = Guid.NewGuid();
-    var context = new DefaultHttpContext
+    [Fact]
+    public async Task ValidateResource_NullResource()
     {
-      User = new ClaimsPrincipal(new ClaimsIdentity(new List<Claim> { new("resume-id", userId.ToString()) }))
-    };
+        var userId = Guid.NewGuid();
+        var resourceId = Guid.NewGuid();
+        _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync((ResumeTreeNode)null!);
 
-    var result = _validator.GetUserId(context);
+        var result = await _validator.ValidateResource(userId, resourceId);
 
-    result.Should().Be(userId);
-  }
+        result.Should().Be(UserValidationResult.NotFound);
+    }
+
+    [Fact]
+    public async Task Validate_UserIdDoesntMatchResource()
+    {
+        var resourceId = Guid.NewGuid();
+        
+        _resumeDb.Setup(x => x.GetNode(resourceId)).ReturnsAsync(new ResumeTreeNode { UserId = Guid.NewGuid() });
+
+        var result = await _validator.ValidateResource(_userId, resourceId);
+
+        result.Should().Be(UserValidationResult.Invalid);
+    }
+
+    #endregion
 }
