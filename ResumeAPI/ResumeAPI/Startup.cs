@@ -8,7 +8,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
-using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
@@ -54,8 +53,6 @@ public class Startup(IConfiguration configuration)
         services.AddTransient<IUserService, UserService>();
 
         services.AddTransient<IResumeTree, ResumeTree>();
-
-        services.AddTransient<IUserValidator, UserValidator>();
 
         services.AddHttpClient<IAuthClient, AuthClient>(options =>
         {

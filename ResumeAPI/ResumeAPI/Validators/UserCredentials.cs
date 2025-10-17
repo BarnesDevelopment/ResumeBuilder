@@ -1,6 +1,6 @@
-using System.Security.Claims;
 using FluentValidation;
 using ResumeAPI.Database;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Services;
 
@@ -22,17 +22,16 @@ public class UserCredentials : AbstractValidator<(HttpContext httpContext, Guid?
                     resource = await resumeDb.GetNode(resourceId.Value);
                     return resource != null;
                 })
-                .WithMessage("The specified resource does not exist.")
+                .WithMessage("The specified resource does not exist. 404")
                 .Must((context, resourceId, _) =>
                 {
                     if (resourceId == null) return true;
 
-                    var userId = Guid.Parse((context.httpContext.User.Identity as ClaimsIdentity)!.FindFirst("userId")!
-                        .Value);
+                    var userId = context.httpContext.GetUserId();
 
                     return resource!.UserId == userId;
                 })
-                .WithMessage("User does not have access to the specified resource."));
+                .WithMessage("User does not have access to the specified resource. 403"));
     }
 }
 
@@ -52,11 +51,11 @@ public class HeaderValidator : AbstractValidator<IHeaderDictionary>
         RuleFor(headers => headers)
             .Cascade(CascadeMode.Stop)
             .Must(headers => headers.ContainsKey("Authorization"))
-            .WithMessage("Missing Authorization header.")
+            .WithMessage("Missing Authorization header. 401")
             .Must(headers => !string.IsNullOrEmpty(headers["Authorization"]))
-            .WithMessage("Authorization header cannot be empty.")
+            .WithMessage("Authorization header cannot be empty. 401")
             .Must(headers => headers["Authorization"].ToString().StartsWith("Bearer "))
-            .WithMessage("Authorization header must start with 'Bearer '.")
+            .WithMessage("Authorization header must start with 'Bearer '. 401")
             .MustAsync(async (headers, _) =>
             {
                 var token = headers["Authorization"].ToString().Substring("Bearer ".Length).Trim();
@@ -65,6 +64,6 @@ public class HeaderValidator : AbstractValidator<IHeaderDictionary>
 
                 return response;
             })
-            .WithMessage("Invalid Authorization header.");
+            .WithMessage("Invalid Authorization header. 401");
     }
 }

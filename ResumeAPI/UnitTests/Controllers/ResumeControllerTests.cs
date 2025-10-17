@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -15,13 +17,13 @@ public class ResumeControllerTests
     private readonly ResumeController _controller;
     private readonly ILogger<ResumeController> _logger;
     private readonly IResumeOrchestrator _orchestrator;
-    private readonly IUserValidator _userValidator;
+    private readonly InlineValidator<(HttpContext httpContext, Guid? resourceId)> _userValidator;
 
     public ResumeControllerTests()
     {
         _orchestrator = Substitute.For<IResumeOrchestrator>();
         _logger = Substitute.For<ILogger<ResumeController>>();
-        _userValidator = Substitute.For<IUserValidator>();
+        _userValidator = new InlineValidator<(HttpContext httpContext, Guid? resourceId)>();
         _controller = new ResumeController(_logger, _orchestrator, _userValidator);
     }
 
@@ -34,7 +36,6 @@ public class ResumeControllerTests
         var expected = new ResumeTreeNode { Id = id };
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
         _orchestrator.GetResumeTree(id).Returns(expected);
 
         var actual = (await _controller.GetResumeById(id)).GetObject();
@@ -47,7 +48,7 @@ public class ResumeControllerTests
     {
         var id = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.NotFound);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("404");
 
         var actual = await _controller.GetResumeById(id);
 
@@ -61,7 +62,7 @@ public class ResumeControllerTests
         var id = Guid.NewGuid();
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Invalid);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("403");
 
         var actual = await _controller.GetResumeById(id);
 
@@ -73,10 +74,15 @@ public class ResumeControllerTests
     {
         var id = Guid.NewGuid();
         var userId = Guid.NewGuid();
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
         _orchestrator.GetResumeTree(id).Throws(new Exception("some error"));
 
         var actual = await _controller.GetResumeById(id);
@@ -94,10 +100,15 @@ public class ResumeControllerTests
     {
         var userId = Guid.NewGuid();
         var expected = new List<ResumeTreeNode> { new() };
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _userValidator.ValidateUser(_controller.HttpContext).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
         _orchestrator.GetTopLevelResumes(userId).Returns(expected);
 
         var actual = (await _controller.GetAllResumes()).GetObject();
@@ -110,7 +121,7 @@ public class ResumeControllerTests
     {
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.ValidateUser(_controller.HttpContext).Returns(UserValidationResult.Invalid);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("403");
 
         var actual = await _controller.GetAllResumes();
 
@@ -121,10 +132,15 @@ public class ResumeControllerTests
     public async Task GetAllResumes_ShouldReturnProblem()
     {
         var userId = Guid.NewGuid();
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _userValidator.ValidateUser(_controller.HttpContext).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
         _orchestrator.GetTopLevelResumes(userId).Throws(new Exception("some error"));
 
         var actual = await _controller.GetAllResumes();
@@ -144,11 +160,15 @@ public class ResumeControllerTests
         var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode { Id = id, UserId = userId };
 
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
-        _userValidator.ValidateResource(userId, id).Returns(UserValidationResult.Valid);
         _orchestrator.UpsertNode(resume, userId).Returns(resume);
 
         var actual = await _controller.UpsertNode(new[] { resume });
@@ -156,18 +176,22 @@ public class ResumeControllerTests
         actual.Should().BeOfType<NoContentResult>();
     }
 
-    [Theory]
-    [InlineData(UserValidationResult.Valid)]
-    [InlineData(UserValidationResult.Invalid)]
-    public async Task UpdateNode_InvalidUser_ReturnsForbidden(UserValidationResult result)
+    [Fact]
+    public async Task UpdateNode_InvalidUser_ReturnsForbidden()
     {
         var id = Guid.NewGuid();
         var resume = new ResumeTreeNode { Id = id, UserId = Guid.NewGuid() };
 
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", Guid.NewGuid().ToString()) }))
+            }
+        };
 
-        _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(result);
-        _userValidator.ValidateResource(Arg.Any<Guid>(), id).Returns(UserValidationResult.Invalid);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("403");
 
         var actual = await _controller.UpsertNode(new[] { resume });
 
@@ -181,11 +205,15 @@ public class ResumeControllerTests
         var userId = Guid.NewGuid();
         var resume = new ResumeTreeNode { Id = id };
 
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _userValidator.ValidateUser(Arg.Any<HttpContext>()).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
-        _userValidator.ValidateResource(userId, id).Returns(UserValidationResult.Valid);
         _orchestrator.UpsertNode(resume, userId).Throws(new Exception("some error"));
 
         var actual = await _controller.UpsertNode(new[] { resume });
@@ -206,7 +234,6 @@ public class ResumeControllerTests
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
         _orchestrator.DuplicateResume(id).Returns(newId);
 
         var actual = await _controller.DuplicateResume(id);
@@ -222,7 +249,7 @@ public class ResumeControllerTests
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.NotFound);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("404");
 
         var actual = await _controller.DuplicateResume(id);
 
@@ -237,7 +264,7 @@ public class ResumeControllerTests
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Invalid);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("403");
 
         var actual = await _controller.DuplicateResume(id);
 
@@ -248,16 +275,13 @@ public class ResumeControllerTests
 
     #region DeleteNode
 
-    [Theory]
-    [InlineData(UserValidationResult.Valid)]
-    [InlineData(UserValidationResult.NotFound)]
-    public async Task DeleteNode_ReturnsAccepted(UserValidationResult result)
+    [Fact]
+    public async Task DeleteNode_ReturnsAccepted()
     {
         var id = Guid.NewGuid();
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(result);
         _orchestrator.DeleteNode(id).Returns(true);
 
         var actual = await _controller.DeleteNode(id);
@@ -272,7 +296,7 @@ public class ResumeControllerTests
 
         _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
 
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Invalid);
+        _userValidator.RuleFor(httpContext => httpContext).Must(id => false).WithMessage("403");
 
         var actual = await _controller.DeleteNode(id);
 
@@ -284,11 +308,15 @@ public class ResumeControllerTests
     {
         var id = Guid.NewGuid();
         var userId = Guid.NewGuid();
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(
+                    new ClaimsIdentity(new List<Claim> { new("userId", userId.ToString()) }))
+            }
+        };
 
-        _controller.ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() };
-
-        _userValidator.Validate(Arg.Any<HttpContext>(), id).Returns(UserValidationResult.Valid);
-        _userValidator.GetUserId(Arg.Any<HttpContext>()).Returns(userId);
         _orchestrator.DeleteNode(id).Throws(new Exception("some error"));
 
         var actual = await _controller.DeleteNode(id);

@@ -38,8 +38,10 @@ public class UserCredentialsTests
 
         _authClient.Setup(a => a.AuthenticateJwt("valid_token")).ReturnsAsync(true);
         if (resourceId.HasValue)
+        {
             _resumeDb.Setup(r => r.GetNode(resourceId.Value))
                 .ReturnsAsync(new ResumeTreeNode { UserId = resourceId.Value });
+        }
 
         var actual = await _validator.ValidateAsync((httpContext, resourceId));
 
@@ -55,7 +57,7 @@ public class UserCredentialsTests
         var actual = await _validator.ValidateAsync((httpContext, resourceId));
 
         actual.IsValid.Should().BeFalse();
-        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Missing Authorization header.");
+        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Missing Authorization header. 401");
     }
 
     [Fact]
@@ -68,7 +70,7 @@ public class UserCredentialsTests
         var actual = await _validator.ValidateAsync((httpContext, resourceId));
 
         actual.IsValid.Should().BeFalse();
-        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Authorization header cannot be empty.");
+        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Authorization header cannot be empty. 401");
     }
 
     [Fact]
@@ -81,7 +83,8 @@ public class UserCredentialsTests
         var actual = await _validator.ValidateAsync((httpContext, resourceId));
 
         actual.IsValid.Should().BeFalse();
-        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Authorization header must start with 'Bearer '.");
+        actual.Errors.Should()
+            .ContainSingle(e => e.ErrorMessage == "Authorization header must start with 'Bearer '. 401");
     }
 
     [Fact]
@@ -96,7 +99,7 @@ public class UserCredentialsTests
         var actual = await _validator.ValidateAsync((httpContext, resourceId));
 
         actual.IsValid.Should().BeFalse();
-        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Invalid Authorization header.");
+        actual.Errors.Should().ContainSingle(e => e.ErrorMessage == "Invalid Authorization header. 401");
     }
 
     // resource id is provided but not found in database
@@ -116,7 +119,7 @@ public class UserCredentialsTests
 
         actual.IsValid.Should().BeFalse();
         actual.Errors.Should()
-            .ContainSingle(e => e.ErrorMessage == "The specified resource does not exist.");
+            .ContainSingle(e => e.ErrorMessage == "The specified resource does not exist. 404");
     }
 
     [Fact]
@@ -135,6 +138,6 @@ public class UserCredentialsTests
 
         actual.IsValid.Should().BeFalse();
         actual.Errors.Should()
-            .ContainSingle(e => e.ErrorMessage == "User does not have access to the specified resource.");
+            .ContainSingle(e => e.ErrorMessage == "User does not have access to the specified resource. 403");
     }
 }

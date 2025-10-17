@@ -1,3 +1,4 @@
+using FluentValidation;
 using iText.Html2pdf;
 using iText.Html2pdf.Resolver.Font;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ namespace ResumeAPI.Controllers;
 public class ResumeController(
     ILogger<ResumeController> logger,
     IResumeOrchestrator orchestrator,
-    IUserValidator validator
+    IValidator<(HttpContext httpContext, Guid? resourceId)> userCredentialValidator
 )
     : ControllerBase
 {
@@ -28,13 +29,16 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.Validate(HttpContext, id);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, id));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NotFound("Resource not found");
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid(id.ToString());
+                    case "404": return NotFound("Resource not found");
+                }
             }
 
             var stream = new MemoryStream();
@@ -84,9 +88,19 @@ public class ResumeController(
     {
         try
         {
-            var user = await validator.ValidateUser(HttpContext);
-            if (user != UserValidationResult.Valid) return Forbid();
-            return Ok(await orchestrator.GetTopLevelResumes(validator.GetUserId(HttpContext)));
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, null));
+            if (!validationResult.IsValid)
+            {
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid();
+                    case "404": return NotFound("Resource not found");
+                }
+            }
+
+            return Ok(await orchestrator.GetTopLevelResumes(HttpContext.GetUserId()));
         }
         catch (Exception e)
         {
@@ -104,13 +118,16 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.Validate(HttpContext, id);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, id));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NotFound("Resource not found");
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid(id.ToString());
+                    case "404": return NotFound("Resource not found");
+                }
             }
 
             var resume = await orchestrator.GetResumeTree(id);
@@ -132,41 +149,40 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.ValidateUser(HttpContext);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, null));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NotFound("Resource not found");
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
-            }
-
-            var userId = validator.GetUserId(HttpContext);
-
-            try
-            {
-                foreach (var node in resume)
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
                 {
-                    if (node.UserId != Guid.Empty)
-                        valid = await validator.ValidateResource(userId, node.ParentId ?? node.Id);
-                    switch (valid)
-                    {
-                        case UserValidationResult.Invalid: throw new UnauthorizedAccessException();
-                        case UserValidationResult.NotFound: throw new KeyNotFoundException();
-                        case UserValidationResult.Valid: break;
-                        default: throw new TiltedException();
-                    }
-
-                    await orchestrator.UpsertNode(node, userId);
+                    case "401":
+                    case "403":
+                        return Forbid();
+                    case "404": return NotFound("Resource not found");
                 }
             }
-            catch (UnauthorizedAccessException)
+
+            var userId = HttpContext.GetUserId();
+
+            foreach (var node in resume)
             {
-                return Forbid();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound("Resource not found");
+                if (node.UserId != Guid.Empty)
+                {
+                    validationResult
+                        = await userCredentialValidator.ValidateAsync((HttpContext, node.ParentId ?? node.Id));
+                }
+
+                if (!validationResult.IsValid)
+                {
+                    switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                    {
+                        case "401":
+                        case "403":
+                            return Forbid();
+                        case "404": return NotFound("Resource not found");
+                    }
+                }
+
+                await orchestrator.UpsertNode(node, userId);
             }
 
             return NoContent();
@@ -187,13 +203,16 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.Validate(HttpContext, id);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, id));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NotFound("Resource not found");
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid(id.ToString());
+                    case "404": return NotFound("Resource not found");
+                }
             }
 
             var newId = await orchestrator.DuplicateResume(id);
@@ -214,13 +233,16 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.Validate(HttpContext, id);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, id));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NoContent();
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid(id.ToString());
+                    case "404": return NotFound("Resource not found");
+                }
             }
 
             await orchestrator.DeleteNode(id);
@@ -244,13 +266,16 @@ public class ResumeController(
     {
         try
         {
-            var valid = await validator.Validate(HttpContext, id);
-            switch (valid)
+            var validationResult = await userCredentialValidator.ValidateAsync((HttpContext, id));
+            if (!validationResult.IsValid)
             {
-                case UserValidationResult.Invalid: return Forbid();
-                case UserValidationResult.NotFound: return NotFound("Resource not found");
-                case UserValidationResult.Valid: break;
-                default: throw new TiltedException();
+                switch (validationResult.Errors.First().ErrorMessage.Split(' ').Last())
+                {
+                    case "401":
+                    case "403":
+                        return Forbid(id.ToString());
+                    case "404": return NotFound("Resource not found");
+                }
             }
 
             var resume = orchestrator.GetResumeTree(id).Result;
