@@ -16,26 +16,37 @@ public class UserServiceTests
         _authClient = new Mock<IAuthClient>();
         _service = new UserService(_db.Object, _authClient.Object);
     }
-
+    
     [Fact]
-    public async Task CreateUser_ReturnUserId()
+    public async Task CreateAnonymousUser_Success()
     {
-        var guid = Guid.NewGuid();
-        _db.Setup(x => x.CreateUser(guid)).ReturnsAsync(guid);
+        var userId = Guid.NewGuid();
+        var jwt = "test-jwt";
+        _authClient.Setup(a => a.CreateAnonymousUser()).ReturnsAsync(userId);
+        _authClient.Setup(a => a.VendJwtFromId(userId)).ReturnsAsync(jwt);
 
-        var actual = await _service.CreateUser(guid);
+        var (returnedJwt, returnedId) = await _service.CreateAnonymousUser();
 
-        actual.Should().Be(guid);
+        returnedJwt.Should().Be(jwt);
+        returnedId.Should().Be(userId);
     }
-
+    
     [Fact]
-    public async Task DeleteUser_ReturnSuccess()
+    public async Task CreateAnonymousUser_Failure()
     {
-        var guid = Guid.NewGuid();
-        _db.Setup(x => x.DeleteUser(guid)).ReturnsAsync(true);
+        _authClient.Setup(a => a.CreateAnonymousUser()).ReturnsAsync((Guid?)null);
 
-        var actual = await _service.DeleteUser(guid);
+        await Assert.ThrowsAsync<Exception>(async () => await _service.CreateAnonymousUser());
+    }
+    
+    [Fact]
+    public async Task DeleteAnonymousUser_Success()
+    {
+        var userId = Guid.NewGuid();
+        _authClient.Setup(a => a.DeleteUser(userId)).ReturnsAsync(true);
 
-        actual.Should().Be(true);
+        var result = await _service.DeleteAnonymousUser(userId);
+
+        result.Should().BeTrue();
     }
 }

@@ -5,10 +5,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
-using ResumeAPI.DemoCookieAuth;
 using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
@@ -52,7 +50,6 @@ public class Startup(IConfiguration configuration)
         services.AddTransient<IResumeBuilderService, ResumeBuilderBuilderService>();
         services.AddTransient<IResumeService, ResumeService>();
 
-        services.AddTransient<IUserOrchestrator, UserOrchestrator>();
         services.AddTransient<IUserService, UserService>();
 
         services.AddTransient<IUserData, UserData>();

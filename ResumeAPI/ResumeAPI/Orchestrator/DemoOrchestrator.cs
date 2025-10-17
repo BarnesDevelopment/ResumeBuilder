@@ -1,21 +1,27 @@
+using ResumeAPI.Services;
+
 namespace ResumeAPI.Orchestrator;
 
 public interface IDemoOrchestrator
 {
-    Task InitResumes(Guid userId);
+    Task<string> CreateUser();
     Task DeleteUser(Guid userId);
 }
 
-public class DemoOrchestrator(IResumeOrchestrator resumeOrchestrator, IUserOrchestrator userOrchestrator)
+public class DemoOrchestrator(IResumeOrchestrator resumeOrchestrator, IUserService userService)
     : IDemoOrchestrator
 {
-    public async Task InitResumes(Guid userId)
+    public async Task<string> CreateUser()
     {
+        var user = await userService.CreateAnonymousUser();
+
         var resumes = await resumeOrchestrator.GetTopLevelResumes(Guid.Empty);
         foreach (var resume in resumes)
         {
-            await resumeOrchestrator.DuplicateResume(resume, userId);
+            await resumeOrchestrator.DuplicateResume(resume, user.id);
         }
+
+        return user.jwt;
     }
 
     public async Task DeleteUser(Guid userId)
@@ -26,6 +32,6 @@ public class DemoOrchestrator(IResumeOrchestrator resumeOrchestrator, IUserOrche
             await resumeOrchestrator.DeleteNode(resume.Id);
         }
 
-        await userOrchestrator.DeleteUser(userId);
+        await userService.DeleteAnonymousUser(userId);
     }
 }
