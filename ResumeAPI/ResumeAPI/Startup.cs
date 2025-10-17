@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using FluentValidation;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -60,6 +61,8 @@ public class Startup(IConfiguration configuration)
         {
             options.BaseAddress = new Uri(appSettings.Jwt.Authority);
         });
+
+        services.AddValidatorsFromAssembly(Assembly.Load("ResumeAPI"), ServiceLifetime.Transient);
 
         #endregion
 
