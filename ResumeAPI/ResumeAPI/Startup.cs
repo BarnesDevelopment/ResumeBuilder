@@ -54,9 +54,11 @@ public class Startup(IConfiguration configuration)
 
         services.AddTransient<IResumeTree, ResumeTree>();
 
+        services.AddScoped<IAuthClient, AuthClient>();
+
         services.AddHttpClient<IAuthClient, AuthClient>(options =>
         {
-            options.BaseAddress = new Uri(appSettings.Jwt.Authority);
+            options.BaseAddress = new Uri("https://" + appSettings.Jwt.Authority);
         });
 
         services.AddValidatorsFromAssembly(Assembly.Load("ResumeAPI"), ServiceLifetime.Transient);
@@ -83,26 +85,18 @@ public class Startup(IConfiguration configuration)
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnChallenge = async context =>
+                    OnTokenValidated = async ctx =>
                     {
-                        context.HandleResponse();
-
-                        var tokenString = context.Request.Headers.Authorization;
-                        var authClient = configuration.Get<IAuthClient>()!;
-
-                        if (string.IsNullOrEmpty(tokenString.ToString())
-                            || await authClient.AuthenticateJwt(tokenString.ToString()))
+                        var authClient = ctx.HttpContext.RequestServices.GetRequiredService<IAuthClient>();
+                        var jwt = ctx.SecurityToken as JwtSecurityToken;
+                        if (jwt == null)
                         {
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            context.Response.ContentType = "application/json";
-
-                            var errorResponse = new
-                            {
-                                error = "Authentication failed.", message = "Invalid or missing token provided."
-                            };
-
-                            await context.Response.WriteAsJsonAsync(errorResponse);
+                            ctx.Fail("Invalid security token.");
+                            return;
                         }
+
+                        var remoteResult = await authClient.AuthenticateJwt(jwt.RawData);
+                        if (!remoteResult) ctx.Fail("Remote token validation failed.");
                     }
                 };
             });

@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using System.Net.Http.Headers;
 using io.fusionauth;
 using io.fusionauth.domain.api;
 using io.fusionauth.domain.api.jwt;
@@ -20,11 +20,13 @@ public class AuthClient : IAuthClient
 {
     private readonly FusionAuthClient _authClient;
     private readonly HttpClient _client;
+    private readonly string _issuer;
 
     public AuthClient(HttpClient client, AppSettings appSettings)
     {
         _client = client;
-        var authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey, appSettings.Jwt.Authority);
+        var authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
+            $"https://{appSettings.Jwt.Authority}");
 
         var search = new TenantSearchCriteria { name = "Resume Builder", numberOfResults = 1 };
         var tenantSearchRequest = new TenantSearchRequest { search = search };
@@ -32,15 +34,16 @@ public class AuthClient : IAuthClient
         var tenantId = response?.successResponse?.tenants[0]?.id;
         if (tenantId == null) throw new InvalidOperationException("TenantId cannot be null.");
 
+        _issuer = response!.successResponse!.tenants[0]!.issuer;
         _authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
-            appSettings.Jwt.Authority,
+            "https://" + appSettings.Jwt.Authority,
             tenantId.ToString());
     }
 
     public async Task<bool> AuthenticateJwt(string token)
     {
         _client.DefaultRequestHeaders.Authorization
-            = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+            = new AuthenticationHeaderValue("Bearer", token);
         var response = await _client.GetAsync("/api/jwt/validate");
         return response.IsSuccessStatusCode;
     }
@@ -74,7 +77,10 @@ public class AuthClient : IAuthClient
         var response = await _authClient.VendJWTAsync(new JWTVendRequest
         {
             timeToLiveInSeconds = ttl,
-            claims = new Dictionary<string, object> { { "userId", id.ToString() }, { "anonymousUser", true } }
+            claims = new Dictionary<string, object>
+            {
+                { "userId", id.ToString() }, { "anonymousUser", true }, { "iss", _issuer }
+            }
         });
 
         return response.successResponse.token;
