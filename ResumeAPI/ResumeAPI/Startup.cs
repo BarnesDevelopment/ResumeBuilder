@@ -52,11 +52,9 @@ public class Startup(IConfiguration configuration)
 
         services.AddTransient<IUserService, UserService>();
 
-        services.AddTransient<IUserData, UserData>();
         services.AddTransient<IResumeTree, ResumeTree>();
 
         services.AddTransient<IUserValidator, UserValidator>();
-        services.AddTransient<IAnonymousUserValidator, AnonymousUserValidator>();
 
         services.AddHttpClient<IAuthClient, AuthClient>(options =>
         {

@@ -6,15 +6,13 @@ namespace UnitTests.Services;
 
 public class UserServiceTests
 {
-    private readonly Mock<IUserData> _db;
     private readonly IUserService _service;
     private readonly Mock<IAuthClient> _authClient;
 
     public UserServiceTests()
     {
-        _db = new Mock<IUserData>();
         _authClient = new Mock<IAuthClient>();
-        _service = new UserService(_db.Object, _authClient.Object);
+        _service = new UserService(_authClient.Object);
     }
     
     [Fact]
