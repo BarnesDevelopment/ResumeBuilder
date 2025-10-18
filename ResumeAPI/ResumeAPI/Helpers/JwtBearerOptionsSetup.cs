@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -13,11 +14,13 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
 
     public JwtBearerOptionsSetup(IOptions<AppSettings> appSettings, IAuthClient authClient)
     {
+        var signingKeyInfo = authClient.GetSigningKey();
         _options = new JwtOptions
         {
             Issuer = appSettings.Value.Jwt.Authority,
             Audience = authClient.GetApplicationId().ToString(),
-            SigningKey = authClient.GetSigningKey()
+            SigningKey = signingKeyInfo.publicKey,
+            Kid = signingKeyInfo.kid
         };
     }
 
@@ -32,6 +35,18 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
         Console.WriteLine("Issuer: {0}", _options.Issuer);
         Console.WriteLine("Audience: {0}", _options.Audience);
         Console.WriteLine("Signing Key: {0}", _options.SigningKey);
+        Console.WriteLine("Key Id: {0}", _options.Kid);
+
+        var pem = _options.SigningKey
+            .Replace("-----BEGIN PUBLIC KEY-----", string.Empty)
+            .Replace("-----END PUBLIC KEY-----", string.Empty)
+            .Replace("\r", string.Empty)
+            .Replace("\n", string.Empty)
+            .Trim();
+        var der = Convert.FromBase64String(pem);
+        var ecdsa = ECDsa.Create();
+        ecdsa.ImportSubjectPublicKeyInfo(der, out _);
+        var key = new ECDsaSecurityKey(ecdsa) { KeyId = _options.Kid };
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -40,9 +55,9 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
             ValidateAudience = true,
             ValidAudience = _options.Audience,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_options.SigningKey)),
+            IssuerSigningKey = key,
             ValidateLifetime = true,
-            RequireSignedTokens = false
+            RequireSignedTokens = true
         };
 
         options.Events = new JwtBearerEvents
@@ -69,4 +84,5 @@ internal record JwtOptions
     public string Issuer { get; init; } = string.Empty;
     public string Audience { get; init; } = string.Empty;
     public string SigningKey { get; init; } = string.Empty;
+    public string Kid { get; init; } = string.Empty;
 }

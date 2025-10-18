@@ -15,7 +15,7 @@ public interface IAuthClient
     Task<string> VendJwtFromId(Guid id);
     Task<bool> DeleteUser(Guid id);
     Guid GetApplicationId();
-    string GetSigningKey();
+    (string publicKey, string kid) GetSigningKey();
 }
 
 public class AuthClient : IAuthClient
@@ -56,10 +56,11 @@ public class AuthClient : IAuthClient
             tenantId.ToString());
     }
 
-    public string GetSigningKey()
+    public (string publicKey, string kid) GetSigningKey()
     {
-        var key = _authClient.RetrieveKeysAsync().Result;
-        return key.successResponse.keys.First(x => x.name == "Resume Builder Signing Key").publicKey;
+        var key = _authClient.RetrieveKeysAsync()
+            .Result.successResponse.keys.First(x => x.name == "Resume Builder Signing Key");
+        return (key.publicKey, key.kid);
     }
 
     public async Task<bool> AuthenticateJwt(string token)
