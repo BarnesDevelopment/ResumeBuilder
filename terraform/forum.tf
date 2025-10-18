@@ -64,6 +64,7 @@ resource "fusionauth_tenant" "resume-builder" {
   jwt_configuration {
     refresh_token_time_to_live_in_minutes = 43200
     time_to_live_in_seconds               = 3600
+    access_token_key_id                   = fusionauth_key.resume-builder-access-token.id
   }
   email_configuration {
     host                              = var.fusionauth_email_configuration_host
