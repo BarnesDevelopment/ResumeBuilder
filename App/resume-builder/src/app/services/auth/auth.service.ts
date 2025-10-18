@@ -1,64 +1,60 @@
-import { Injectable } from '@angular/core';
-import { OAuthService } from 'angular-oauth2-oidc';
+import { inject, Injectable } from '@angular/core';
 import { DemoService } from './demo.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { FusionAuthService } from '@fusionauth/angular-sdk';
+import { from, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  loggedIn: boolean = false;
-  demo: boolean = false;
-
-  constructor(
-    private oauthService: OAuthService,
-    private demoService: DemoService,
-    private router: Router,
-    private cookieService: CookieService,
-  ) {}
+  private readonly fusionAuthService: FusionAuthService =
+    inject(FusionAuthService);
+  // private readonly oauthService: OAuthService = inject(OAuthService);
+  private readonly demoService: DemoService = inject(DemoService);
+  private readonly router: Router = inject(Router);
+  private readonly cookieService: CookieService = inject(CookieService);
+  private demo: boolean = false;
 
   public isLoggedIn() {
-    this.checkForCookie();
-    return this.loggedIn;
+    return this.fusionAuthService.isLoggedIn();
+  }
+
+  public isDemo() {
+    return this.demo;
   }
 
   public getClaims() {
-    if (this.loggedIn && this.demo) {
-      return { name: 'Demo User' };
+    if (this.isLoggedIn() && this.demo) {
+      return of({ name: 'Demo User' });
     } else {
-      return this.oauthService.getIdentityClaims() as any;
+      // return this.oauthService.getIdentityClaims() as any;
+      return from(this.fusionAuthService.getUserInfo());
     }
-  }
-
-  private checkForCookie() {
-    const cookie = this.cookieService.get('resume-id');
-    this.loggedIn = cookie !== '';
-    this.demo = cookie !== '';
   }
 
   public login(demo: boolean = false) {
     if (demo) {
-      this.demoService.login().subscribe(() => {
-        this.loggedIn = true;
+      this.demoService.login().subscribe(token => {
         this.demo = true;
+        this.cookieService.set('demo-token', token);
         this.router.navigate(['/login-callback']);
       });
     } else {
-      this.oauthService.initCodeFlow();
+      this.fusionAuthService.startLogin();
     }
   }
 
   public logout() {
     if (this.demo) {
       this.demoService.logout().subscribe(() => {
-        this.loggedIn = false;
         this.demo = false;
-        this.cookieService.delete('resume-id');
+        this.cookieService.delete('demo-token');
         this.router.navigate(['/']);
       });
     } else {
-      this.oauthService.logOut();
+      this.fusionAuthService.logout();
     }
   }
 }

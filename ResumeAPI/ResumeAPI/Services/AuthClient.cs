@@ -75,13 +75,15 @@ public class AuthClient : IAuthClient
 
     public async Task<Guid?> CreateAnonymousUser()
     {
+        var password = Guid.NewGuid().ToString();
+        var username = Guid.NewGuid().ToString();
         var response = await _authClient.CreateUserAsync(Guid.NewGuid(),
             new UserRequest
             {
                 user = new User
                 {
-                    username = Guid.NewGuid().ToString(),
-                    password = Guid.NewGuid().ToString(),
+                    username = username,
+                    password = password,
                     email = $"demo_{Guid.NewGuid()}@example.com",
                     fullName = "Demo User",
                     firstName = "Demo",

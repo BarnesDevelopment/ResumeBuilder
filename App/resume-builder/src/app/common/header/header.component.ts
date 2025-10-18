@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   BorderStyle,
   ButtonComponent,
@@ -16,7 +16,7 @@ import { AuthService } from '../../services/auth/auth.service';
   standalone: true,
   imports: [FaIconComponent, ButtonComponent],
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   faCaretDown = faCaretDown;
   showUserPanel: boolean;
 
@@ -24,6 +24,16 @@ export class HeaderComponent {
   protected readonly BorderStyle = BorderStyle;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
+  public Claims = signal({});
+
+  ngOnInit(): void {
+    if (this.authService.isLoggedIn()) {
+      this.authService.getClaims().subscribe(claims => {
+        this.Claims.set(claims);
+        console.log({ claims: this.Claims() });
+      });
+    }
+  }
 
   ToggleUserPanel() {
     this.showUserPanel = !this.showUserPanel;
@@ -33,9 +43,9 @@ export class HeaderComponent {
     this.router.navigate([url]);
   }
 
-  get Claims() {
-    return this.authService.getClaims();
-  }
+  // get Claims() {
+  //   return
+  // }
 
   get isLoggedIn() {
     return this.authService.isLoggedIn();

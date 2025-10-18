@@ -2,9 +2,9 @@ resource "fusionauth_application" "resume-builder" {
   tenant_id = fusionauth_tenant.resume-builder.id
   name      = local.friendly_name
   oauth_configuration {
-    client_id = var.fusionauth_default_application_id
+    client_id = "9833eaf0-8202-4cbf-b47c-c6224c742024"
     authorized_redirect_urls = [
-      "http://localhost:4200/login/callback",
+      "https://localhost:4200/login/callback",
     ]
     generate_refresh_tokens = true
 

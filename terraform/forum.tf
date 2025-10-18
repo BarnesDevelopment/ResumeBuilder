@@ -77,7 +77,7 @@ resource "fusionauth_tenant" "resume-builder" {
 resource "fusionauth_key" "resume-builder-signing-key" {
   algorithm = "ES512"
   name      = "Resume Builder Signing Key"
-  length    = 2048
+  length    = 521
 }
 
 
