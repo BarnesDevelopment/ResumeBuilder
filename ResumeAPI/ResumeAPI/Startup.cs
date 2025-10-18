@@ -1,13 +1,12 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using FluentValidation;
 using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using ResumeAPI.Database;
+using ResumeAPI.Helpers;
 using ResumeAPI.Models;
 using ResumeAPI.Orchestrator;
 using ResumeAPI.Services;
@@ -44,6 +43,8 @@ public class Startup(IConfiguration configuration)
         #region Dependency Injection
 
         services.AddSingleton(appSettings);
+        services.AddSingleton<IOptions<AppSettings>>(sp =>
+            Options.Create(appSettings));
         services.AddTransient<IDemoOrchestrator, DemoOrchestrator>();
 
         services.AddTransient<IResumeOrchestrator, ResumeOrchestrator>();
@@ -58,8 +59,10 @@ public class Startup(IConfiguration configuration)
 
         services.AddHttpClient<IAuthClient, AuthClient>(options =>
         {
-            options.BaseAddress = new Uri("https://" + appSettings.Jwt.Authority);
+            options.BaseAddress = new Uri(appSettings.Jwt.Authority);
         });
+
+        services.ConfigureOptions<JwtBearerOptionsSetup>();
 
         services.AddValidatorsFromAssembly(Assembly.Load("ResumeAPI"), ServiceLifetime.Transient);
 
@@ -69,37 +72,8 @@ public class Startup(IConfiguration configuration)
 
         #region Authentication
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidIssuer = appSettings.Jwt.Authority,
-                    ValidateAudience = false,
-                    ValidateIssuerSigningKey = false,
-                    ValidateLifetime = true,
-                    SignatureValidator = (token, parameters) => new JwtSecurityToken(token),
-                    RequireSignedTokens = false
-                };
-
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async ctx =>
-                    {
-                        var authClient = ctx.HttpContext.RequestServices.GetRequiredService<IAuthClient>();
-                        var jwt = ctx.SecurityToken as JwtSecurityToken;
-                        if (jwt == null)
-                        {
-                            ctx.Fail("Invalid security token.");
-                            return;
-                        }
-
-                        var remoteResult = await authClient.AuthenticateJwt(jwt.RawData);
-                        if (!remoteResult) ctx.Fail("Remote token validation failed.");
-                    }
-                };
-            });
+        services.AddAuthentication()
+            .AddJwtBearer();
 
         #endregion
 

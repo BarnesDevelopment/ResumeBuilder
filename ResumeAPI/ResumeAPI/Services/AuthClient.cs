@@ -14,10 +14,13 @@ public interface IAuthClient
     Task<bool> AuthenticateJwt(string token);
     Task<string> VendJwtFromId(Guid id);
     Task<bool> DeleteUser(Guid id);
+    string SigningKey();
+    Guid GetApplicationId();
 }
 
 public class AuthClient : IAuthClient
 {
+    private readonly Guid _appId;
     private readonly FusionAuthClient _authClient;
     private readonly HttpClient _client;
     private readonly string _issuer;
@@ -26,7 +29,7 @@ public class AuthClient : IAuthClient
     {
         _client = client;
         var authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
-            $"https://{appSettings.Jwt.Authority}");
+            $"{appSettings.Jwt.Authority}");
 
         var search = new TenantSearchCriteria { name = "Resume Builder", numberOfResults = 1 };
         var tenantSearchRequest = new TenantSearchRequest { search = search };
@@ -34,9 +37,22 @@ public class AuthClient : IAuthClient
         var tenantId = response?.successResponse?.tenants[0]?.id;
         if (tenantId == null) throw new InvalidOperationException("TenantId cannot be null.");
 
+        var apps = authClient.SearchApplicationsAsync(new ApplicationSearchRequest
+            {
+                search = new ApplicationSearchCriteria
+                {
+                    tenantId = tenantId, name = "Resume Builder", numberOfResults = 1
+                }
+            })
+            .Result;
+        if (apps.successResponse == null || apps.successResponse.applications.Count == 0)
+            throw new InvalidOperationException("Application not found.");
+
+        _appId = apps!.successResponse!.applications[0]!.id!.Value;
+
         _issuer = response!.successResponse!.tenants[0]!.issuer;
         _authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
-            "https://" + appSettings.Jwt.Authority,
+            appSettings.Jwt.Authority,
             tenantId.ToString());
     }
 
@@ -47,6 +63,8 @@ public class AuthClient : IAuthClient
         var response = await _client.GetAsync("/api/jwt/validate");
         return response.IsSuccessStatusCode;
     }
+
+    public Guid GetApplicationId() => _appId;
 
     public async Task<Guid?> CreateAnonymousUser()
     {
@@ -79,7 +97,10 @@ public class AuthClient : IAuthClient
             timeToLiveInSeconds = ttl,
             claims = new Dictionary<string, object>
             {
-                { "userId", id.ToString() }, { "anonymousUser", true }, { "iss", _issuer }
+                { "userId", id.ToString() },
+                { "anonymousUser", true },
+                { "iss", _issuer },
+                { "aud", _appId.ToString() }
             }
         });
 
@@ -91,5 +112,11 @@ public class AuthClient : IAuthClient
         var response = await _authClient.DeleteUserAsync(id);
 
         return response.WasSuccessful();
+    }
+
+    public string SigningKey()
+    {
+        var signingKeyResponse = _authClient.RetrieveJWTPublicKeyByApplicationIdAsync(_appId.ToString()).Result;
+        return signingKeyResponse.successResponse.publicKey;
     }
 }
