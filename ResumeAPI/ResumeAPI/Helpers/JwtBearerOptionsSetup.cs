@@ -31,11 +31,13 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
 
     public void Configure(string name, JwtBearerOptions options)
     {
+        #if DEBUG
         Console.WriteLine("Configuring JWT Bearer Options with AppId: {0}", _options.Audience);
         Console.WriteLine("Issuer: {0}", _options.Issuer);
         Console.WriteLine("Audience: {0}", _options.Audience);
         Console.WriteLine("Signing Key: {0}", _options.SigningKey);
         Console.WriteLine("Key Id: {0}", _options.Kid);
+        #endif
 
         var pem = _options.SigningKey
             .Replace("-----BEGIN PUBLIC KEY-----", string.Empty)
