@@ -15,6 +15,12 @@ resource "fusionauth_application" "resume-builder" {
       "authorization_code", "implicit"
     ]
   }
+  jwt_configuration {
+    enabled                   = true
+    refresh_token_ttl_minutes = 43200
+    ttl_seconds               = 3600
+    access_token_id           = fusionauth_key.resume-builder-access-token.id
+  }
 }
 
 resource "fusionauth_application_role" "resume-builder_admin_role" {
