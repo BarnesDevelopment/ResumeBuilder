@@ -18,7 +18,6 @@ import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FusionAuthModule } from '@fusionauth/angular-sdk';
 import { environment } from '../environment/environment';
-import { FusionAuthConfig } from '@fusionauth/angular-sdk/lib/types';
 
 @NgModule({
   declarations: [AppComponent],
@@ -51,7 +50,7 @@ import { FusionAuthConfig } from '@fusionauth/angular-sdk/lib/types';
       mePath: '/oauth2/userinfo',
       shouldAutoRefresh: true, // option to configure the SDK to automatically handle token refresh. Defaults to false if not specified here.
       scope: 'openid email profile',
-    } as FusionAuthConfig),
+    }),
   ],
   providers: [
     {
