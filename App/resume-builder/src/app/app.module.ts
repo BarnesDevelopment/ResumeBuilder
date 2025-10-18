@@ -42,6 +42,10 @@ import { environment } from '../environment/environment';
     FusionAuthModule.forRoot({
       clientId: '9833eaf0-8202-4cbf-b47c-c6224c742024', // Your FusionAuth client ID
       serverUrl: 'https://auth.barnes7619.com', // The base URL of the server that performs the token exchange
+      loginPath: '/oauth2/authorize',
+      logoutPath: '/oauth2/logout',
+      tokenRefreshPath: '/oauth2/token',
+      mePath: '/oauth2/userinfo',
       redirectUri: environment.fusionAuthRedirectUri, // The URI that the user is directed to after the login/register/logout action
       shouldAutoRefresh: true, // option to configure the SDK to automatically handle token refresh. Defaults to false if not specified here.
     }),
