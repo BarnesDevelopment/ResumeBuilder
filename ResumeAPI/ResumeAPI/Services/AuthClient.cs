@@ -14,8 +14,8 @@ public interface IAuthClient
     Task<bool> AuthenticateJwt(string token);
     Task<string> VendJwtFromId(Guid id);
     Task<bool> DeleteUser(Guid id);
-    string SigningKey();
     Guid GetApplicationId();
+    string GetSigningKey();
 }
 
 public class AuthClient : IAuthClient
@@ -54,6 +54,12 @@ public class AuthClient : IAuthClient
         _authClient = new FusionAuthClient(appSettings.FusionAuth.UserCreationApiKey,
             appSettings.Jwt.Authority,
             tenantId.ToString());
+    }
+
+    public string GetSigningKey()
+    {
+        var key = _authClient.RetrieveKeysAsync().Result;
+        return key.successResponse.keys.First(x => x.name == "Resume Builder Signing Key").publicKey;
     }
 
     public async Task<bool> AuthenticateJwt(string token)
@@ -112,11 +118,5 @@ public class AuthClient : IAuthClient
         var response = await _authClient.DeleteUserAsync(id);
 
         return response.WasSuccessful();
-    }
-
-    public string SigningKey()
-    {
-        var signingKeyResponse = _authClient.RetrieveJWTPublicKeyByApplicationIdAsync(_appId.ToString()).Result;
-        return signingKeyResponse.successResponse.publicKey;
     }
 }

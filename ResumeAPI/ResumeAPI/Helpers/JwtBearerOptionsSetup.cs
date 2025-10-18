@@ -1,5 +1,4 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -18,7 +17,7 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
         {
             Issuer = appSettings.Value.Jwt.Authority,
             Audience = authClient.GetApplicationId().ToString(),
-            SigningKey = authClient.SigningKey()
+            SigningKey = authClient.GetSigningKey()
         };
     }
 
@@ -30,18 +29,18 @@ public class JwtBearerOptionsSetup : IConfigureNamedOptions<JwtBearerOptions>
     public void Configure(string name, JwtBearerOptions options)
     {
         Console.WriteLine("Configuring JWT Bearer Options with AppId: {0}", _options.Audience);
-        Console.WriteLine("Signing Key: {0}", _options.SigningKey);
         Console.WriteLine("Issuer: {0}", _options.Issuer);
         Console.WriteLine("Audience: {0}", _options.Audience);
+        Console.WriteLine("Signing Key: {0}", _options.SigningKey);
 
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey)),
             ValidateIssuer = true,
             ValidIssuer = _options.Issuer,
             ValidateAudience = true,
             ValidAudience = _options.Audience,
             ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_options.SigningKey)),
             ValidateLifetime = true,
             RequireSignedTokens = false
         };
