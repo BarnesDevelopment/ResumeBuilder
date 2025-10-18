@@ -18,6 +18,7 @@ import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FusionAuthModule } from '@fusionauth/angular-sdk';
 import { environment } from '../environment/environment';
+import { FusionAuthConfig } from '@fusionauth/angular-sdk/lib/types';
 
 @NgModule({
   declarations: [AppComponent],
@@ -42,13 +43,15 @@ import { environment } from '../environment/environment';
     FusionAuthModule.forRoot({
       clientId: '9833eaf0-8202-4cbf-b47c-c6224c742024', // Your FusionAuth client ID
       serverUrl: 'https://auth.barnes7619.com', // The base URL of the server that performs the token exchange
+      redirectUri: environment.fusionAuthRedirectUri, // The URI that the user is directed to after the login/register/logout action
+      postLogoutRedirectUri: 'https://localhost:4200/logout/callback',
       loginPath: '/oauth2/authorize',
       logoutPath: '/oauth2/logout',
       tokenRefreshPath: '/oauth2/token',
       mePath: '/oauth2/userinfo',
-      redirectUri: environment.fusionAuthRedirectUri, // The URI that the user is directed to after the login/register/logout action
       shouldAutoRefresh: true, // option to configure the SDK to automatically handle token refresh. Defaults to false if not specified here.
-    }),
+      scope: 'openid email profile',
+    } as FusionAuthConfig),
   ],
   providers: [
     {

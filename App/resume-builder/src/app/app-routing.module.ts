@@ -7,6 +7,7 @@ import { EditResumeComponent } from './resume/components/edit-resume/edit-resume
 import { LoginCallbackComponent } from './services/auth/callbacks/login-callback/login-callback.component';
 import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callback/logout-callback.component';
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
+import { authGuard } from './auth-guard';
 
 const routes: Routes = [
   {
@@ -16,21 +17,23 @@ const routes: Routes = [
   {
     path: 'create',
     component: CreateResumeComponent,
+    canActivate: [authGuard(true, '/')],
   },
   {
     path: 'edit/:id',
     component: EditResumeComponent,
+    canActivate: [authGuard(true, '/')],
   },
   {
-    path: 'login-callback',
+    path: 'login/callback',
     component: LoginCallbackComponent,
   },
   {
-    path: 'logout-callback',
+    path: 'logout/callback',
     component: LogoutCallbackComponent,
   },
   {
-    path: 'silent-callback',
+    path: 'silent/callback',
     component: SilentCallbackComponent,
   },
   { path: '**', component: PageNotFoundComponent },

@@ -1,6 +1,7 @@
 resource "fusionauth_application" "resume-builder" {
   tenant_id = fusionauth_tenant.resume-builder.id
   name      = local.friendly_name
+
   oauth_configuration {
     client_id = "9833eaf0-8202-4cbf-b47c-c6224c742024"
     authorized_redirect_urls = [
@@ -8,12 +9,33 @@ resource "fusionauth_application" "resume-builder" {
     ]
     generate_refresh_tokens = true
 
+    client_authentication_policy = "NotRequired"
+
     scope_handling_policy = "Strict"
     unknown_scope_policy  = "Reject"
 
     enabled_grants = [
-      "authorization_code", "implicit"
+      "refresh_token", "authorization_code"
     ]
+    provided_scope_policy {
+      address {
+        enabled  = false
+        required = false
+      }
+      email {
+        enabled  = true
+        required = false
+      }
+      phone {
+        enabled  = false
+        required = false
+      }
+      profile {
+        enabled  = true
+        required = false
+      }
+    }
+
   }
   jwt_configuration {
     enabled                   = true
