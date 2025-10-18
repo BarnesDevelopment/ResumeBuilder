@@ -29,14 +29,14 @@ describe('DemoService', () => {
   it('should login', done => {
     service.login().subscribe({
       next: data => {
-        expect(data).toBeNull();
+        expect(data).toBe('totally_real_token');
         done();
       },
       error: () => fail('should not throw error'),
     });
     const req = httpMock.expectOne(`${baseUrl}/demo/login`);
     expect(req.request.method).toBe('PUT');
-    req.flush(null, { status: 200, statusText: 'OK' });
+    req.flush('totally_real_token', { status: 200, statusText: 'OK' });
   });
 
   it('should logout', done => {

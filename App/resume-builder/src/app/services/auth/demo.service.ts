@@ -11,8 +11,8 @@ export class DemoService {
 
   constructor(private http: HttpClient) {}
 
-  public login(): Observable<void> {
-    return this.http.put<void>(`${this.env.apiBasePath}/demo/login`, {});
+  public login(): Observable<string> {
+    return this.http.put<string>(`${this.env.apiBasePath}/demo/login`, {});
   }
 
   public logout(): Observable<void> {
