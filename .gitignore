@@ -152,4 +152,4 @@ CSS/
 
 
 # Exceptions
-!/App/resume-builder/node_modules/@fusionauth/angular-sdk-custom/**
+!**/node_modules/@fusionauth/angular-sdk-custom/**
