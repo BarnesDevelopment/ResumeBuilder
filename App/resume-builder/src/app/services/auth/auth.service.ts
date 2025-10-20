@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { DemoService } from './demo.service';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-import { FusionAuthService } from '@fusionauth/angular-sdk';
+import { FusionAuthService } from '@fusionauth/angular-sdk-custom';
 import { from, of } from 'rxjs';
 
 @Injectable({

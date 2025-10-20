@@ -1,6 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FusionAuthService, UserInfo } from '@fusionauth/angular-sdk';
+import { FusionAuthService, UserInfo } from '@fusionauth/angular-sdk-custom';
 
 @Component({
   selector: 'app-root',
