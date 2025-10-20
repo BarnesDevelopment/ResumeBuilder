@@ -6,4 +6,6 @@ export const environment: Environment = {
   apiBasePath: 'https://api.barnes-development.com/resume',
   domain: 'resume-builder.barnes-development.com',
   loggedIn: false,
+  fusionAuthRedirectUri:
+    'https://resume-builder.barnes-development.com/login-callback',
 };
