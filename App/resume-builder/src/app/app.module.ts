@@ -16,7 +16,7 @@ import { LogoutCallbackComponent } from './services/auth/callbacks/logout-callba
 import { SilentCallbackComponent } from './services/auth/callbacks/silent-callback/silent-callback.component';
 import { AuthInterceptor } from '../interceptors/auth.interceptor';
 import { MatDialogModule } from '@angular/material/dialog';
-import { FusionAuthModule } from '@fusionauth/angular-sdk-custom';
+import { FusionAuthModule } from '@fusionauth/angular-sdk';
 import { environment } from '../environment/environment';
 
 @NgModule({
@@ -49,8 +49,8 @@ import { environment } from '../environment/environment';
       tokenRefreshPath: '/oauth2/token',
       mePath: '/oauth2/userinfo',
       shouldAutoRefresh: true, // option to configure the SDK to automatically handle token refresh. Defaults to false if not specified here.
-      scope: 'openid email profile',
-      authParams: [{ response_type: 'code' }],
+      scope: 'openid email profile offline_access',
+      // authParams: [{ response_type: 'code' }],
     }),
   ],
   providers: [

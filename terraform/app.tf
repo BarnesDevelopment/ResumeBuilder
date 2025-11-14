@@ -11,8 +11,10 @@ resource "fusionauth_application" "resume-builder" {
 
     client_authentication_policy = "NotRequired"
 
-    scope_handling_policy = "Strict"
-    unknown_scope_policy  = "Reject"
+    scope_handling_policy = "Compatibility"
+    unknown_scope_policy  = "Remove"
+
+    proof_key_for_code_exchange_policy = "Required"
 
     enabled_grants = [
       "refresh_token", "authorization_code"
